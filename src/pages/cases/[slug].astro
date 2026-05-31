@@ -1,0 +1,31 @@
+---
+// Страница кейса (EN): /cases/grow-food, /cases/priem.
+// getStaticPaths генерирует по одному маршруту на каждую запись коллекции `cases`.
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import CaseArticle from '../../components/CaseArticle.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({
+    params: { slug: entry.id }, // slug = имя .md-файла (grow-food, priem)
+    props: { entry }, // саму запись прокидываем в страницу как проп
+  }));
+}
+
+const lang = 'en';
+const { entry } = Astro.props;
+const description = `${entry.data.title} — ${entry.data.client} case study by Maria Tkachenko.`;
+---
+
+<Base
+  title={`${entry.data.title} — ${entry.data.client} · Maria Tkachenko`}
+  description={description}
+  lang={lang}
+>
+  <Nav lang={lang} />
+  <CaseArticle entry={entry} lang={lang} />
+  <Footer lang={lang} />
+</Base>

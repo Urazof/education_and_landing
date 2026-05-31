@@ -23,10 +23,15 @@ const cases = defineCollection({
       z.object({
         heading: z.string(),
         body: z.string(),
+        // Имена файлов картинок из src/assets (без пути). Резолвятся в CaseArticle
+        // через import.meta.glob. Пусто = у секции нет иллюстраций.
+        images: z.array(z.string()).default([]),
       }),
     ),
     // Маркированные результаты (метрики).
     results: z.array(z.string()).default([]),
+    // Слоты медиа, которых ещё нет (скринкасты, ролики, фото) — рендерятся как «coming soon».
+    media: z.array(z.string()).default([]),
   }),
 });
 

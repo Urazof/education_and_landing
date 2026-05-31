@@ -1,0 +1,31 @@
+---
+// Страница кейса (RU): /ru/cases/grow-food, /ru/cases/priem.
+// Контент кейсов пока единый (EN) — переводится только обвязка (nav/footer/кнопки).
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import CaseArticle from '../../../components/CaseArticle.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const lang = 'ru';
+const { entry } = Astro.props;
+const description = `${entry.data.title} — кейс ${entry.data.client}. Мария Ткаченко.`;
+---
+
+<Base
+  title={`${entry.data.title} — ${entry.data.client} · Мария Ткаченко`}
+  description={description}
+  lang={lang}
+>
+  <Nav lang={lang} />
+  <CaseArticle entry={entry} lang={lang} />
+  <Footer lang={lang} />
+</Base>

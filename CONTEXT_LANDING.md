@@ -145,7 +145,11 @@
       Секционные компоненты: `Hero/About/Works/Archive/Publications/Nav/SocialLinks/CaseCard/Footer`.
       Соц-иконки в шапке (LI/WA/TG), фото в hero — плейсхолдер. Archive/Publications — заглушки.
       Бренд-превью карточек через `astro:assets` (WebP). build/check зелёные.
-- [ ] Шаблон кейса: `src/pages/cases/[slug].astro` (+ `/ru/cases/...`) из контент-коллекции
+- [x] **Шаблон кейса** `src/pages/cases/[slug].astro` (+ `/ru/cases/...`) из коллекции (Этап 3, 2026-05-31):
+      динамический маршрут + `getStaticPaths`, компонент `CaseArticle.astro` (шапка/лого/external/соцсети/
+      секции/Results). **Картинки кейсов на своих местах** (Miro 1:1): `sections[].images` + `media`-слоты,
+      реальные ассеты в `src/assets`, резолв `import.meta.glob`. 6 страниц, build/check зелёные. Контент EN,
+      обвязка i18n. ⚠️ external-URL Priem под вопросом; медиа-ярлыки — EN-заглушки, ждут реальных файлов.
 - [x] Контент 2 кейсов (Grow Food, **Priem**) в `src/content/cases/*.md`
 - [~] Адаптив — базовый (sm/), допилить под кейсы и mobile-меню
 - [ ] Анимации / hover (hover-инверсия карточек уже есть)
