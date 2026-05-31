@@ -1,0 +1,22 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import SocialLinks from './SocialLinks.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// TODO: заменить на реальные ссылки Марии.
+const socials = [
+  { label: 'LI', url: 'https://linkedin.com/' },
+  { label: 'WA', url: 'https://wa.me/' },
+  { label: 'TG', url: 'https://t.me/' },
+];
+---
+
+<section class="py-16">
+  <p class="mb-4 text-lg font-semibold">{t('contact.title')}</p>
+  <SocialLinks items={socials} />
+</section>

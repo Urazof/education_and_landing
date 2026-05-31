@@ -1,8 +1,8 @@
 ---
 title: Building from zero
-client: Priem
+client: Priem.menu
 order: 2
-external: https://growfood.pro/
+external: https://priem.menu/
 social:
   - { label: IG, url: "https://instagram.com/" }
   - { label: VK, url: "https://vk.com/" }
@@ -18,6 +18,9 @@ sections:
       mid-to-premium perception, so reaching budget-conscious customers required a separate product.
       The decision was made to launch a lean MVP with a straightforward value proposition: simple,
       home-style food at an accessible price.
+    images:
+      - priem-fridge.jpg
+    layout: aside-right
   - heading: Strategy
     body: >-
       The product and brand needed to serve one clear need: eat well without cooking, no complexity
@@ -33,6 +36,9 @@ sections:
     images:
       - priem-execution-wide.jpg
       - priem-execution-tall.jpg
+    videos:
+      - https://www.youtube.com/shorts/miRtqwE-jn4
+      - https://www.youtube.com/watch?v=dCQZeO8Ter0
   - heading: Results
     body: >-
       Priem grew fast and profitably, becoming a proven model the company chose to expand abroad.
@@ -42,12 +48,14 @@ sections:
       I helped adapt the brand for foreign markets, which led to the creation of The Meal — a
       separate vertical built for English-speaking audiences. Same core idea, new identity built to
       work in a different cultural and competitive context.
+    images:
+      - the-meal.png
+    link:
+      label: themeal.menu
+      url: https://www.themeal.menu/
 media:
-  - Website screencast
-  - Brand guide / visual guidelines
-  - Packaging photos
-  - Offline photos
-  - "Ad film: \"Cat\""
+  - label: Cat film
+    video: https://www.youtube.com/watch?v=wHJYcF63Q3c
 results:
   - "Scaled to $20M+ revenue run rate within 1.5 years"
   - "Expanded into 15+ cities and regions in the first 6 months"

@@ -15,12 +15,10 @@ export const ui = {
     'hero.role': 'Marketing leader & brand strategist',
     'hero.greeting': 'Hi! My name is Maria Tkachenko.',
     'hero.intro':
-      "I'm a marketing leader and brand strategist with 10+ years of experience building consumer and tech-driven brands across subscriptions, digital products, and international markets.",
+      "I'm a marketing leader and brand strategist with 12+ years of experience building consumer and tech-driven brands across subscriptions, digital products, and international markets.",
     'hero.photoAlt': 'Portrait of Maria Tkachenko',
     'about.p1':
       "Since 2011, I've been building and scaling brands across consumer, tech, subscription, and digital products. I know how to turn complex products into brands people instantly understand and genuinely connect with.",
-    'about.p2':
-      'Over the last 5 years at Grow Food, I helped turn the company into one of the leading ready-to-eat meal delivery brands. I led a full-scale rebrand that gave the company a stronger and more recognizable identity, doubled the efficiency of the brand ecosystem, and increased brand awareness by 200%. I also launched and scaled Priem.menu from the ground up, growing it to a $20M+ revenue run rate within 1.5 years and expanding into 15+ cities and regions.',
     'bridge':
       "So here are some examples of the brands, systems, and campaigns I've built over the years.",
     'works.title': 'Selected works',
@@ -31,6 +29,8 @@ export const ui = {
     'case.back': 'Back to home',
     'case.visit': 'Visit website',
     'case.results': 'Results',
+    'case.video': 'Video coming soon',
+    'contact.title': "Let's keep in touch",
     'footer.rights': 'All rights reserved',
   },
   ru: {
@@ -39,12 +39,10 @@ export const ui = {
     'hero.role': 'Маркетинг-лидер и бренд-стратег',
     'hero.greeting': 'Привет! Меня зовут Мария Ткаченко.',
     'hero.intro':
-      'Я маркетинг-лидер и бренд-стратег с опытом 10+ лет: строю потребительские и технологичные бренды в подписках, цифровых продуктах и на международных рынках.',
+      'Я маркетинг-лидер и бренд-стратег с опытом 12+ лет: строю потребительские и технологичные бренды в подписках, цифровых продуктах и на международных рынках.',
     'hero.photoAlt': 'Портрет Марии Ткаченко',
     'about.p1':
       'С 2011 года я строю и масштабирую бренды в потребительском, технологичном, подписочном и цифровом сегментах. Я умею превращать сложные продукты в бренды, которые люди мгновенно понимают и к которым по-настоящему привязываются.',
-    'about.p2':
-      'За последние 5 лет в Grow Food я помогла превратить компанию в один из ведущих брендов доставки готовой еды. Провела полный ребрендинг, который дал компании более сильную и узнаваемую айдентику, вдвое повысил эффективность бренд-экосистемы и поднял узнаваемость бренда на 200%. Также с нуля запустила и масштабировала Priem.menu — до выручки $20M+ в run rate за 1,5 года и охвата 15+ городов и регионов.',
     'bridge':
       'Вот несколько примеров брендов, систем и кампаний, которые я создала за эти годы.',
     'works.title': 'Избранные работы',
@@ -55,6 +53,8 @@ export const ui = {
     'case.back': 'На главную',
     'case.visit': 'Перейти на сайт',
     'case.results': 'Результаты',
+    'case.video': 'Видео скоро появится',
+    'contact.title': 'Давайте общаться',
     'footer.rights': 'Все права защищены',
   },
 } as const;

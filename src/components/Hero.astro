@@ -1,7 +1,9 @@
 ---
-// HERO по макету: две колонки — слева приветствие + интро, справа фото.
-// Фото Марии пока нет → ставим типизированный плейсхолдер (заменим в Этапе 4 на astro:assets).
+// Hero + About merged (по макету Miro 2026-05-31): всё в одном контейнере.
+// Левая колонка: приветствие → интро → about.p1. Правая: фото.
+import { Image } from 'astro:assets';
 import { useTranslations, type Lang } from '../i18n/ui';
+import mariaPhoto from '../assets/maria-photo.png';
 
 interface Props {
   lang: Lang;
@@ -10,22 +12,20 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section id="about" class="py-16 sm:py-24">
-  <div class="grid items-center gap-10 sm:grid-cols-[1fr_auto]">
-    <!-- левая колонка: текст -->
-    <div class="max-w-2xl">
-      <p class="text-sm uppercase tracking-widest opacity-70">{t('hero.role')}</p>
-      <h1 class="mt-4 text-4xl font-bold sm:text-5xl">{t('hero.greeting')}</h1>
-      <p class="mt-6 text-lg leading-relaxed">{t('hero.intro')}</p>
+<section id="about" class="py-10 sm:py-14">
+  <div class="grid items-start gap-8 sm:grid-cols-[1fr_auto]">
+    <div>
+      <h1 class="text-2xl font-bold sm:text-3xl">{t('hero.greeting')}</h1>
+      <p class="mt-3 text-base leading-relaxed opacity-80">{t('hero.intro')}</p>
+      <p class="mt-4 text-base leading-relaxed">{t('about.p1')}</p>
     </div>
-
-    <!-- правая колонка: место под фото (placeholder) -->
-    <div
-      class="flex aspect-[3/4] w-full items-center justify-center border-2 border-ink text-sm opacity-50 sm:w-56"
-      role="img"
-      aria-label={t('hero.photoAlt')}
-    >
-      Photo
+    <div class="flex-shrink-0">
+      <Image
+        src={mariaPhoto}
+        alt={t('hero.photoAlt')}
+        class="w-36 sm:w-44 rounded-sm"
+        loading="eager"
+      />
     </div>
   </div>
 </section>
