@@ -1,7 +1,7 @@
 {
   // Название проекта в Cloudflare Pages — должно совпадать с тем, что создали в дашборде.
   // Если используете Git-интеграцию Pages, этот файл не нужен — деплой идёт автоматически.
-  "name": "maria-portfolio",
+  "name": "education-and-landing",
   "compatibility_date": "2026-06-01",
   "assets": {
     "directory": "./dist"
