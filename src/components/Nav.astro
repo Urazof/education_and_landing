@@ -1,10 +1,9 @@
 ---
-// Nav по макету: слева About/Works (жирные), справа иконки соцсетей (PNG).
 import { Image } from 'astro:assets';
 import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
 import liIcon from '../assets/icon-li.png';
-import waIcon from '../assets/icon-wa.png';
 import tgIcon from '../assets/icon-tg.png';
+import waIcon from '../assets/icon-wa.png';
 
 interface Props {
   lang: Lang;
@@ -13,11 +12,10 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const base = localePrefix(lang);
 
-// TODO: заменить на реальные ссылки Марии.
 const socials = [
-  { icon: liIcon, label: 'LinkedIn', url: 'https://linkedin.com/' },
-  { icon: waIcon, label: 'WhatsApp', url: 'https://wa.me/' },
-  { icon: tgIcon, label: 'Telegram', url: 'https://t.me/' },
+  { icon: liIcon, label: 'LinkedIn',  url: 'https://www.linkedin.com/in/maria-tkachenko-k/' },
+  { icon: tgIcon, label: 'Telegram',  url: 'https://t.me/marymishel' },
+  { icon: waIcon, label: 'WhatsApp',  url: 'https://wa.me/message/DLSCXFQCCOVPA1' },
 ];
 ---
 
@@ -27,16 +25,11 @@ const socials = [
       <li><a href={`${base}/#about`} class="font-bold hover:underline">{t('nav.about')}</a></li>
       <li><a href={`${base}/#works`} class="font-bold hover:underline">{t('nav.works')}</a></li>
     </ul>
-    <ul class="flex items-center gap-2">
+    <ul class="flex items-center gap-3">
       {socials.map((s) => (
         <li>
           <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
-            <Image
-              src={s.icon}
-              alt={s.label}
-              class="h-5 w-5 transition-opacity hover:opacity-70"
-              loading="eager"
-            />
+            <Image src={s.icon} alt={s.label} class="h-5 w-5 transition-opacity hover:opacity-60" loading="eager" />
           </a>
         </li>
       ))}

@@ -224,21 +224,6 @@ function videoCols(n: number): string {
     })}
   </div>
 
-  <!-- Метрики Results (отдельный блок) — после секций, перед media -->
-  {results.length > 0 && (
-    <section class="mt-12 border-2 border-ink p-6">
-      <h2 class="mb-4 text-sm uppercase tracking-widest opacity-70">{t('case.results')}</h2>
-      <ul class="space-y-2">
-        {results.map((r) => (
-          <li class="flex gap-3 text-lg">
-            <span aria-hidden="true" class="font-bold">→</span>
-            <span>{r}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
   <!-- Media-слоты (gold video и т.п.) — самый конец страницы -->
   {media.length > 0 && (
     <section class="mt-12">

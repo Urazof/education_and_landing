@@ -15,7 +15,7 @@ sections:
       identity. Despite having one of the lowest average checks in the category, it was perceived
       as expensive and underperformed on "tasty" and "varied" attributes.
     images:
-      - growfood-before-after.png
+      - growfood-context-new.png
     layout: aside-right
   - heading: Challenge
     body: >-
@@ -53,12 +53,12 @@ sections:
     layout: video-image
   - heading: Results
     body: >-
-      The rebrand reset how the market perceived Grow Food and became the foundation for new
-      product launches, audience segmentation, and expansion into new markets.
-results:
-  - "+200% brand awareness growth within a year after the rebrand"
-  - "+40% customer base growth after launching campaigns in the new system"
-  - "2x product activity in the first months, holding stable over the year"
+      +200% brand awareness growth within a year after the rebrand. +40% customer base growth
+      following the launch of campaigns in the new brand system. 2x product activity in the first
+      months after launch, with results holding stable over the following year. The new brand
+      platform became the foundation for new product launches, audience segmentation, and expansion
+      into new markets.
+results: []
 media:
   - label: Ad campaign — Gold
     video: https://www.youtube.com/watch?v=478lf3dQgao

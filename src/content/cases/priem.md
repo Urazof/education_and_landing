@@ -41,7 +41,10 @@ sections:
       - https://www.youtube.com/watch?v=dCQZeO8Ter0
   - heading: Results
     body: >-
-      Priem grew fast and profitably, becoming a proven model the company chose to expand abroad.
+      Scaled to $20M+ revenue run rate within 1.5 years. Expanded into 15+ cities and regions in
+      the first 6 months. Organic channels reached 50%+ of total revenue. Built a partnerships
+      channel from zero to ~40% of total acquisition. Reduced CAC by 55% YoY while growing revenue
+      by 90%. Increased brand awareness by 180% YoY.
     videos:
       - https://www.youtube.com/watch?v=wHJYcF63Q3c
   - heading: What came next
@@ -55,13 +58,7 @@ sections:
     link:
       label: themeal.menu
       url: https://www.themeal.menu/
-results:
-  - "Scaled to $20M+ revenue run rate within 1.5 years"
-  - "Expanded into 15+ cities and regions in the first 6 months"
-  - "Organic channels reached 50%+ of total revenue"
-  - "Partnerships channel from zero to ~40% of acquisition"
-  - "CAC reduced 55% YoY while revenue grew 90%"
-  - "+180% brand awareness YoY"
+results: []
 media: []
 ---
 
