@@ -1,8 +1,8 @@
 ---
 title: Building from zero
-client: Priem
+client: Priem.menu
 order: 2
-external: https://growfood.pro/
+external: https://priem.menu/
 social:
   - { label: IG, url: "https://instagram.com/" }
   - { label: VK, url: "https://vk.com/" }
@@ -18,6 +18,9 @@ sections:
       mid-to-premium perception, so reaching budget-conscious customers required a separate product.
       The decision was made to launch a lean MVP with a straightforward value proposition: simple,
       home-style food at an accessible price.
+    images:
+      - priem-fridge.jpg
+    layout: aside-right
   - heading: Strategy
     body: >-
       The product and brand needed to serve one clear need: eat well without cooking, no complexity
@@ -33,28 +36,30 @@ sections:
     images:
       - priem-execution-wide.jpg
       - priem-execution-tall.jpg
+    videos:
+      - https://www.youtube.com/shorts/miRtqwE-jn4
+      - https://www.youtube.com/watch?v=dCQZeO8Ter0
   - heading: Results
     body: >-
-      Priem grew fast and profitably, becoming a proven model the company chose to expand abroad.
+      Scaled to $20M+ revenue run rate within 1.5 years. Expanded into 15+ cities and regions in
+      the first 6 months. Organic channels reached 50%+ of total revenue. Built a partnerships
+      channel from zero to ~40% of total acquisition. Reduced CAC by 55% YoY while growing revenue
+      by 90%. Increased brand awareness by 180% YoY.
+    videos:
+      - https://www.youtube.com/watch?v=wHJYcF63Q3c
   - heading: What came next
     body: >-
       After Priem's successful launch, the company decided to expand the same model internationally.
       I helped adapt the brand for foreign markets, which led to the creation of The Meal — a
       separate vertical built for English-speaking audiences. Same core idea, new identity built to
       work in a different cultural and competitive context.
-media:
-  - Website screencast
-  - Brand guide / visual guidelines
-  - Packaging photos
-  - Offline photos
-  - "Ad film: \"Cat\""
-results:
-  - "Scaled to $20M+ revenue run rate within 1.5 years"
-  - "Expanded into 15+ cities and regions in the first 6 months"
-  - "Organic channels reached 50%+ of total revenue"
-  - "Partnerships channel from zero to ~40% of acquisition"
-  - "CAC reduced 55% YoY while revenue grew 90%"
-  - "+180% brand awareness YoY"
+    images:
+      - the-meal.png
+    link:
+      label: themeal.menu
+      url: https://www.themeal.menu/
+results: []
+media: []
 ---
 
 A brand built from zero: naming, identity, and the storefront landing page.

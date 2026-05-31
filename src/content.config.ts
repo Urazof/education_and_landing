@@ -26,12 +26,24 @@ const cases = defineCollection({
         // Имена файлов картинок из src/assets (без пути). Резолвятся в CaseArticle
         // через import.meta.glob. Пусто = у секции нет иллюстраций.
         images: z.array(z.string()).default([]),
+        // YouTube URLs для встраивания видео (несколько = сетка). Пусто = нет видео.
+        videos: z.array(z.string()).default([]),
+        // Раскладка: default — картинки снизу, aside-right — текст слева/картинка справа,
+        // aside-left — картинка слева/текст справа. Соответствует макету Miro.
+        // default: текст→видео→картинки; aside-right: текст|картинка; aside-left: картинка|текст;
+        // video-image: видео(шире)|картинка (для пар медиа без текста, напр. boxing+packaging GF)
+        layout: z.enum(['default', 'aside-right', 'aside-left', 'video-image']).default('default'),
+        // Ссылка-кнопка под текстом секции (напр. themeal.menu в «What came next»).
+        link: z.object({ label: z.string(), url: z.string().url() }).optional(),
       }),
     ),
     // Маркированные результаты (метрики).
     results: z.array(z.string()).default([]),
-    // Слоты медиа, которых ещё нет (скринкасты, ролики, фото) — рендерятся как «coming soon».
-    media: z.array(z.string()).default([]),
+    // Медиа-слоты: label = название, video = YouTube URL (пусто = плейсхолдер).
+    media: z.array(z.object({
+      label: z.string(),
+      video: z.string().optional(),
+    })).default([]),
   }),
 });
 

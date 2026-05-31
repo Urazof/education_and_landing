@@ -15,14 +15,16 @@ sections:
       identity. Despite having one of the lowest average checks in the category, it was perceived
       as expensive and underperformed on "tasty" and "varied" attributes.
     images:
-      - works-preview.png
+      - growfood-context-new.png
+    layout: aside-right
   - heading: Challenge
     body: >-
       The goal was to build a unified brand platform that could bring together different audience
       motivations under one narrative, simplify product navigation for users, and create a visual
       identity that would scale consistently across all touchpoints, from packaging to ad campaigns.
     images:
-      - growfood-challenge.png
+      - growfood-old-brand.png
+    layout: aside-left
   - heading: Strategy
     body: >-
       The core decision was to move away from fragmented need-based communication toward a
@@ -30,27 +32,36 @@ sections:
       were not diets or fitness, but free time, energy, and self-care. The new brand message
       "Time to Eat" became a flexible system adaptable across audiences, products, and seasonal
       campaigns.
+    videos:
+      - https://www.youtube.com/watch?v=IS69SsgqiUQ
   - heading: Execution
     body: >-
       We built a full brand platform covering positioning, tone of voice, messaging architecture,
       and guidelines. Redesigned the website and app UX to make product navigation simpler and
       clearer. The new visual identity was rolled out consistently across all channels: packaging,
       CRM, social media, digital, and product communication.
+    videos:
+      - https://www.youtube.com/shorts/4knLhGeQk_g
+      - https://www.youtube.com/watch?v=f5pQcgWSdbw
+      - https://www.youtube.com/watch?v=KwDQtDInBhY
+  - heading: ""
+    body: ""
+    videos:
+      - https://www.youtube.com/watch?v=kFULNDI1KGA
     images:
-      - growfood-execution.png
+      - growfood-packaging.jpg
+    layout: video-image
   - heading: Results
     body: >-
-      The rebrand reset how the market perceived Grow Food and became the foundation for new
-      product launches, audience segmentation, and expansion into new markets.
+      +200% brand awareness growth within a year after the rebrand. +40% customer base growth
+      following the launch of campaigns in the new brand system. 2x product activity in the first
+      months after launch, with results holding stable over the following year. The new brand
+      platform became the foundation for new product launches, audience segmentation, and expansion
+      into new markets.
+results: []
 media:
-  - App screencast
-  - Website screencast
-  - Brand guide walkthrough
-  - "Ad campaign film: \"Gold\""
-results:
-  - "+200% brand awareness growth within a year after the rebrand"
-  - "+40% customer base growth after launching campaigns in the new system"
-  - "2x product activity in the first months, holding stable over the year"
+  - label: Ad campaign — Gold
+    video: https://www.youtube.com/watch?v=478lf3dQgao
 ---
 
 Full brand platform: positioning, identity, and rollout across every touchpoint.

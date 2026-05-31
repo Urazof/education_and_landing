@@ -1,0 +1,13 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="py-8">
+  <p class="text-lg font-semibold">{t('contact.title')}</p>
+</section>
