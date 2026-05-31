@@ -5,10 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Канонический адрес сайта. Используется для sitemap, OG-тегов, canonical, абсолютных ссылок.
-  // ⚠️ PROVISIONAL: портфолио планируется на субдомене becom.ing. Домен ещё НЕ зарегистрирован —
-  // заменить на реальный (напр. https://maria.becom.ing) перед деплоем. Меняется только эта строка.
-  site: 'https://maria.becom.ing',
+  // Канонический адрес сайта. Используется для sitemap, OG, canonical, hreflang.
+  site: 'https://mariatkachenko.savor.ing',
 
   // Встроенная интернационализация Astro.
   i18n: {
