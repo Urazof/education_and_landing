@@ -1,12 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Канонический адрес сайта. Используется для sitemap, OG-тегов, абсолютных ссылок.
-  // TODO: заменить на реальный домен (кандидат: https://becom.ing) перед деплоем.
-  site: 'https://example.com',
+  // Канонический адрес сайта. Используется для sitemap, OG-тегов, canonical, абсолютных ссылок.
+  // ⚠️ PROVISIONAL: портфолио планируется на субдомене becom.ing. Домен ещё НЕ зарегистрирован —
+  // заменить на реальный (напр. https://maria.becom.ing) перед деплоем. Меняется только эта строка.
+  site: 'https://maria.becom.ing',
 
   // Встроенная интернационализация Astro.
   i18n: {
@@ -16,6 +18,18 @@ export default defineConfig({
       prefixDefaultLocale: false, // en — без префикса (/), ru — с префиксом (/ru/)
     },
   },
+
+  // Интеграции сборки. sitemap обходит все страницы и пишет sitemap-index.xml при build.
+  integrations: [
+    sitemap({
+      // Проставляет hreflang-связи между языковыми версиями прямо в карте сайта.
+      // Ключи — наши locale-коды, значения — BCP-47 теги для поисковика.
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en-US', ru: 'ru-RU' },
+      },
+    }),
+  ],
 
   // Tailwind v4 подключается как Vite-плагин (не через astro integration, как было в v3).
   vite: {

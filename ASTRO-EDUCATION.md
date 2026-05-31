@@ -19,6 +19,7 @@
 - [8. Этап 2: вёрстка главной по макету](#8-этап-2-вёрстка-главной-по-макету)
 - [9. Деплой: как сайт попадает в интернет](#9-деплой-как-сайт-попадает-в-интернет)
 - [10. Этап 3: страницы кейсов и динамические маршруты](#10-этап-3-страницы-кейсов-и-динамические-маршруты)
+- [11. Этап 4: SEO-фундамент](#11-этап-4-seo-фундамент)
 - [Журнал этапов](#журнал-этапов)
 
 ---
@@ -90,6 +91,7 @@
 | `tailwindcss` | 4.3.0 | utility-CSS |
 | `@tailwindcss/vite` | 4.3.0 | плагин, встраивающий Tailwind v4 в сборку Vite |
 | `@astrojs/check` | 0.9.9 | проверка типов в `.astro` |
+| `@astrojs/sitemap` | 3.7.3 | генерация `sitemap-index.xml` при сборке (Этап 4) |
 | `typescript` | 5.9.3 | типы |
 
 Команды (`npm run <script>`, скрипты заданы в `package.json`):
@@ -107,8 +109,9 @@ education_and_landing/
 ├── astro.config.mjs        # конфиг Astro: домен, i18n, плагин Tailwind
 ├── tsconfig.json           # настройки TypeScript (строгий режим)
 ├── package.json            # зависимости и команды
-├── public/                 # статика «как есть» (favicon, robots) — копируется в dist без обработки
-│   └── favicon.svg
+├── public/                 # статика «как есть» — копируется в dist без обработки
+│   ├── favicon.svg
+│   └── robots.txt          # правила для краулеров + ссылка на sitemap (Этап 4)
 ├── src/
 │   ├── styles/
 │   │   └── global.css      # вход Tailwind + дизайн-токены (@theme)
@@ -200,10 +203,12 @@ const name = 'Maria';
 // @ts-check                       // включает проверку типов в этом JS-файле
 import { defineConfig } from 'astro/config';   // хелпер: даёт автодополнение по конфигу
 import tailwindcss from '@tailwindcss/vite';   // Tailwind v4 = Vite-плагин
+import sitemap from '@astrojs/sitemap';        // интеграция: карта сайта при сборке (Этап 4)
 
 export default defineConfig({
-  site: 'https://example.com',     // канонический URL. Нужен для sitemap, OG, абсолютных ссылок.
-                                   // TODO: заменить на реальный домен (кандидат becom.ing).
+  // ⚠️ PROVISIONAL: портфолио на субдомене becom.ing, домен ещё не зарегистрирован.
+  // Из site строятся sitemap, canonical, OG, hreflang — заменить на реальный перед деплоем.
+  site: 'https://maria.becom.ing',
 
   i18n: {                          // встроенная интернационализация
     defaultLocale: 'en',           // язык по умолчанию
@@ -213,11 +218,24 @@ export default defineConfig({
     },
   },
 
+  integrations: [                  // интеграции сборки
+    sitemap({                      // обходит все страницы → sitemap-index.xml + sitemap-0.xml
+      i18n: {                      // проставляет hreflang-связи языковых версий В САМОЙ карте
+        defaultLocale: 'en',
+        locales: { en: 'en-US', ru: 'ru-RU' },  // locale-код → BCP-47 тег для поисковика
+      },
+    }),
+  ],
+
   vite: {                          // Astro построен на Vite; сюда прокидываем его плагины
     plugins: [tailwindcss()],      // подключаем Tailwind в конвейер сборки
   },
 });
 ```
+**`site` vs `integrations`.** `site` — фундамент SEO: без него все абсолютные ссылки сломаны.
+`integrations` — список расширений Astro; `sitemap()` подключается именно так (это полноценная
+интеграция, в отличие от Tailwind, который в v4 — Vite-плагин). Подробно про SEO — §11.
+
 **Почему Tailwind через Vite, а не интеграцию?** В Tailwind v3 ставили `@astrojs/tailwind`.
 В v4 подход изменили: Tailwind стал Vite-плагином + конфиг переехал в CSS (`@theme`). Это текущий
 рекомендованный способ.
@@ -912,6 +930,112 @@ for (const [path, mod] of Object.entries(imageModules)) {
 
 ---
 
+## 11. Этап 4: SEO-фундамент
+
+Сайт-портфолио живёт ради того, чтобы его **находили**. Этап 4 — это техническая база SEO:
+сделать сайт понятным для поисковика и красивым при шеринге в соцсетях. Ничего из этого не видно
+глазом на странице — всё живёт в `<head>` и в служебных файлах.
+
+### 11.0 Ключевая зависимость: `site`
+
+Почти весь SEO строится на **абсолютных** URL (`https://домен/путь`). Поэтому первое — поле `site`
+в `astro.config.mjs`. Из него Astro строит canonical, hreflang, OG-ссылки и sitemap.
+
+> ⚠️ **Домен ещё не выбран окончательно.** Стоит **временное** `https://maria.becom.ing` (план:
+> портфолио на субдомене becom.ing). Перед реальным деплоем заменить на настоящий — это **одна
+> строка** в конфиге (+ одна в `public/robots.txt`). Всё остальное подтянется автоматически.
+
+### 11.1 Sitemap — карта сайта
+
+`@astrojs/sitemap` подключается в `integrations` (§5.2). При `build` она обходит все
+сгенерированные страницы и пишет `dist/sitemap-index.xml` (оглавление) → `sitemap-0.xml` (сами URL).
+Зачем: поисковику не нужно угадывать структуру — он берёт готовый список всех 6 страниц.
+
+Мы передали ей `i18n`-настройку, и в карте появились **перекрёстные hreflang-связи**:
+```xml
+<url>
+  <loc>https://maria.becom.ing/cases/priem/</loc>
+  <xhtml:link rel="alternate" hreflang="en-US" href=".../cases/priem/"/>
+  <xhtml:link rel="alternate" hreflang="ru-RU" href=".../ru/cases/priem/"/>
+</url>
+```
+Так Google понимает: en- и ru-версии — это **одна** страница на двух языках, а не дубликат
+(дубликаты вредят ранжированию).
+
+### 11.2 `robots.txt`
+
+Лежит в `public/` → копируется в корень как `/robots.txt`. Это первый файл, который читает краулер:
+```
+User-agent: *
+Allow: /
+Sitemap: https://maria.becom.ing/sitemap-index.xml
+```
+`User-agent: *` — правило для всех роботов; `Allow: /` — разрешаем обходить всё; `Sitemap:` — прямая
+ссылка на карту (абсолютная, того же домена).
+
+### 11.3 SEO-теги в `Base.astro` — единое место для всех страниц
+
+Layout — идеальное место для `<head>`-тегов: задаём один раз, работает на всех страницах. Страница
+передаёт только данные (`title`, `description`, `ogType`, опц. `ogImage`), а сборка тегов — в `Base`.
+
+**Canonical.** «Какой URL этой страницы считать главным» — защита от дублей (со слешем/без,
+с трекинг-параметрами):
+```astro
+const canonical = new URL(Astro.url.pathname, Astro.site!);   // абсолютный URL текущей страницы
+...
+<link rel="canonical" href={canonical} />
+```
+`Astro.url` — адрес текущей страницы при сборке; `Astro.site` — домен из конфига. `new URL(путь,
+база)` склеивает их в абсолютный. `!` (non-null assertion) — говорим TS «`site` точно задан»
+(он задан в конфиге).
+
+**hreflang.** Для каждой страницы перечисляем её версии на других языках. Пути считает хелпер
+`alternateLinks` из `ui.ts` (§5.5) — он зеркалит правило маршрутизации (снять `/ru` → базовый путь):
+```astro
+{alternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.lang} href={new URL(alt.path, site)} />
+))}
+<link rel="alternate" hreflang="x-default" href={new URL('/', site)} />
+```
+`x-default` — версия «по умолчанию» для языков, которых у нас нет (указываем на en-главную).
+
+**Open Graph + Twitter Card.** Как ссылка выглядит при шеринге (заголовок, описание, картинка):
+```astro
+<meta property="og:type" content={ogType} />        {/* website | article */}
+<meta property="og:title" content={title} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={localeTag[lang]} />  {/* en_US | ru_RU */}
+{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+```
+Картинка (`og:image`) рендерится **только если страница её передала** (условный `&&`, §10.5).
+Соц-картинки 1200×630 у нас пока нет → тег опущен, а `twitter:card` падает на `summary` (без
+большой картинки). Это честно: лучше не отдавать битую ссылку на картинку.
+
+**`og:type` по страницам.** Главная — `website` (дефолт в `Base`), кейсы передают `ogType="article"`
+(содержательно это статьи-разборы). Меняет только сигнал соцсетям, не вёрстку.
+
+### 11.4 Почему теги — в `<head>`, а не в теле
+
+Поисковик и соцсети-боты читают именно `<head>` (часто даже не рендеря тело). У нас сайт —
+статический HTML (SSG), поэтому все эти теги **уже впечатаны** в файл на этапе сборки: боту не нужно
+выполнять JS, чтобы их увидеть. Это и есть главное SEO-преимущество Astro из §0 — здесь оно «выстрелило».
+
+### 11.5 Что осталось на потом (Этап 4 не закрыт полностью)
+- **Реальный домен** → заменить `site` и `Sitemap:` в robots.txt.
+- **Соц-картинка** (`og:image`, 1200×630) — нет файла; добавим в `public/` и пробросим `ogImage`.
+- **Lighthouse-прогон** — замерить производительность/доступность/SEO вживую после деплоя.
+- **Структурированные данные** (JSON-LD `Person`/`Article`) — следующий уровень SEO, опционально.
+
+### 11.6 Глоссарий (SEO)
+- **canonical** — тег, указывающий «главный» URL страницы; борется с дублями.
+- **hreflang** — тег связи языковых версий; `x-default` — версия по умолчанию.
+- **Open Graph (OG)** — протокол мета-тегов для превью ссылок в соцсетях/мессенджерах.
+- **sitemap** — XML-карта всех страниц для поисковиков.
+- **robots.txt** — текстовый файл с правилами обхода для краулеров.
+- **BCP-47** — стандарт языковых тегов (`en-US`, `ru-RU`).
+
+---
+
 ## Журнал этапов
 
 ### Этап 1 — Инициализация (2026-05-30) ✅
@@ -948,3 +1072,18 @@ for (const [path, mod] of Object.entries(imageModules)) {
 
 > Следующий этап (4): SEO — `@astrojs/sitemap`, OG-теги, `robots.txt`, замена `site` в конфиге;
 > плюс фото Марии в hero и реальные медиа в слоты кейсов (скринкасты/ролики/фото).
+
+### Этап 4 — SEO-фундамент (2026-05-31) ✅
+- Установлен `@astrojs/sitemap@3.7.3`, подключён в `integrations` с i18n → `sitemap-index.xml` +
+  `sitemap-0.xml` с перекрёстными hreflang (en-US/ru-RU) для всех 6 страниц.
+- `astro.config.mjs`: `site` сменён с заглушки `example.com` на **provisional** `https://maria.becom.ing`.
+- `public/robots.txt`: разрешён обход + ссылка на sitemap.
+- `Base.astro` расширен: **canonical**, **hreflang** (en/ru/x-default), **Open Graph** + **Twitter Card**;
+  `og:type` = website (главная) / article (кейсы); `og:image` опционален (нет соц-картинки — тег опущен).
+- `i18n/ui.ts`: хелперы `alternateLinks(pathname)` и `localeTag` для языковых версий и BCP-47.
+- `npm run build` + `check` — зелёные; проверено: sitemap и SEO-теги в `<head>` корректны.
+- **Не закрыто:** реальный домен (заменить `site` + robots), соц-картинка `og:image` 1200×630,
+  Lighthouse-прогон, JSON-LD (опц.). Подробности — §11.5.
+
+> Следующий шаг: либо контент-правки (домен, фото Марии в hero, соц-URL, реальный URL Priem),
+> либо деплой на Cloudflare Pages (см. §9 + `CONTEXT_LANDING.md`).

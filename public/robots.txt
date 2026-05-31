@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# ⚠️ PROVISIONAL домен (см. astro.config.mjs → site). Заменить при выборе реального домена.
+Sitemap: https://maria.becom.ing/sitemap-index.xml
