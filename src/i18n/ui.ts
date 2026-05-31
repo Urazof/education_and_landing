@@ -28,6 +28,9 @@ export const ui = {
     'archive.note': 'More projects — coming soon.',
     'publications.title': 'Publications',
     'publications.note': 'Press & features — coming soon.',
+    'case.back': 'Back to home',
+    'case.visit': 'Visit website',
+    'case.results': 'Results',
     'footer.rights': 'All rights reserved',
   },
   ru: {
@@ -49,6 +52,9 @@ export const ui = {
     'archive.note': 'Больше проектов — скоро.',
     'publications.title': 'Публикации',
     'publications.note': 'Пресса и упоминания — скоро.',
+    'case.back': 'На главную',
+    'case.visit': 'Перейти на сайт',
+    'case.results': 'Результаты',
     'footer.rights': 'Все права защищены',
   },
 } as const;

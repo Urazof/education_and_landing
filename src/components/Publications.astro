@@ -9,8 +9,8 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-// 9 ячеек-плейсхолдеров (3×3). Array.from создаёт массив нужной длины для перебора в шаблоне.
-const cells = Array.from({ length: 9 });
+// 6 ячеек-плейсхолдеров (3×2 по макету). Array.from создаёт массив нужной длины для перебора.
+const cells = Array.from({ length: 6 });
 ---
 
 <section id="publications" class="border-t-2 border-ink py-16">

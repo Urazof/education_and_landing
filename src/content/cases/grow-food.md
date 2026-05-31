@@ -14,11 +14,15 @@ sections:
       product had become more complex, the audience wider, and the brand still lacked a clear
       identity. Despite having one of the lowest average checks in the category, it was perceived
       as expensive and underperformed on "tasty" and "varied" attributes.
+    images:
+      - works-preview.png
   - heading: Challenge
     body: >-
       The goal was to build a unified brand platform that could bring together different audience
       motivations under one narrative, simplify product navigation for users, and create a visual
       identity that would scale consistently across all touchpoints, from packaging to ad campaigns.
+    images:
+      - growfood-challenge.png
   - heading: Strategy
     body: >-
       The core decision was to move away from fragmented need-based communication toward a
@@ -32,10 +36,17 @@ sections:
       and guidelines. Redesigned the website and app UX to make product navigation simpler and
       clearer. The new visual identity was rolled out consistently across all channels: packaging,
       CRM, social media, digital, and product communication.
+    images:
+      - growfood-execution.png
   - heading: Results
     body: >-
       The rebrand reset how the market perceived Grow Food and became the foundation for new
       product launches, audience segmentation, and expansion into new markets.
+media:
+  - App screencast
+  - Website screencast
+  - Brand guide walkthrough
+  - "Ad campaign film: \"Gold\""
 results:
   - "+200% brand awareness growth within a year after the rebrand"
   - "+40% customer base growth after launching campaigns in the new system"

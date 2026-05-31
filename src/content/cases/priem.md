@@ -30,6 +30,9 @@ sections:
       three levels in Russian: a meal, a radio signal acknowledgment ("copy that"), and a sports
       term for a powerful move. I developed the full visual identity, brand voice, guidelines, and
       designed the main storefront as a landing page, including UX and UI.
+    images:
+      - priem-execution-wide.jpg
+      - priem-execution-tall.jpg
   - heading: Results
     body: >-
       Priem grew fast and profitably, becoming a proven model the company chose to expand abroad.
@@ -39,6 +42,12 @@ sections:
       I helped adapt the brand for foreign markets, which led to the creation of The Meal — a
       separate vertical built for English-speaking audiences. Same core idea, new identity built to
       work in a different cultural and competitive context.
+media:
+  - Website screencast
+  - Brand guide / visual guidelines
+  - Packaging photos
+  - Offline photos
+  - "Ad film: \"Cat\""
 results:
   - "Scaled to $20M+ revenue run rate within 1.5 years"
   - "Expanded into 15+ cities and regions in the first 6 months"
