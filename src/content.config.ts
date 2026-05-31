@@ -30,7 +30,9 @@ const cases = defineCollection({
         videos: z.array(z.string()).default([]),
         // Раскладка: default — картинки снизу, aside-right — текст слева/картинка справа,
         // aside-left — картинка слева/текст справа. Соответствует макету Miro.
-        layout: z.enum(['default', 'aside-right', 'aside-left']).default('default'),
+        // default: текст→видео→картинки; aside-right: текст|картинка; aside-left: картинка|текст;
+        // video-image: видео(шире)|картинка (для пар медиа без текста, напр. boxing+packaging GF)
+        layout: z.enum(['default', 'aside-right', 'aside-left', 'video-image']).default('default'),
         // Ссылка-кнопка под текстом секции (напр. themeal.menu в «What came next»).
         link: z.object({ label: z.string(), url: z.string().url() }).optional(),
       }),

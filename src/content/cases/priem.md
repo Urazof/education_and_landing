@@ -42,6 +42,8 @@ sections:
   - heading: Results
     body: >-
       Priem grew fast and profitably, becoming a proven model the company chose to expand abroad.
+    videos:
+      - https://www.youtube.com/watch?v=wHJYcF63Q3c
   - heading: What came next
     body: >-
       After Priem's successful launch, the company decided to expand the same model internationally.
@@ -53,9 +55,6 @@ sections:
     link:
       label: themeal.menu
       url: https://www.themeal.menu/
-media:
-  - label: Cat film
-    video: https://www.youtube.com/watch?v=wHJYcF63Q3c
 results:
   - "Scaled to $20M+ revenue run rate within 1.5 years"
   - "Expanded into 15+ cities and regions in the first 6 months"
@@ -63,6 +62,7 @@ results:
   - "Partnerships channel from zero to ~40% of acquisition"
   - "CAC reduced 55% YoY while revenue grew 90%"
   - "+180% brand awareness YoY"
+media: []
 ---
 
 A brand built from zero: naming, identity, and the storefront landing page.

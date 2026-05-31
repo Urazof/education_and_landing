@@ -40,25 +40,28 @@ sections:
       and guidelines. Redesigned the website and app UX to make product navigation simpler and
       clearer. The new visual identity was rolled out consistently across all channels: packaging,
       CRM, social media, digital, and product communication.
-    images:
-      - growfood-packaging.jpg
     videos:
       - https://www.youtube.com/shorts/4knLhGeQk_g
       - https://www.youtube.com/watch?v=f5pQcgWSdbw
       - https://www.youtube.com/watch?v=KwDQtDInBhY
+  - heading: ""
+    body: ""
+    videos:
+      - https://www.youtube.com/watch?v=kFULNDI1KGA
+    images:
+      - growfood-packaging.jpg
+    layout: video-image
   - heading: Results
     body: >-
       The rebrand reset how the market perceived Grow Food and became the foundation for new
       product launches, audience segmentation, and expansion into new markets.
-media:
-  - label: Packaging video
-    video: https://www.youtube.com/watch?v=kFULNDI1KGA
-  - label: Ad campaign — Gold
-    video: https://www.youtube.com/watch?v=478lf3dQgao
 results:
   - "+200% brand awareness growth within a year after the rebrand"
   - "+40% customer base growth after launching campaigns in the new system"
   - "2x product activity in the first months, holding stable over the year"
+media:
+  - label: Ad campaign — Gold
+    video: https://www.youtube.com/watch?v=478lf3dQgao
 ---
 
 Full brand platform: positioning, identity, and rollout across every touchpoint.
