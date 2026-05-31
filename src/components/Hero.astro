@@ -1,6 +1,5 @@
 ---
-// Hero + About merged (по макету Miro 2026-05-31): всё в одном контейнере.
-// Левая колонка: приветствие → интро → about.p1. Правая: фото.
+// Hero + About merged (по макету Miro): текст+фото, затем bridge к Works.
 import { Image } from 'astro:assets';
 import { useTranslations, type Lang } from '../i18n/ui';
 import mariaPhoto from '../assets/maria-photo.png';
@@ -13,6 +12,7 @@ const t = useTranslations(lang);
 ---
 
 <section id="about" class="py-10 sm:py-14">
+  <!-- Две колонки: текст слева, фото справа -->
   <div class="grid items-start gap-8 sm:grid-cols-[1fr_auto]">
     <div>
       <h1 class="text-2xl font-bold sm:text-3xl">{t('hero.greeting')}</h1>
@@ -23,9 +23,12 @@ const t = useTranslations(lang);
       <Image
         src={mariaPhoto}
         alt={t('hero.photoAlt')}
-        class="w-36 sm:w-44 rounded-sm"
+        class="w-36 sm:w-44"
         loading="eager"
       />
     </div>
   </div>
+
+  <!-- Bridge-текст (y:224 в Miro, между hero и Works) -->
+  <p class="mt-8 text-center text-sm font-semibold sm:text-base">{t('bridge')}</p>
 </section>

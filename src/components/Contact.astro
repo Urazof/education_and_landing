@@ -1,21 +1,13 @@
 ---
 import { useTranslations, type Lang } from '../i18n/ui';
-import SocialLinks from './SocialLinks.astro';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-
-const socials = [
-  { label: 'LI', url: 'https://www.linkedin.com/in/maria-tkachenko-k/' },
-  { label: 'TG', url: 'https://t.me/marymishel' },
-  { label: 'WA', url: 'https://wa.me/message/DLSCXFQCCOVPA1' },
-];
 ---
 
-<section class="py-16">
-  <p class="mb-4 text-lg font-semibold">{t('contact.title')}</p>
-  <SocialLinks items={socials} />
+<section class="py-8">
+  <p class="text-lg font-semibold">{t('contact.title')}</p>
 </section>
