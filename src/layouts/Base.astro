@@ -1,12 +1,15 @@
 ---
 // === Frontmatter (между --- ) — серверный код, выполняется при сборке, в браузер НЕ попадает ===
 import '../styles/global.css';
+import { alternateLinks, localeTag, type Lang } from '../i18n/ui';
 
 // Props, которые принимает layout. interface + TypeScript = типобезопасность в шаблонах.
 interface Props {
   title: string;
   description?: string;
-  lang?: 'en' | 'ru';
+  lang?: Lang;
+  ogType?: 'website' | 'article'; // тип для Open Graph: главная — website, кейсы — article
+  ogImage?: string; // путь к соц-картинке (root-relative, напр. "/og.png"). Опционально.
 }
 
 // Деструктуризация Astro.props со значениями по умолчанию.
@@ -14,7 +17,16 @@ const {
   title,
   description = 'Maria Tkachenko — marketing leader and brand strategist.',
   lang = 'en',
+  ogType = 'website',
+  ogImage,
 } = Astro.props;
+
+// site задан в astro.config.mjs → доступен как Astro.site. Из него строим абсолютные URL.
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site);
+const alternates = alternateLinks(Astro.url.pathname); // языковые версии текущей страницы
+const ogImageUrl = ogImage ? new URL(ogImage, site).href : undefined;
+const siteName = 'Maria Tkachenko';
 ---
 
 <!doctype html>
@@ -25,7 +37,34 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- именованный слот: страницы смогут добавить свои теги в <head> (OG, canonical) -->
+
+    <!-- Канонический URL — какой адрес страницы считать главным (защита от дублей) -->
+    <link rel="canonical" href={canonical} />
+
+    <!-- hreflang: связываем языковые версии, чтобы Google не считал en/ru дублями -->
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.lang} href={new URL(alt.path, site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL('/', site)} />
+
+    <!-- Open Graph (превью ссылки в соцсетях/мессенджерах) -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={localeTag[lang]} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+    <!-- именованный слот: страницы смогут добавить свои теги в <head> -->
     <slot name="head" />
   </head>
   <body class="min-h-screen antialiased">

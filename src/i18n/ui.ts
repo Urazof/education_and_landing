@@ -75,3 +75,21 @@ export function useTranslations(lang: Lang) {
 export function localePrefix(lang: Lang): string {
   return lang === defaultLang ? '' : `/${lang}`;
 }
+
+// BCP-47 теги для hreflang/og:locale (en → en_US и т.п.). Зеркалит конфиг sitemap.
+export const localeTag: Record<Lang, string> = {
+  en: 'en_US',
+  ru: 'ru_RU',
+};
+
+// По текущему пути возвращает пути ВСЕХ языковых версий страницы — для тегов hreflang.
+// Логика — зеркало маршрутизации: en без префикса, ru с префиксом /ru.
+export function alternateLinks(pathname: string): { lang: Lang; path: string }[] {
+  let enPath = pathname.replace(/^\/ru(?=\/|$)/, ''); // снимаем префикс /ru → базовый (en) путь
+  if (enPath === '') enPath = '/';
+  const ruPath = enPath === '/' ? '/ru/' : `/ru${enPath}`;
+  return [
+    { lang: 'en', path: enPath },
+    { lang: 'ru', path: ruPath },
+  ];
+}

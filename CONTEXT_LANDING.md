@@ -156,8 +156,12 @@
 - [ ] Заменить плейсхолдеры: фото Марии (hero), логотипы Publications, реальные соц-URL
 
 ### Этап 4 — финальные штрихи
-- [ ] SEO: meta, OG-теги, sitemap (`@astrojs/sitemap`), robots.txt
-- [ ] Lighthouse-прогон, оптимизация изображений (`astro:assets`)
+- [x] **SEO-фундамент** (Этап 4, 2026-05-31): `@astrojs/sitemap` (sitemap-index + hreflang en-US/ru-RU
+      для всех 6 страниц), `public/robots.txt`, `Base.astro` — canonical + hreflang(en/ru/x-default) +
+      Open Graph + Twitter Card, `og:type` website/article, хелперы `alternateLinks`/`localeTag` в `ui.ts`.
+      `site` сменён на **provisional** `https://maria.becom.ing`. build/check зелёные. Разбор — ASTRO-EDUCATION §11.
+      Остаётся: реальный домен, соц-картинка `og:image` 1200×630, Lighthouse, JSON-LD (опц.).
+- [ ] Lighthouse-прогон, оптимизация изображений (`astro:assets` — уже частично: кейсы в WebP)
 - [ ] Форма обратной связи (если на макете есть — определиться: статически с mailto, через Formspree/Web3Forms, или поднимать бэк)
 - [ ] Деплой на выбранную платформу + кастомный домен (если есть)
 
@@ -243,4 +247,5 @@
 длинные `.ing` (ожид. базовая цена ~$11): `savor.ing`, `homecom.ing`, `even.ing`, `settl.ing`,
 `exhal.ing`. Короткие (`be.ing`/`breath.ing`) — premium-дорогие, отвергнуты.
 **Топ-3: `becom.ing`, `exhal.ing`, `even.ing`.** Цену подтвердить на Cloudflare/Porkbun.
-⚠️ `site:` в `astro.config.mjs` сейчас заглушка `https://example.com` — заменить на выбранный домен.
+⚠️ `site:` в `astro.config.mjs` — **provisional** `https://maria.becom.ing` (Этап 4). При выборе
+реального домена заменить ДВЕ строки: `site` в конфиге и `Sitemap:` в `public/robots.txt`.
