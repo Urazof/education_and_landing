@@ -1,0 +1,35 @@
+---
+// === Frontmatter (между --- ) — серверный код, выполняется при сборке, в браузер НЕ попадает ===
+import '../styles/global.css';
+
+// Props, которые принимает layout. interface + TypeScript = типобезопасность в шаблонах.
+interface Props {
+  title: string;
+  description?: string;
+  lang?: 'en' | 'ru';
+}
+
+// Деструктуризация Astro.props со значениями по умолчанию.
+const {
+  title,
+  description = 'Maria Tkachenko — marketing leader and brand strategist.',
+  lang = 'en',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- именованный слот: страницы смогут добавить свои теги в <head> (OG, canonical) -->
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen antialiased">
+    <!-- безымянный слот: сюда подставится содержимое страницы -->
+    <slot />
+  </body>
+</html>

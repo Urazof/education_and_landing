@@ -1,0 +1,35 @@
+/* Единственная точка входа Tailwind v4: подтягивает base/components/utilities. */
+@import "tailwindcss";
+
+/*
+  @theme — способ Tailwind v4 объявлять дизайн-токены прямо в CSS (вместо tailwind.config.js).
+  Каждая переменная автоматически становится утилитой: --color-brand-green → bg-brand-green, text-brand-green и т.д.
+  Токены взяты из логотипов на Miro-доске (см. .design/specs/00-site-overview.md).
+*/
+@theme {
+  /* Палитра вайрфрейма (макет на доске — ч/б) */
+  --color-ink: #1a1a1a;
+  --color-paper: #ffffff;
+
+  /* Бренд Grow Food */
+  --color-gf-green: #21c24b;
+  --color-gf-lime: #b6f03c;
+  --color-gf-dark: #0e3b1e;
+
+  /* Бренд Priem */
+  --color-priem-purple: #5b2a86;
+  --color-priem-yellow: #f4c400;
+
+  /* Типографика */
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Базовые стили документа */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper);
+}

@@ -1,0 +1,654 @@
+# ASTRO-EDUCATION
+
+> Живой учебник по этому проекту. Сюда пишем **всю** разработку: разбор кода построчно,
+> паттерны с объяснениями, идеи и решения. Цель — чтобы человек без опыта с Astro мог
+> открыть файл и понять, как всё устроено и почему.
+>
+> Документ растёт по этапам. Каждый этап реализации (см. `CONTEXT_LANDING.md` §6 / раздел «План»)
+> добавляет сюда новый раздел.
+
+## Оглавление
+- [0. Что такое Astro и зачем он здесь](#0-что-такое-astro-и-зачем-он-здесь)
+- [1. Ментальная модель: как Astro рендерит сайт](#1-ментальная-модель-как-astro-рендерит-сайт)
+- [2. Версии и команды](#2-версии-и-команды)
+- [3. Структура проекта](#3-структура-проекта)
+- [4. Анатомия `.astro`-файла](#4-анатомия-astro-файла)
+- [5. Разбор каждого файла построчно](#5-разбор-каждого-файла-построчно)
+- [6. Паттерны, которые мы используем](#6-паттерны-которые-мы-используем)
+- [7. Глоссарий](#7-глоссарий)
+- [Журнал этапов](#журнал-этапов)
+
+---
+
+## 0. Что такое Astro и зачем он здесь
+
+**Astro** — это фреймворк для сайтов, ориентированных на контент (лэндинги, блоги, портфолио,
+доки). Его главная идея — **server-first, ноль JS по умолчанию**.
+
+Что это значит на практике:
+- Ты пишешь компоненты (`.astro`), Astro во время **сборки** превращает их в обычный **HTML**.
+- В браузер по умолчанию **не уезжает JavaScript** — поэтому страницы лёгкие и быстрые, и это
+  отлично для **SEO** (поисковику отдаётся готовый HTML, а не пустой `<div>`, который дорисовывает JS).
+- JS добавляется **точечно** и только там, где нужна интерактивность («острова», см. ниже).
+
+Почему именно Astro для нашего лэндинга-портфолио:
+1. **SEO** (приоритет пользователя) — статический HTML из коробки, плюс встроенные sitemap/meta.
+2. **Простота добавления контента** (второй приоритет) — кейсы лежат в Markdown, добавить кейс =
+   добавить `.md`-файл. Никакого редеплоя логики.
+3. **Многостраничность и i18n** (en/ru) — встроенная маршрутизация по папкам и по языкам.
+4. Можно подключить React/Vue/Svelte позже, если понадобится интерактив — но платить за это JS’ом
+   будем только на нужных компонентах.
+
+Чем отличается от Next.js: Next — это React-фреймворк (всё — React-компоненты, JS уезжает в браузер
+по умолчанию). Astro — HTML-first, JS опционален. Для статичного контента Astro проще и легче;
+для сложного приложения (наша будущая видеоплатформа) лучше подойдёт что-то вроде Next — поэтому мы
+их и **разделили** (лэндинг на Astro, платформа потом — отдельно).
+
+---
+
+## 1. Ментальная модель: как Astro рендерит сайт
+
+Ключевое, что нужно уложить в голове — **где выполняется код**.
+
+```
+              СБОРКА (на твоём компьютере / на сервере деплоя)        БРАУЗЕР пользователя
+              ────────────────────────────────────────────          ───────────────────
+  .astro  ─▶  frontmatter (--- код ---) выполняется ЗДЕСЬ      ─▶     получает готовый HTML
+              (читает Markdown, ходит в API, считает данные)          (по умолчанию без JS)
+```
+
+- Всё, что между `---` в начале `.astro`-файла (**frontmatter**), — это серверный код. Он бежит
+  один раз при сборке. Его результат «впекается» в HTML. В браузер этот код **не попадает**.
+- Всё, что после второго `---`, — **шаблон** (HTML + вставки `{...}`). Из него получается финальная
+  разметка.
+- Поскольку сайт у нас **статический** (`output: "static"` — режим по умолчанию), на выходе —
+  папка `dist/` с готовыми `.html`, `.css`, картинками. Её можно положить на любой статический
+  хостинг (Vercel/Netlify/Cloudflare Pages) — сервер с Node не нужен.
+
+**«Острова» (islands).** Если на странице нужен интерактив (слайдер, переключатель), ты делаешь
+отдельный компонент-«остров» и помечаешь его директивой `client:*` (например `client:visible`).
+Только он получит JS; остальная страница останется статичным HTML. В Этапе 1 островов нет — всё
+статика.
+
+**Маршрутизация по файлам.** Каждый файл в `src/pages/` становится страницей по своему пути:
+- `src/pages/index.astro` → `/`
+- `src/pages/ru/index.astro` → `/ru/`
+- (позже) `src/pages/cases/[slug].astro` → `/cases/grow-food`, `/cases/priem` — динамические маршруты.
+
+---
+
+## 2. Версии и команды
+
+Установлено (зафиксировано в `package.json` / `package-lock.json`):
+
+| Пакет | Версия | Зачем |
+|---|---|---|
+| `astro` | 5.18.2 | сам фреймворк |
+| `tailwindcss` | 4.3.0 | utility-CSS |
+| `@tailwindcss/vite` | 4.3.0 | плагин, встраивающий Tailwind v4 в сборку Vite |
+| `@astrojs/check` | 0.9.9 | проверка типов в `.astro` |
+| `typescript` | 5.9.3 | типы |
+
+Команды (`npm run <script>`, скрипты заданы в `package.json`):
+- `npm run dev` — локальный дев-сервер с горячей перезагрузкой (обычно http://localhost:4321).
+- `npm run build` — сборка в `dist/` (то, что деплоим).
+- `npm run preview` — локально посмотреть, что получилось в `dist/`.
+- `npm run check` — проверка типов и ошибок в шаблонах.
+
+---
+
+## 3. Структура проекта
+
+```
+education_and_landing/
+├── astro.config.mjs        # конфиг Astro: домен, i18n, плагин Tailwind
+├── tsconfig.json           # настройки TypeScript (строгий режим)
+├── package.json            # зависимости и команды
+├── public/                 # статика «как есть» (favicon, robots) — копируется в dist без обработки
+│   └── favicon.svg
+├── src/
+│   ├── styles/
+│   │   └── global.css      # вход Tailwind + дизайн-токены (@theme)
+│   ├── i18n/
+│   │   └── ui.ts           # словарь интерфейсных строк (en/ru) + переводчик
+│   ├── content.config.ts   # описание content-коллекций (схема кейсов на zod)
+│   ├── content/
+│   │   └── cases/
+│   │       ├── grow-food.md # кейс 1 (контент во frontmatter)
+│   │       └── priem.md     # кейс 2
+│   ├── layouts/
+│   │   └── Base.astro      # общий каркас страницы (<html><head><body>)
+│   ├── components/
+│   │   ├── Nav.astro       # шапка с навигацией
+│   │   ├── Footer.astro    # подвал
+│   │   └── CaseCard.astro  # карточка кейса в секции Works
+│   └── pages/
+│       ├── index.astro     # главная (EN, "/")
+│       └── ru/
+│           └── index.astro # главная (RU, "/ru/")
+├── .design/                # артефакты дизайна (Miro-экспорт, спеки, картинки) — не часть сборки
+└── dist/                   # результат build (в .gitignore)
+```
+
+Разница `public/` vs `src/`:
+- `public/` — файлы копируются в итог **без изменений** по тому же пути (`public/favicon.svg` → `/favicon.svg`).
+  Сюда кладут то, что не нужно обрабатывать: favicon, `robots.txt`, готовые PDF.
+- `src/` — всё, что Astro **обрабатывает** (компилирует, оптимизирует, проверяет типы).
+
+---
+
+## 4. Анатомия `.astro`-файла
+
+`.astro` — это HTML с «подвалом данных» сверху. Структура всегда такая:
+
+```astro
+---
+// 1) FRONTMATTER — серверный JS/TS. Бежит при сборке. В браузер не попадает.
+import Something from '../components/Something.astro';
+const name = 'Maria';
+---
+
+<!-- 2) ШАБЛОН — HTML с вставками. Из него получается финальная разметка. -->
+<h1>Hello, {name}!</h1>     <!-- {name} — вставка значения из frontmatter -->
+<Something prop="value" />  <!-- использование другого компонента -->
+
+<style>
+  /* 3) (опционально) СТИЛИ — по умолчанию scoped: применяются только к этому компоненту */
+  h1 { color: red; }
+</style>
+```
+
+Три важных механизма шаблона:
+- **Вставка `{выражение}`** — печатает значение. `{1 + 1}` → `2`, `{name}` → `Maria`.
+- **Атрибуты-выражения** — `<a href={url}>`: значение берётся из переменной.
+- **Списки через `.map()`** — `{items.map((x) => <li>{x}</li>)}` рисует элемент на каждый элемент массива.
+
+---
+
+## 5. Разбор каждого файла построчно
+
+### 5.1 `package.json`
+```json
+{
+  "name": "maria-portfolio",
+  "type": "module",        // используем ES-модули (import/export), а не require
+  "version": "0.1.0",
+  "private": true,         // защита от случайной публикации в npm
+  "scripts": {             // короткие команды: npm run dev / build / preview / check
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {        // нужны и в рантайме сборки
+    "astro": "^5.0.0"      // ^ = «совместимые обновления» внутри мажорной версии 5
+  },
+  "devDependencies": {     // нужны только при разработке/сборке
+    "@astrojs/check": "^0.9.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  }
+}
+```
+
+### 5.2 `astro.config.mjs`
+```js
+// @ts-check                       // включает проверку типов в этом JS-файле
+import { defineConfig } from 'astro/config';   // хелпер: даёт автодополнение по конфигу
+import tailwindcss from '@tailwindcss/vite';   // Tailwind v4 = Vite-плагин
+
+export default defineConfig({
+  site: 'https://example.com',     // канонический URL. Нужен для sitemap, OG, абсолютных ссылок.
+                                   // TODO: заменить на реальный домен (кандидат becom.ing).
+
+  i18n: {                          // встроенная интернационализация
+    defaultLocale: 'en',           // язык по умолчанию
+    locales: ['en', 'ru'],         // список языков
+    routing: {
+      prefixDefaultLocale: false,  // en без префикса ("/"), ru с префиксом ("/ru/")
+    },
+  },
+
+  vite: {                          // Astro построен на Vite; сюда прокидываем его плагины
+    plugins: [tailwindcss()],      // подключаем Tailwind в конвейер сборки
+  },
+});
+```
+**Почему Tailwind через Vite, а не интеграцию?** В Tailwind v3 ставили `@astrojs/tailwind`.
+В v4 подход изменили: Tailwind стал Vite-плагином + конфиг переехал в CSS (`@theme`). Это текущий
+рекомендованный способ.
+
+**Про `// @ts-expect-error` над `plugins`.** Astro 5.18 внутри использует `vite@6`, а
+`@tailwindcss/vite@4.3` тянет `vite@8`. Тип `Plugin` из vite 8 не совпадает с тем, что ожидает
+конфиг Astro (vite 6) — `astro check` ругается. На **сборку и рантайм это не влияет** (`npm run
+build` зелёный), поэтому мы помечаем строку `@ts-expect-error` с комментарием. Когда обе зависимости
+сойдутся на одной мажорной версии vite, подавление можно будет убрать (тогда `@ts-expect-error` сам
+станет «неиспользуемым» и подсветится — это сигнал удалить его). Проверить дерево версий:
+`npm ls vite`.
+
+### 5.3 `tsconfig.json`
+```json
+{
+  "extends": "astro/tsconfigs/strict",  // берём строгий пресет Astro (макс. проверки типов)
+  "include": [".astro/types.d.ts", "**/*"], // .astro/types.d.ts — автогенерируемые типы (контент, маршруты)
+  "exclude": ["dist"]                   // собранную папку не проверяем
+}
+```
+`.astro/` создаётся самим Astro при `dev`/`build` — там лежат типы для `astro:content` и т.п.
+Поэтому она в `.gitignore`, но включена в проверку типов.
+
+### 5.4 `src/styles/global.css`
+```css
+@import "tailwindcss";   /* единственный вход Tailwind v4: base + utilities */
+
+@theme {                 /* объявляем дизайн-токены прямо в CSS */
+  --color-ink: #1a1a1a;  /* → утилиты bg-ink, text-ink, border-ink */
+  --color-paper: #ffffff;
+  --color-gf-green: #21c24b;   /* токены бренда Grow Food (из логотипа на Miro) */
+  --color-gf-lime: #b6f03c;
+  --color-gf-dark: #0e3b1e;
+  --color-priem-purple: #5b2a86;  /* токены бренда Priem */
+  --color-priem-yellow: #f4c400;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }  /* плавная прокрутка к якорям #about/#works */
+body { font-family: var(--font-sans); color: var(--color-ink); background: var(--color-paper); }
+```
+**Магия `@theme`:** объявил `--color-ink` — и сразу получил классы `text-ink`, `bg-ink`,
+`border-ink`. Не нужно отдельно описывать палитру в JS-конфиге, как было в v3.
+
+### 5.5 `src/i18n/ui.ts`
+```ts
+export const languages = { en: 'English', ru: 'Русский' } as const;
+// as const → TypeScript понимает точные строковые литералы, а не просто string.
+
+export const defaultLang = 'en';
+
+export const ui = {                 // словарь: ключ → перевод, для каждого языка
+  en: { 'nav.about': 'About', 'nav.works': 'Works', /* ... */ },
+  ru: { 'nav.about': 'Обо мне', 'nav.works': 'Работы', /* ... */ },
+} as const;
+
+export type UiKey = keyof (typeof ui)['en']; // тип = объединение всех ключей en-словаря
+export type Lang = keyof typeof ui;          // тип = 'en' | 'ru'
+
+export function useTranslations(lang: Lang) {        // фабрика переводчика
+  return function t(key: UiKey): string {            // возвращает функцию t(key)
+    return ui[lang][key] ?? ui[defaultLang][key];    // нет перевода → откат на en (?? = «или»)
+  };
+}
+```
+**Паттерн:** `const t = useTranslations('ru'); t('nav.about')` → `'Обо мне'`. Типы не дадут
+опечатться в ключе — `t('nav.aboutt')` подсветится ошибкой ещё до запуска.
+
+### 5.6 `src/content.config.ts`
+```ts
+import { defineCollection, z } from 'astro:content';  // z = zod, библиотека валидации схем
+import { glob } from 'astro/loaders';                 // loader: откуда брать контент
+
+const cases = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/cases' }),
+  // glob берёт все .md из папки. Имя файла без .md → id записи (grow-food.md → id "grow-food").
+
+  schema: z.object({                  // схема frontmatter каждого .md. Не совпало → ошибка сборки.
+    title: z.string(),
+    client: z.string(),
+    order: z.number(),
+    external: z.string().url().optional(),   // .optional() — поле необязательное
+    social: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+    sections: z.array(z.object({ heading: z.string(), body: z.string() })),
+    results: z.array(z.string()).default([]),  // .default([]) — если нет, подставит пустой массив
+  }),
+});
+
+export const collections = { cases };  // регистрируем коллекцию под именем "cases"
+```
+**Зачем схема:** это контракт. Если в `.md` забыть `title` или написать `order: "1"` строкой
+вместо числа — сборка упадёт с понятной ошибкой, а не молча сломает страницу. Плюс из схемы
+Astro генерирует TypeScript-типы: в шаблоне `entry.data.title` знает, что это строка.
+
+### 5.7 `src/content/cases/grow-food.md` (и `priem.md`)
+```yaml
+---                         # YAML-frontmatter: структурированные данные кейса
+title: Brand transformation
+client: Grow Food
+order: 1                    # число → попадёт в сортировку списка Works
+external: https://growfood.pro/
+social:
+  - { label: IG, url: "https://instagram.com/" }   # массив объектов
+  - { label: TG, url: "https://t.me/" }
+sections:
+  - heading: Context
+    body: >-                # >- = «свёрнутый» блок: переносы строк станут пробелами,
+      Grow Food is a ...    #      финальный перевод строки убирается. Удобно для длинного текста.
+  - heading: Challenge
+    body: >- ...
+results:
+  - "+200% brand awareness growth within a year after the rebrand"
+---
+
+Full brand platform: positioning, identity, and rollout across every touchpoint.
+# ^ это «тело» Markdown. Сейчас не используется в рендере, но доступно как контент при желании.
+```
+**Решение по моделированию:** мы положили секции кейса (`Context/Challenge/...`) в **структурное**
+поле `sections` (массив), а не в свободный Markdown-текст. Так рендер кейса будет
+data-driven: пробежимся по `sections.map(...)` и одинаково оформим каждый блок. Добавить кейс =
+скопировать `.md`, заменить тексты.
+
+### 5.8 `src/layouts/Base.astro`
+```astro
+---
+import '../styles/global.css';   // импорт CSS в layout = стили на всех страницах, где он используется
+
+interface Props {                // описываем, какие props принимает компонент (типобезопасность)
+  title: string;
+  description?: string;          // ? = необязательный
+  lang?: 'en' | 'ru';
+}
+
+const { title, description = '...', lang = 'en' } = Astro.props;
+// Astro.props — объект переданных пропсов. Деструктурируем со значениями по умолчанию.
+---
+
+<!doctype html>
+<html lang={lang}>            <!-- атрибут из переменной: важно для SEO и доступности -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <slot name="head" />       <!-- ИМЕНОВАННЫЙ слот: страница может добавить теги в <head> -->
+  </head>
+  <body class="min-h-screen antialiased">
+    <slot />                   <!-- БЕЗЫМЯННЫЙ слот: сюда встанет содержимое страницы -->
+  </body>
+</html>
+```
+**Слоты** — это «дырки», куда родитель вставляет контент. `<slot />` — главная дырка;
+`<slot name="head" />` — именованная, заполняется через `<Fragment slot="head">...</Fragment>`.
+Паттерн layout: один каркас `<html>/<head>/<body>` на все страницы, не дублируем мету в каждой.
+
+### 5.9 `src/components/Nav.astro`
+```astro
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);              // переводчик под текущий язык
+const base = lang === 'en' ? '' : `/${lang}`; // префикс пути: en → "", ru → "/ru"
+---
+<header class="border-b-2 border-ink">
+  <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <a href={`${base}/`} class="font-semibold tracking-tight">Maria Tkachenko</a>
+    <ul class="flex gap-6 text-sm">
+      <li><a href={`${base}/#about`} class="hover:underline">{t('nav.about')}</a></li>
+      <li><a href={`${base}/#works`} class="hover:underline">{t('nav.works')}</a></li>
+    </ul>
+  </nav>
+</header>
+```
+Tailwind-классы по-человечески: `mx-auto` — центрируем блок; `flex ... justify-between` —
+лого слева, меню справа; `max-w-5xl` — ограничиваем ширину контента; `px-6 py-4` — внутренние
+отступы; `border-b-2 border-ink` — нижняя граница 2px цветом нашего токена `ink`.
+`base` решает i18n-ссылки: на ru-странице ссылки ведут на `/ru/...`.
+
+### 5.10 `src/components/Footer.astro`
+```astro
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();   // год вычисляется ПРИ СБОРКЕ (это серверный код)
+---
+<footer class="border-t-2 border-ink">
+  <div class="... flex-col gap-2 ... sm:flex-row sm:justify-between">
+    <span>© {year} Maria Tkachenko. {t('footer.rights')}.</span>
+    <div class="flex gap-4"> <a>LinkedIn</a> <a>Telegram</a> <a>WhatsApp</a> </div>
+  </div>
+</footer>
+```
+`sm:` — это **breakpoint-префикс** Tailwind: стиль применяется от ширины `sm` (≈640px) и выше.
+Так делается адаптив: по умолчанию (мобайл) колонка (`flex-col`), на широких экранах — строка
+(`sm:flex-row`). Это **mobile-first** подход.
+
+### 5.11 `src/components/CaseCard.astro`
+```astro
+---
+import { type Lang } from '../i18n/ui';
+interface Props { href: string; title: string; client: string; lang: Lang; }
+const { href, title, client } = Astro.props;
+---
+<a href={href}
+   class="group flex aspect-square flex-col justify-end border-2 border-ink p-6
+          transition-colors hover:bg-ink hover:text-paper">
+  <p class="text-sm uppercase tracking-wide opacity-70">{client}</p>
+  <h3 class="mt-1 text-2xl font-bold">{title}</h3>
+</a>
+```
+**Слабая связанность:** карточка НЕ знает про content-коллекцию. Она принимает готовые `href/title/
+client`. Так её можно переиспользовать с любыми данными, а логика «откуда данные» живёт на странице.
+`aspect-square` — квадрат; `hover:bg-ink hover:text-paper` — инверсия цветов при наведении;
+`transition-colors` — плавный переход.
+
+### 5.12 `src/pages/index.astro` (главная EN)
+```astro
+---
+import { getCollection } from 'astro:content';   // API чтения коллекций
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import CaseCard from '../components/CaseCard.astro';
+import { useTranslations } from '../i18n/ui';
+
+const lang = 'en';
+const t = useTranslations(lang);
+
+const cases = (await getCollection('cases'))           // читаем все кейсы (await — это асинхронно)
+  .sort((a, b) => a.data.order - b.data.order);        // сортируем по order (1, 2, ...)
+---
+<Base title="Maria Tkachenko — Brand strategist" lang={lang}>
+  <Nav lang={lang} />
+  <main class="mx-auto max-w-5xl px-6">
+    <section id="about" class="py-20"> ...hero... </section>
+    <section id="works" class="py-12">
+      <h2>{t('works.title')}</h2>
+      <div class="grid gap-6 sm:grid-cols-2">
+        {cases.map((entry) => (              {/* на каждый кейс — карточка */}
+          <CaseCard href={`/cases/${entry.id}`}
+                    title={entry.data.title}
+                    client={entry.data.client}
+                    lang={lang} />
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} />
+</Base>
+```
+Здесь видно весь конвейер: страница **читает данные** (getCollection) → **готовит** (sort) →
+**рендерит** через переиспользуемые компоненты. `entry.id` — это имя файла кейса (`grow-food`),
+из него строим ссылку `/cases/grow-food` (саму страницу кейса сделаем в Этапе 3).
+
+### 5.13 `src/pages/ru/index.astro` (главная RU)
+То же, что EN, но `lang = 'ru'`, тексты hero на русском, и ссылки на кейсы с префиксом `/ru/...`.
+Пути импортов на уровень глубже (`../../`), потому что файл лежит в подпапке `ru/`.
+
+### 5.14 `public/favicon.svg`
+Иконка вкладки. SVG = векторная, чёткая на любом экране. Временная заглушка (буква «M» на чёрном).
+Лежит в `public/`, поэтому доступна по `/favicon.svg` без обработки.
+
+---
+
+## 6. Паттерны, которые мы используем
+
+1. **Layout + Slots** — единый каркас страницы (`Base.astro`), страницы наполняют его через слоты.
+   Меняешь мету/шрифт в одном месте — меняется везде.
+2. **Типизированные Props** (`interface Props` + `Astro.props`) — компонент документирует свой
+   «вход», ошибки ловятся на этапе типов.
+3. **Content Collections + zod** — контент отделён от кода, валидируется схемой, типизирован.
+   Добавление кейса не требует трогать шаблоны.
+4. **Data-driven рендер** (`.map()` по коллекции) — список works генерируется из данных.
+5. **i18n словарём + префиксом пути** — один набор компонентов, тексты из `ui.ts`, язык — проп.
+6. **Дизайн-токены в `@theme`** — единый источник цветов/шрифтов, утилиты Tailwind из коробки.
+7. **Слабая связанность компонентов** — `CaseCard` не знает про источник данных; данные готовит страница.
+8. **Mobile-first адаптив** — базовые стили для мобайла, `sm:`/`md:` добавляют для широких экранов.
+
+---
+
+## 7. Глоссарий
+
+- **SSG (Static Site Generation)** — генерация готового HTML на этапе сборки. Наш режим (`output: "static"`).
+- **Frontmatter** — блок между `---`. В `.astro` это серверный код; в `.md` — YAML-данные.
+- **Slot** — место в компоненте, куда родитель вставляет контент.
+- **Props** — входные параметры компонента.
+- **Island (остров)** — интерактивный компонент с JS, помеченный `client:*`. Пока не используем.
+- **zod** — библиотека описания и проверки схем данных.
+- **Loader** — источник контента для коллекции (у нас `glob` по `.md`).
+- **Breakpoint** — порог ширины экрана для адаптивных стилей (`sm`, `md`, `lg`...).
+- **Token (дизайн-токен)** — именованная переменная дизайна (цвет, шрифт) в `@theme`.
+- **Vite** — быстрый сборщик, на котором работает Astro.
+
+---
+
+## 8. Этап 2: вёрстка главной по макету
+
+В Этапе 1 страница была скелетом (nav + короткий hero + works). В Этапе 2 мы привели её к
+**структуре макета Miro 1:1** и применили несколько новых приёмов. Главная идея этапа —
+**композиция из секционных компонентов**: страница больше не содержит разметку секций сама,
+она лишь «собирает» их в нужном порядке.
+
+### 8.1 Соответствие макет → код
+
+| Секция макета (`.design/specs/00-site-overview.md`) | Компонент | Статус |
+|---|---|---|
+| Header: `About`/`Works` слева, соц-иконки справа | `Nav.astro` + `SocialLinks.astro` | ✅ 1:1 |
+| Hero: текст слева, фото справа | `Hero.astro` | ✅ (фото — плейсхолдер) |
+| About (2 абзаца) + bridge-строка | `About.astro` | ✅ 1:1 |
+| Works: 2 карточки | `Works.astro` + `CaseCard.astro` | ✅ (превью брендов) |
+| Archive | `Archive.astro` | ⏳ заглушка (нет контента на доске) |
+| Publications: сетка 3×3 | `Publications.astro` | ⏳ заглушка (нет логотипов) |
+
+### 8.2 Новый паттерн: композиция из секционных компонентов
+
+Сравни `index.astro` до и после:
+- **Было (Этап 1):** вся разметка hero/works прямо в странице → дублируется между `/` и `/ru/`.
+- **Стало (Этап 2):** страница импортирует секции и расставляет их:
+```astro
+<main class="mx-auto max-w-5xl px-6">
+  <Hero lang={lang} />
+  <About lang={lang} />
+  <Works lang={lang} />
+  <Archive lang={lang} />
+  <Publications lang={lang} />
+</main>
+```
+Каждая секция — отдельный файл, принимает `lang` и сама берёт тексты из `ui.ts`. Плюсы:
+страница читается как оглавление; правки секции локальны; en/ru-страницы отличаются **только** `lang`.
+
+### 8.3 Новый паттерн: `astro:assets` и `<Image>`
+
+Картинки бренда теперь оптимизируются автоматически. В `Works.astro`:
+```astro
+import growFood from '../assets/growfood-logo.png';  // импорт картинки из src/ даёт ImageMetadata
+```
+В `CaseCard.astro`:
+```astro
+import { Image } from 'astro:assets';
+<Image src={image} alt={alt} class="h-full w-full object-cover" />
+```
+Что делает `<Image>` при сборке: конвертирует в современный формат (**WebP**), ужимает, проставляет
+`width`/`height` (чтобы страница не «прыгала» при загрузке — это важно для метрики CLS и SEO).
+В логах сборки видно: `growfood-logo` 75kB → 43kB, `priem-logo` 10kB → 1kB.
+
+> Почему картинки в `src/assets/`, а не в `public/`? Только то, что в `src/`, проходит через
+> оптимизатор. Файлы из `public/` отдаются как есть. Поэтому фото для `<Image>` кладём в `src/`.
+
+### 8.4 Новый паттерн: переиспользуемый компонент со списком-пропом
+
+`SocialLinks.astro` не знает, какие именно соцсети — он принимает массив и рисует кружки:
+```astro
+interface Social { label: string; url: string; }
+interface Props { items: Social[]; }
+const { items } = Astro.props;
+...
+{items.map((s) => (
+  <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}> {s.label} </a>
+))}
+```
+`target="_blank"` — открыть в новой вкладке; `rel="noopener noreferrer"` — безопасность (новая
+вкладка не получит доступ к `window.opener`); `aria-label` — доступность для скринридеров (текст
+«LI» сам по себе непонятен). В Этапе 3 этот же компонент переиспользуем на страницах кейсов (там
+IG/TG/VK).
+
+### 8.5 Построчно — ключевые новые/изменённые файлы
+
+**`src/components/Hero.astro`** — двухколоночный hero:
+```astro
+<div class="grid items-center gap-10 sm:grid-cols-[1fr_auto]">
+```
+`grid-cols-[1fr_auto]` — произвольный шаблон колонок Tailwind: первая колонка тянется (`1fr`),
+вторая по содержимому (`auto`). На мобайле (без `sm:`) колонок нет — блоки идут друг под другом.
+```astro
+<div class="aspect-[3/4] ... border-2 border-ink" role="img" aria-label={t('hero.photoAlt')}>Photo</div>
+```
+Плейсхолдер фото: `aspect-[3/4]` держит пропорции портрета; `role="img"`+`aria-label` — чтобы
+скринридер понимал, что это будущее изображение. Заменим на `<Image>` в Этапе 4.
+
+**`src/components/About.astro`** — `space-y-5` ставит вертикальные отступы между абзацами;
+bridge-строка крупнее и жирная (`text-xl font-semibold`), как акцент в макете.
+
+**`src/components/Works.astro`** — здесь живёт логика данных (`getCollection('cases')`, сортировка,
+сопоставление картинок по `entry.id`). `Record<string, ImageMetadata>` — словарь «id кейса →
+картинка». Страницы об этом не знают — это и есть слабая связанность.
+
+**`src/components/Archive.astro` / `Publications.astro`** — заглушки. У Publications сетка 9 ячеек
+генерируется так:
+```astro
+const cells = Array.from({ length: 9 }); // массив из 9 пустых элементов — чтобы было что перебрать
+...
+<div class="grid grid-cols-2 gap-4 sm:grid-cols-3">{cells.map(() => <div .../>)}</div>
+```
+`border-dashed` — пунктир, визуально кричит «это плейсхолдер». На мобайле 2 колонки, на `sm:` — 3.
+
+**`src/components/Nav.astro`** — переписан под макет: слева `About`/`Works`, справа `<SocialLinks>`.
+Тексто-лого убрано (в макете его нет; имя звучит в hero).
+
+**`src/components/Footer.astro`** — ужат до строки копирайта (соцсети уехали в шапку).
+
+**`src/pages/index.astro` и `ru/index.astro`** — стали тонкими: только импорт секций и их порядок.
+
+### 8.6 Что осталось плейсхолдерами (и почему)
+- **Фото в hero** — нет файла фотографии Марии.
+- **Archive / Publications** — на доске это пустые рамки, реального контента (проектов, логотипов) нет.
+- **Соц-URL** — стоят заглушки (`linkedin.com/`, `t.me/` …), нужны реальные профили.
+- **`site` в `astro.config.mjs`** — `https://example.com`, ждёт выбранный домен (`becom.ing`?).
+
+Всё это помечено `TODO`/`coming soon` в коде и перечислено в `CONTEXT_LANDING.md` §9.
+
+---
+
+## Журнал этапов
+
+### Этап 1 — Инициализация (2026-05-30) ✅
+- Установлены Astro 5.18.2, Tailwind 4.3.0, TS 5.9.3.
+- Настроены: i18n (en/ru), content-коллекция `cases` со схемой, дизайн-токены, базовый layout.
+- Созданы: `Base`, `Nav`, `Footer`, `CaseCard`, главные `/` и `/ru/`, 2 кейса в Markdown.
+- `npm run build` — зелёный, 2 страницы собраны.
+- **Что НЕ сделано (по плану дальше):** страницы кейсов (`/cases/[slug]`), полная вёрстка секций
+  главной (Archive, Publications, фото/видео), SEO-теги/sitemap, перевод контента кейсов на RU.
+
+### Этап 2 — Вёрстка главной по макету (2026-05-30) ✅
+- Главная приведена к структуре Miro 1:1: Hero(2 кол.) + About + Bridge + Works + Archive + Publications.
+- Новые компоненты: `Hero`, `About`, `Works`, `Archive`, `Publications`, `SocialLinks`; обновлены
+  `Nav` (ссылки+соцсети), `CaseCard` (бренд-превью), `Footer` (копирайт), обе страницы (композиция секций).
+- Применили: композицию секционных компонентов, `astro:assets` `<Image>` (→ WebP), переиспользуемый
+  `SocialLinks` со списком-пропом, расширили словарь `ui.ts` (en+ru).
+- `npm run build` + `npm run check` — зелёные. Картинки оптимизированы в WebP.
+- **Плейсхолдеры:** фото в hero, Archive/Publications, соц-URL, `site` в конфиге (подробности §8.6).
+
+> Следующий этап (3): страницы кейсов `src/pages/cases/[slug].astro` (+ `/ru/`) из коллекции —
+> Context→Challenge→Strategy→Execution→Results(+What came next), медиа из `.design/assets/`.

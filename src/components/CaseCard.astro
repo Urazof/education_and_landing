@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// Карточка кейса в секции Works. Бренд-превью сверху + клиент/заголовок снизу.
+// Слабая связанность: карточка получает готовые поля и картинку, не зная про коллекцию.
+interface Props {
+  href: string;
+  title: string;
+  client: string;
+  image: ImageMetadata; // импортированное изображение (astro:assets оптимизирует размер/формат)
+  alt: string;
+}
+const { href, title, client, image, alt } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex flex-col border-2 border-ink transition-colors hover:bg-ink hover:text-paper"
+>
+  <!-- превью бренда; object-contain — логотип не обрезается -->
+  <div class="flex aspect-[16/10] items-center justify-center overflow-hidden border-b-2 border-ink">
+    <Image src={image} alt={alt} class="h-full w-full object-cover" />
+  </div>
+  <div class="p-6">
+    <p class="text-sm uppercase tracking-wide opacity-70">{client}</p>
+    <h3 class="mt-1 text-2xl font-bold">{title}</h3>
+  </div>
+</a>

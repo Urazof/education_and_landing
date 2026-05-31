@@ -1,0 +1,18 @@
+---
+// В макете отдельного футера нет (соцсети — в шапке). Оставляем тонкую строку копирайта —
+// это хорошая практика и не спорит с макетом.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t-2 border-ink">
+  <div class="mx-auto max-w-5xl px-6 py-8 text-sm opacity-70">
+    © {year} Maria Tkachenko. {t('footer.rights')}.
+  </div>
+</footer>

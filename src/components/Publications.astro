@@ -1,0 +1,28 @@
+---
+// PUBLICATIONS: на доске — заголовок + сетка логотипов ≈ 3×3. Контента (логотипов/ссылок) нет,
+// поэтому рисуем сетку из 9 пустых ячеек-заглушек. Заполним, когда пользователь даст логотипы.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// 9 ячеек-плейсхолдеров (3×3). Array.from создаёт массив нужной длины для перебора в шаблоне.
+const cells = Array.from({ length: 9 });
+---
+
+<section id="publications" class="border-t-2 border-ink py-16">
+  <h2 class="mb-6 text-2xl font-bold">{t('publications.title')}</h2>
+  <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+    {
+      cells.map(() => (
+        <div class="flex aspect-[3/1] items-center justify-center border-2 border-dashed border-ink/40 text-xs opacity-40">
+          logo
+        </div>
+      ))
+    }
+  </div>
+  <p class="mt-4 text-sm opacity-50">{t('publications.note')}</p>
+</section>

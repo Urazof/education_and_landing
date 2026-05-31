@@ -1,0 +1,45 @@
+---
+// WORKS: читает кейсы из content-коллекции и рисует карточки. Логика «откуда данные» — здесь,
+// чтобы страницы (index / ru/index) оставались тонкими и не дублировали getCollection.
+import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
+import CaseCard from './CaseCard.astro';
+
+// Бренд-превью для карточек. Сопоставляем по id записи (имя .md-файла).
+import growFood from '../assets/growfood-logo.png';
+import priem from '../assets/priem-logo.png';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = localePrefix(lang);
+
+const images: Record<string, ImageMetadata> = {
+  'grow-food': growFood,
+  priem: priem,
+};
+
+const cases = (await getCollection('cases')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="works" class="border-t-2 border-ink py-16">
+  <h2 class="mb-8 text-2xl font-bold">{t('works.title')}</h2>
+  <div class="grid gap-6 sm:grid-cols-2">
+    {
+      cases.map((entry) => (
+        <CaseCard
+          href={`${base}/cases/${entry.id}`}
+          title={entry.data.title}
+          client={entry.data.client}
+          image={images[entry.id]}
+          alt={entry.data.client}
+        />
+      ))
+    }
+  </div>
+</section>

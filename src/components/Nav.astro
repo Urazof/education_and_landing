@@ -1,0 +1,30 @@
+---
+// Шапка по макету: слева ссылки About / Works, справа круглые соц-иконки LI / WA / TG.
+// (В макете тексто-лого нет — имя звучит в hero.)
+import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
+import SocialLinks from './SocialLinks.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = localePrefix(lang);
+
+// Соц-ссылки шапки. TODO: заменить заглушки на реальные профили Марии.
+const socials = [
+  { label: 'LI', url: 'https://linkedin.com/' },
+  { label: 'WA', url: 'https://wa.me/' },
+  { label: 'TG', url: 'https://t.me/' },
+];
+---
+
+<header class="border-b-2 border-ink">
+  <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <ul class="flex gap-6 text-sm">
+      <li><a href={`${base}/#about`} class="hover:underline">{t('nav.about')}</a></li>
+      <li><a href={`${base}/#works`} class="hover:underline">{t('nav.works')}</a></li>
+    </ul>
+    <SocialLinks items={socials} />
+  </nav>
+</header>
