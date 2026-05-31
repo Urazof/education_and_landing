@@ -1,0 +1,31 @@
+---
+// HERO по макету: две колонки — слева приветствие + интро, справа фото.
+// Фото Марии пока нет → ставим типизированный плейсхолдер (заменим в Этапе 4 на astro:assets).
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="about" class="py-16 sm:py-24">
+  <div class="grid items-center gap-10 sm:grid-cols-[1fr_auto]">
+    <!-- левая колонка: текст -->
+    <div class="max-w-2xl">
+      <p class="text-sm uppercase tracking-widest opacity-70">{t('hero.role')}</p>
+      <h1 class="mt-4 text-4xl font-bold sm:text-5xl">{t('hero.greeting')}</h1>
+      <p class="mt-6 text-lg leading-relaxed">{t('hero.intro')}</p>
+    </div>
+
+    <!-- правая колонка: место под фото (placeholder) -->
+    <div
+      class="flex aspect-[3/4] w-full items-center justify-center border-2 border-ink text-sm opacity-50 sm:w-56"
+      role="img"
+      aria-label={t('hero.photoAlt')}
+    >
+      Photo
+    </div>
+  </div>
+</section>

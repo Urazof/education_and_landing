@@ -1,0 +1,30 @@
+---
+// Ряд круглых соц-иконок (как в макете). Переиспользуется в шапке (и позже на страницах кейсов).
+// Принимает массив ссылок — компонент не знает, какие именно соцсети, просто рисует кружки.
+interface Social {
+  label: string; // короткая подпись: LI / WA / TG / IG / VK
+  url: string;
+}
+interface Props {
+  items: Social[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="flex items-center gap-2">
+  {
+    items.map((s) => (
+      <li>
+        <a
+          href={s.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={s.label}
+          class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink text-xs font-semibold transition-colors hover:bg-ink hover:text-paper"
+        >
+          {s.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>

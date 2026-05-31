@@ -1,0 +1,18 @@
+---
+// ABOUT: полный абзац о себе (2 параграфа) + строка-мостик к секции Works.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="border-t-2 border-ink py-16">
+  <div class="max-w-3xl space-y-5 text-lg leading-relaxed">
+    <p>{t('about.p1')}</p>
+    <p>{t('about.p2')}</p>
+  </div>
+  <p class="mt-10 max-w-3xl text-xl font-semibold">{t('bridge')}</p>
+</section>

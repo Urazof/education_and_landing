@@ -1,0 +1,18 @@
+---
+// ARCHIVE: на доске секция есть, но контент — пустой плейсхолдер. Верстаем структуру-заглушку,
+// контент пользователь добавит позже (см. CONTEXT_LANDING.md §9).
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="archive" class="border-t-2 border-ink py-16">
+  <h2 class="mb-6 text-2xl font-bold">{t('archive.title')}</h2>
+  <div class="flex h-32 items-center justify-center border-2 border-dashed border-ink/40 text-sm opacity-50">
+    {t('archive.note')}
+  </div>
+</section>
