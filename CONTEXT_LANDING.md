@@ -4,6 +4,88 @@
 
 ---
 
+## 🎨 СЕССИЯ 2026-06-01 (поздняя): ДИЗАЙН-ПОЛИРОВКА (Этап 5)
+
+**Что сделано** (детальный учебный разбор — `ASTRO-EDUCATION.md` §12 + журнал «Этап 5»):
+- Наладили **computer-vision-воркфлоу**: `npm run dev` → headless-скриншот Chrome
+  (`--headless=new --screenshot`, окно 1280×N) → кроп/зум через `System.Drawing` в PowerShell →
+  смотрим PNG. Так ловим визуальные баги, невидимые в коде. Скриншоты лежат в `.design/shot-*.png`,
+  `.design/crop-*.png` (можно удалить, не часть сборки).
+- **Иконка LinkedIn** больше не сплющена: `src/assets/icon-li.png` обрезан с 1200×800 (3:2) до
+  квадрата 560×560 вокруг логотипа (значок ® и поля убраны). Все 3 соц-иконки теперь квадратные →
+  `h-5 w-5` в `Nav.astro` рисует их единообразно.
+- **Скругление углов 5px** на всех блоках с обводкой: `rounded-[5px]` добавлен в `Publications`,
+  `Archive`, `CaseCard`, `CaseArticle` (кнопки/ссылки/картинки/видео-фреймы/медиа-слоты), фото hero.
+- **Обводка Publications — тонкая**: `border-2` → `border` (1px) + `border-ink/30`. Чипы переведены
+  на data-модель `{ label, url? }` (в `Publications.astro`) — **готовы стать ссылками**, как только
+  подтвердим URL по доске Miro.
+- **Контейнеры под текст** (читабельность): колонка hero сужена `max-w-xl`, bridge — `max-w-2xl`
+  по центру; `grid-cols-[minmax(0,1fr)_auto]`.
+- `npm run check` — зелёный (0 ошибок; pre-existing hint про неиспользуемый `results` в CaseArticle).
+
+**⏳ ОТКРЫТО — нужно действие пользователя:**
+- **Сверить ссылки Publications с Miro.** Пользователь просил проверить, есть ли ВНУТРИ рамок
+  Publications на доске гиперссылки. Для этого нужна **переавторизация Miro MCP** (сейчас доступны
+  только `mcp__miro__authenticate`/`complete_authentication`). Запущен OAuth — ждём, когда юзер
+  откроет URL и авторизуется. После — `board_list_items` → найти элементы Publications → вытащить
+  url → дописать `url:` в массив `items` в `Publications.astro` (рендер уже поддерживает ссылки).
+- (опц.) Унифицировать визуальный вес иконки WhatsApp (она чуть «плотнее» LI/TG — отличие минимально).
+
+---
+
+## 🔴 ТЕКУЩИЙ ФОКУС (сессия от 2026-06-01): ЧИНИМ ДЕПЛОЙ
+
+**Состояние кода:** всё закоммичено и запушено. Ветка `develop`, последний коммит `9666ea4 "fix: deploy"`.
+Рабочее дерево чистое. `npm run build` + `npm run check` — ЗЕЛЁНЫЕ локально (6 страниц, sitemap, картинки в WebP).
+Лэндинг по макету готов: hero+фото+bridge, Works (2 карточки-фон), Archive, Publications (чипы),
+Contact (только заголовок «Let's keep in touch»), 2 страницы кейсов с видео/картинками. Соц-ссылки реальные.
+
+**Домен куплен:** `savor.ing` (Cloudflare Registrar). Субдомен лэндинга: **`mariatkachenko.savor.ing`**.
+`site` в `astro.config.mjs` = `https://mariatkachenko.savor.ing`. `.ing` = HSTS-preloaded (HTTPS обязателен;
+на Cloudflare Pages SSL авто — проблемы нет). robots.txt `Sitemap:` тоже на этот домен.
+
+**ПРОБЛЕМА — деплой падает.** Деплой настроен **автоматом из GitHub**. Лог сборки в Cloudflare ругается
+(Wrangler):
+```
+"name": "worker-name", "compatibility_date": "2026-05-31", "main": "src/index.ts"
+If you are uploading a directory of assets, you can either:
+ - npx wrangler versions upload --assets=./dist
+ - Or create a "wrangler.jsonc": { "name": ..., "assets": { "directory": "./dist" } }
+```
+
+**ДИАГНОЗ (рабочая гипотеза):** это ошибка **Wrangler `deploy`/`versions upload`**, а не Pages-пайплайна.
+Значит репозиторий подключён как **Workers project** (новый «Import a repository» под Workers Builds),
+который по умолчанию гонит `npx wrangler deploy` и требует `wrangler.jsonc` с `main` (скрипт воркера)
+ИЛИ `assets.directory`. Для нашей чистой статики (`output: static` → `dist/`) воркер-скрипт не нужен —
+нужен только assets-деплой.
+
+**Что уже сделано в этой сессии:** создан `wrangler.jsonc` в корне:
+```jsonc
+{ "name": "maria-portfolio", "compatibility_date": "2026-06-01", "assets": { "directory": "./dist" } }
+```
+`wrangler.jsonc` УЖЕ закоммичен (в `9666ea4`, дерево чистое).
+⚠️ НО: (1) `"name"` (`maria-portfolio`) должно совпадать с реальным именем проекта в дашборде Cloudflare —
+проверить/исправить; (2) при Workers-сборке нужно ещё задать **build command = `npm run build`** в настройках
+проекта (иначе `dist/` не создастся перед деплоем); (3) если выберем путь Pages — `wrangler.jsonc` удалить.
+
+**ВАРИАНТЫ РЕШЕНИЯ (выбрать в новой сессии):**
+- **A (проще и каноничнее для статики):** удалить Workers-проект и пересоздать как **Pages**:
+  Cloudflare dash → Workers & Pages → Create → **Pages** → Connect to Git → build command `npm run build`,
+  output dir `dist`. Тогда `wrangler.jsonc` НЕ нужен (можно удалить), Pages сам публикует `dist/`.
+- **B (оставить Workers + assets):** довести `wrangler.jsonc` (верное `name`), в настройках билда указать
+  build command `npm run build`, deploy command `npx wrangler deploy`. Убедиться что pipeline сначала
+  билдит, потом деплоит.
+
+**NEXT ACTIONS для новой сессии:**
+1. Спросить пользователя: как именно подключён репо в Cloudflare — как **Pages** или как **Worker**?
+   (Workers & Pages → открыть проект → посмотреть тип). Это определяет путь A или B.
+2. Проверить ветку деплоя: код в `develop`, но по нашему процессу прод = `main`. Уточнить, с какой ветки
+   Cloudflare собирает (возможно надо смержить develop→main ИЛИ переключить ветку в настройках Pages).
+3. Проверить `git status`/`git log` — закоммичен ли `wrangler.jsonc`.
+4. Применить выбранный вариант, передеплоить, проверить `https://mariatkachenko.savor.ing`.
+
+---
+
 ## 1. Цель проекта
 
 Собрать многостраничный **мультиязычный** лэндинг-портфолио по макету из Miro-доски.

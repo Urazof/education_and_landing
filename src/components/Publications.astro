@@ -8,39 +8,49 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 // Реальный контент из доски Miro (2026-05-31).
-// Строка 1 (3 чипа), строка 2 (3 чипа), строка 3 (1 полноширинный).
-const row1 = [
-  'Budget Brand Positioning',
-  'Brand transformation',
-  'Expert Commentary',
+// Каждый пункт: подпись + опциональная ссылка (url). Если url задан — чип становится <a>.
+// Сетка: 2 ряда по 3 чипа + 1 полноширинный (jury credential).
+interface Pub {
+  label: string;
+  url?: string;
+}
+const items: Pub[] = [
+  { label: 'Budget Brand Positioning' },
+  { label: 'Brand transformation' },
+  { label: 'Expert Commentary' },
+  { label: 'Industry Insight' },
+  { label: 'Marketing Conspiracies (Podcast)' },
+  { label: 'The Anatomy of Advertising (Podcast)' },
 ];
-const row2 = [
-  'Industry Insight',
-  'Marketing Conspiracies (Podcast)',
-  'The Anatomy of Advertising (Podcast)',
-];
-const fullWidth = 'Jury Member, E+ Awards (formerly Effie), 2024';
+const fullWidth: Pub = { label: 'Jury Member, E+ Awards (formerly Effie), 2024' };
+
+// Общие классы чипа: тонкая обводка, скругление 5px, мягкий hover.
+const chip =
+  'flex min-h-[3.25rem] items-center justify-center rounded-[5px] border border-ink/30 px-4 py-3 text-center text-sm font-medium transition-colors';
+const chipLink = `${chip} hover:border-ink hover:bg-ink hover:text-paper`;
+const chipStatic = `${chip} text-ink/80`;
 ---
 
 <section id="publications" class="py-16">
   <h2 class="mb-6 text-2xl font-bold">{t('publications.title')}</h2>
   <div class="space-y-3">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      {row1.map((item) => (
-        <div class="flex items-center justify-center border-2 border-ink px-4 py-3 text-center text-sm font-semibold">
-          {item}
-        </div>
-      ))}
+      {items.map((item) =>
+        item.url ? (
+          <a href={item.url} target="_blank" rel="noopener noreferrer" class={chipLink}>
+            {item.label}
+          </a>
+        ) : (
+          <div class={chipStatic}>{item.label}</div>
+        ),
+      )}
     </div>
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      {row2.map((item) => (
-        <div class="flex items-center justify-center border-2 border-ink px-4 py-3 text-center text-sm font-semibold">
-          {item}
-        </div>
-      ))}
-    </div>
-    <div class="flex items-center justify-center border-2 border-ink px-4 py-3 text-center text-sm font-semibold">
-      {fullWidth}
-    </div>
+    {fullWidth.url ? (
+      <a href={fullWidth.url} target="_blank" rel="noopener noreferrer" class={chipLink}>
+        {fullWidth.label}
+      </a>
+    ) : (
+      <div class={chipStatic}>{fullWidth.label}</div>
+    )}
   </div>
 </section>

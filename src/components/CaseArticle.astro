@@ -62,7 +62,7 @@ function videoCols(n: number): string {
     <div class="mt-6 flex flex-wrap items-center gap-4">
       {external && (
         <a href={external} target="_blank" rel="noopener noreferrer"
-          class="border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+          class="rounded-[5px] border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
           {t('case.visit')} ↗
         </a>
       )}
@@ -86,13 +86,13 @@ function videoCols(n: number): string {
             {s.layout === 'video-image' && hasVideos && hasImages && (
               <div class="grid grid-cols-[2fr_1fr] gap-4 items-start">
                 {s.videos.map((url) => (
-                  <div class="aspect-video w-full overflow-hidden">
+                  <div class="aspect-video w-full overflow-hidden rounded-[5px]">
                     <iframe src={embedUrl(url)} title={`${title} media`}
                       class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
                   </div>
                 ))}
                 {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} media`} class="w-full" />
+                  <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px]" />
                 ))}
               </div>
             )}
@@ -102,14 +102,14 @@ function videoCols(n: number): string {
                 {hasImages && (
                   <div class:list={['grid gap-4', s.images.length > 1 && 'sm:grid-cols-2']}>
                     {s.images.map((f) => assets[f] && (
-                      <Image src={assets[f]} alt={`${client} media`} class="w-full" />
+                      <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px]" />
                     ))}
                   </div>
                 )}
                 {hasVideos && (
                   <div class:list={['mt-4', videoCols(s.videos.length)]}>
                     {s.videos.map((url) => (
-                      <div class="aspect-video overflow-hidden">
+                      <div class="aspect-video overflow-hidden rounded-[5px]">
                         <iframe src={embedUrl(url)} title={`${title} media`}
                           class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
                       </div>
@@ -132,14 +132,14 @@ function videoCols(n: number): string {
               </p>
               <div class="space-y-4">
                 {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full" />
+                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
                 ))}
               </div>
             </div>
             {hasVideos && (
               <div class:list={['mt-6', videoCols(s.videos.length)]}>
                 {s.videos.map((url) => (
-                  <div class="aspect-video overflow-hidden">
+                  <div class="aspect-video overflow-hidden rounded-[5px]">
                     <iframe src={embedUrl(url)} title={`${title} — ${s.heading}`}
                       class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
                   </div>
@@ -148,7 +148,7 @@ function videoCols(n: number): string {
             )}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+                class="mt-4 inline-block rounded-[5px] border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
                 {s.link.label} ↗
               </a>
             )}
@@ -163,7 +163,7 @@ function videoCols(n: number): string {
             <div class="grid items-start gap-8 sm:grid-cols-2">
               <div class="space-y-4">
                 {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full" />
+                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
                 ))}
               </div>
               <p class="text-lg leading-relaxed">
@@ -173,7 +173,7 @@ function videoCols(n: number): string {
             {hasVideos && (
               <div class:list={['mt-6', videoCols(s.videos.length)]}>
                 {s.videos.map((url) => (
-                  <div class="aspect-video overflow-hidden">
+                  <div class="aspect-video overflow-hidden rounded-[5px]">
                     <iframe src={embedUrl(url)} title={`${title} — ${s.heading}`}
                       class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
                   </div>
@@ -182,7 +182,7 @@ function videoCols(n: number): string {
             )}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+                class="mt-4 inline-block rounded-[5px] border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
                 {s.link.label} ↗
               </a>
             )}
@@ -199,14 +199,14 @@ function videoCols(n: number): string {
           {hasImages && (
             <div class:list={['mt-6 grid gap-4', s.images.length > 1 && 'sm:grid-cols-2']}>
               {s.images.map((f) => assets[f] && (
-                <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full" />
+                <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
               ))}
             </div>
           )}
           {hasVideos && (
             <div class:list={['mt-6', videoCols(s.videos.length)]}>
               {s.videos.map((url) => (
-                <div class="aspect-video overflow-hidden">
+                <div class="aspect-video overflow-hidden rounded-[5px]">
                   <iframe src={embedUrl(url)} title={`${title} — ${s.heading}`}
                     class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
                 </div>
@@ -215,7 +215,7 @@ function videoCols(n: number): string {
           )}
           {s.link && (
             <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-              class="mt-4 inline-block border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+              class="mt-4 inline-block rounded-[5px] border-2 border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
               {s.link.label} ↗
             </a>
           )}
@@ -230,12 +230,12 @@ function videoCols(n: number): string {
       <div class="grid gap-4 sm:grid-cols-2">
         {media.map((item) => (
           item.video ? (
-            <div class="aspect-video overflow-hidden">
+            <div class="aspect-video overflow-hidden rounded-[5px]">
               <iframe src={embedUrl(item.video)} title={item.label}
                 class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
             </div>
           ) : (
-            <div class="flex aspect-video items-center justify-center border-2 border-dashed border-ink/40 text-sm opacity-50">
+            <div class="flex aspect-video items-center justify-center rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50">
               {item.label}
             </div>
           )

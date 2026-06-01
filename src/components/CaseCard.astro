@@ -14,7 +14,7 @@ interface Props {
 const { href, title, client, image, alt } = Astro.props;
 ---
 
-<a href={href} class="group relative block aspect-square overflow-hidden">
+<a href={href} class="group relative block aspect-square overflow-hidden rounded-[5px]">
   <Image
     src={image}
     alt={alt}
