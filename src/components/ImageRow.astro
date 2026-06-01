@@ -1,6 +1,9 @@
 ---
-// Несколько картинок ОДНИМ рядом одинаковой высоты (как на доске: пара кадров стоит в линию,
-// общая высота, ширина — по натуральным пропорциям). На мобиле — стопкой во всю ширину.
+// Несколько картинок в ОДНОМ ряду. При 2+ изображениях: пропорциональная ширина
+// (flex-grow = aspect_ratio), высота фиксирована --row-h. Вертикальная картинка
+// автоматически получает узкую колонку соответственно своим пропорциям.
+// При 1 изображении: естественная ширина, фиксированная высота.
+// На мобиле — стопкой во всю ширину.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -10,15 +13,41 @@ interface Item {
 }
 interface Props {
   images: Item[];
-  height?: number; // высота ряда на десктопе (px)
+  height?: number;
 }
 const { images, height = 300 } = Astro.props;
+const isMulti = images.length >= 2;
 ---
 
 {images.length > 0 && (
-  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center" style={`--row-h:${height}px`}>
-    {images.map((im) => (
-      <Image src={im.src} alt={im.alt} class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
-    ))}
+  <div
+    class={`flex flex-col gap-4 sm:flex-row sm:items-stretch ${isMulti ? '' : 'sm:justify-center'}`}
+    style={`--row-h:${height}px`}
+  >
+    {images.map((im) => {
+      const ratio = (im.src.width / im.src.height).toFixed(4);
+      return isMulti ? (
+        <div class="img-item overflow-hidden rounded-[5px]" style={`--r:${ratio}`}>
+          <Image src={im.src} alt={im.alt} class="w-full object-cover sm:h-full" />
+        </div>
+      ) : (
+        <Image
+          src={im.src}
+          alt={im.alt}
+          class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto"
+        />
+      );
+    })}
   </div>
 )}
+
+<style>
+  /* Пропорциональная раскладка только на десктопе */
+  @media (min-width: 640px) {
+    .img-item {
+      flex: var(--r) 1 0%;
+      height: var(--row-h);
+      min-width: 0;
+    }
+  }
+</style>

@@ -53,7 +53,7 @@ function imgItems(files: string[], alt: string) {
 ---
 
 <main class="mx-auto max-w-5xl px-6 py-12">
-  <a href={`${base}/#works`} class="text-sm opacity-70 hover:underline">← {t('case.back')}</a>
+  <a href={`${base}/`} class="text-sm opacity-70 hover:underline">← {t('case.back')}</a>
 
   <!-- Шапка: лого слева, текст + ссылка + соцсети справа (как на доске) -->
   <header class="mt-8 flex flex-col gap-6 border-b border-ink/10 pb-10 sm:flex-row sm:items-start sm:gap-8">
@@ -185,7 +185,7 @@ function imgItems(files: string[], alt: string) {
       <div class="flex flex-wrap justify-center gap-4">
         {media.map((item) => (
           item.video ? (
-            <div class={`aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
+            <div class={`aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 ${media.length === 1 ? 'sm:h-[390px] sm:w-auto' : 'sm:w-[48%]'}`}>
               <iframe src={embedUrl(item.video)} title={item.label} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
             </div>
           ) : (
