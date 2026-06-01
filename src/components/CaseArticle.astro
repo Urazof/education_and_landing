@@ -90,7 +90,7 @@ function imgItems(files: string[], alt: string) {
         // video-image: видео (горизонт.) + картинка в один ряд общей высоты
         if (s.layout === 'video-image' && hasVideos && hasImages) {
           return (
-            <section class="flex flex-col gap-4 sm:flex-row sm:items-start" style={`--row-h:${ROW_H}px`}>
+            <section class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-center" style={`--row-h:${ROW_H}px`}>
               {s.videos.map((v) => (
                 <div class="aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 sm:h-[var(--row-h)] sm:w-auto">
                   <iframe src={embedUrl(v.url)} title={`${title} media`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
@@ -114,7 +114,7 @@ function imgItems(files: string[], alt: string) {
       if (s.layout === 'aside-right' && hasImages) {
         return (
           <section>
-            <div class="grid items-start gap-8 sm:grid-cols-[3fr_2fr]">
+            <div class="grid items-center gap-8 sm:grid-cols-[3fr_2fr]">
               <p class={proseText}>
                 {hasHeading && <strong>{s.heading} </strong>}{s.body}
               </p>
@@ -139,7 +139,7 @@ function imgItems(files: string[], alt: string) {
       if (s.layout === 'aside-left' && hasImages) {
         return (
           <section>
-            <div class="grid items-start gap-8 sm:grid-cols-[2fr_3fr]">
+            <div class="grid items-center gap-8 sm:grid-cols-[2fr_3fr]">
               <div class="space-y-4">
                 {s.images.map((f) => assets[f] && (
                   <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
@@ -182,14 +182,14 @@ function imgItems(files: string[], alt: string) {
   <!-- Media-слоты (gold video и т.п.) — конец страницы -->
   {media.length > 0 && (
     <section class="mt-16">
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="flex flex-wrap justify-center gap-4">
         {media.map((item) => (
           item.video ? (
-            <div class="aspect-video overflow-hidden rounded-[5px] bg-ink/5">
+            <div class={`aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
               <iframe src={embedUrl(item.video)} title={item.label} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
             </div>
           ) : (
-            <div class="flex aspect-video items-center justify-center rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50">
+            <div class={`flex aspect-video w-full items-center justify-center rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50 ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
               {item.label}
             </div>
           )

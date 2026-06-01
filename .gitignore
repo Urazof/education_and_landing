@@ -11,3 +11,5 @@ npm-debug.log*
 .env.production
 # os / editor
 .DS_Store
+.claude
+CLAUDE.md
