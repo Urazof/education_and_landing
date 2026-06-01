@@ -26,8 +26,20 @@ const cases = defineCollection({
         // Имена файлов картинок из src/assets (без пути). Резолвятся в CaseArticle
         // через import.meta.glob. Пусто = у секции нет иллюстраций.
         images: z.array(z.string()).default([]),
-        // YouTube URLs для встраивания видео (несколько = сетка). Пусто = нет видео.
-        videos: z.array(z.string()).default([]),
+        // Видео для встраивания (YouTube). Каждое: url + ориентация.
+        // vertical:true → вертикальный формат 9:16 (Shorts/сторис), иначе 16:9.
+        // Принимаем и просто строку (= горизонтальное) для краткости.
+        videos: z
+          .array(
+            z.union([
+              z.string().url(),
+              z.object({ url: z.string().url(), vertical: z.boolean().default(false) }),
+            ]),
+          )
+          .default([])
+          .transform((arr) =>
+            arr.map((v) => (typeof v === 'string' ? { url: v, vertical: false } : v)),
+          ),
         // Раскладка: default — картинки снизу, aside-right — текст слева/картинка справа,
         // aside-left — картинка слева/текст справа. Соответствует макету Miro.
         // default: текст→видео→картинки; aside-right: текст|картинка; aside-left: картинка|текст;

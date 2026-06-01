@@ -2,8 +2,8 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-// Карточка кейса в Works. Фоновое изображение с полупрозрачным белым оверлеем и текстом — 1:1 макет.
-// Слабая связанность: карточка получает готовые поля, не зная про коллекцию.
+// Карточка кейса в Works. Показываем реальное изображение кейса с тёмным градиентом снизу,
+// поверх — клиент + заголовок. Единое оформление для всех карточек → одинаковое скругление/вид.
 interface Props {
   href: string;
   title: string;
@@ -14,16 +14,19 @@ interface Props {
 const { href, title, client, image, alt } = Astro.props;
 ---
 
-<a href={href} class="group relative block aspect-square overflow-hidden rounded-[5px]">
+<a
+  href={href}
+  class="group relative block aspect-[4/3] overflow-hidden rounded-[5px] border border-ink/10"
+>
   <Image
     src={image}
     alt={alt}
-    class="absolute inset-0 h-full w-full object-cover"
+    class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
   />
-  <!-- белый оверлей 90% opacity, как fillOpacity: 0.9 в Miro. Hover → тёмный -->
-  <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center
-              bg-white/90 group-hover:bg-ink/90 transition-colors duration-200">
-    <h3 class="text-2xl font-bold group-hover:text-paper">{title}</h3>
-    <p class="mt-1 text-sm opacity-70 group-hover:opacity-80 group-hover:text-paper">{client}</p>
+  <!-- Градиент снизу для читаемости подписи -->
+  <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent"></div>
+  <div class="absolute inset-x-0 bottom-0 p-5">
+    <p class="text-xs font-medium uppercase tracking-wide text-paper/80">{client}</p>
+    <h3 class="mt-1 text-xl font-bold text-paper sm:text-2xl">{title}</h3>
   </div>
 </a>

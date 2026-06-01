@@ -37,7 +37,7 @@ sections:
       - priem-execution-wide.jpg
       - priem-execution-tall.jpg
     videos:
-      - https://www.youtube.com/shorts/miRtqwE-jn4
+      - { url: "https://www.youtube.com/shorts/miRtqwE-jn4", vertical: true }
       - https://www.youtube.com/watch?v=dCQZeO8Ter0
   - heading: Results
     body: >-
