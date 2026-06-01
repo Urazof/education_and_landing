@@ -12,10 +12,10 @@ const t = useTranslations(lang);
 ---
 
 <section id="about" class="py-10 sm:py-14">
-  <!-- Две колонки: текст слева, фото справа -->
-  <div class="grid items-start gap-10 sm:grid-cols-[minmax(0,1fr)_auto]">
+  <!-- Баннер: текст + фото в единой подложке, читается как один блок -->
+  <div class="grid items-center gap-8 rounded-[5px] bg-ink/[0.04] p-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-12 sm:p-12">
     <div class="max-w-xl">
-      <h1 class="text-2xl font-bold leading-tight sm:text-3xl">{t('hero.greeting')}</h1>
+      <h1 class="text-3xl font-bold leading-tight sm:text-4xl">{t('hero.greeting')}</h1>
       <p class="mt-4 text-base leading-relaxed opacity-80">{t('hero.intro')}</p>
       <p class="mt-4 text-base leading-relaxed">{t('about.p1')}</p>
     </div>
@@ -23,12 +23,12 @@ const t = useTranslations(lang);
       <Image
         src={mariaPhoto}
         alt={t('hero.photoAlt')}
-        class="w-36 rounded-[5px] sm:w-44"
+        class="w-40 rounded-[5px] shadow-sm sm:w-48"
         loading="eager"
       />
     </div>
   </div>
 
   <!-- Bridge-текст (y:224 в Miro, между hero и Works) -->
-  <p class="mx-auto mt-10 max-w-2xl text-center text-base font-semibold sm:text-lg">{t('bridge')}</p>
+  <p class="mx-auto mt-10 max-w-4xl text-center text-base font-semibold sm:text-lg">{t('bridge')}</p>
 </section>
