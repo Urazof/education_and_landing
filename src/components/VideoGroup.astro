@@ -1,0 +1,46 @@
+---
+// Рендер группы видео секции с учётом ориентации.
+// Вертикальные (9:16, Shorts/сторис) — узкие, встают в ряд (flex-wrap).
+// Горизонтальные (16:9) — на всю ширину контейнера, стопкой.
+// Так раскладка повторяет замысел доски Miro: высокие боксы = вертикаль, широкие = горизонталь.
+interface Video {
+  url: string;
+  vertical: boolean;
+}
+interface Props {
+  videos: Video[];
+  title?: string;
+}
+const { videos, title = 'video' } = Astro.props;
+
+// YouTube URL (watch / shorts / youtu.be) → embed-URL.
+function embedUrl(url: string): string {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+}
+
+const allow =
+  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+
+const verticals = videos.filter((v) => v.vertical);
+const horizontals = videos.filter((v) => !v.vertical);
+---
+
+{videos.length > 0 && (
+  <div class="space-y-4">
+    {verticals.length > 0 && (
+      <div class="flex flex-wrap gap-4">
+        {verticals.map((v) => (
+          <div class="aspect-[9/16] w-full max-w-[260px] overflow-hidden rounded-[5px] bg-ink/5">
+            <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+          </div>
+        ))}
+      </div>
+    )}
+    {horizontals.map((v) => (
+      <div class="aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5">
+        <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+      </div>
+    ))}
+  </div>
+)}

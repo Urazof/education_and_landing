@@ -41,8 +41,8 @@ sections:
       clearer. The new visual identity was rolled out consistently across all channels: packaging,
       CRM, social media, digital, and product communication.
     videos:
-      - https://www.youtube.com/shorts/4knLhGeQk_g
-      - https://www.youtube.com/watch?v=f5pQcgWSdbw
+      - { url: "https://www.youtube.com/shorts/4knLhGeQk_g", vertical: true }
+      - { url: "https://www.youtube.com/watch?v=f5pQcgWSdbw", vertical: true }
       - https://www.youtube.com/watch?v=KwDQtDInBhY
   - heading: ""
     body: ""
