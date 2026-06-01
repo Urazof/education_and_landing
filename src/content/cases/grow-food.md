@@ -4,8 +4,8 @@ client: Grow Food
 order: 1
 external: https://growfood.pro/
 social:
-  - { label: IG, url: "https://instagram.com/" }
-  - { label: TG, url: "https://t.me/" }
+  - { label: IG, url: "https://www.instagram.com/growfoodrus?igsh=eHVuZjJleXVpYmth" }
+  - { label: TG, url: "https://t.me/growfoodrus" }
 sections:
   - heading: Context
     body: >-
