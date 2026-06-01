@@ -5,6 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
 import SocialLinks from './SocialLinks.astro';
 import VideoGroup from './VideoGroup.astro';
+import ImageRow from './ImageRow.astro';
 
 import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
@@ -35,66 +36,76 @@ const logo = logos[entry.id];
 const { title, client, external, social, sections } = entry.data;
 const media = entry.data.media;
 
-// Шрифт-классы для текста секции — единый стиль во всех раскладках.
 const proseText = 'text-lg leading-relaxed';
+const ROW_H = 300; // общая высота рядов медиа на десктопе (px)
+
+function embedUrl(url: string): string {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+}
+const allow =
+  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+
+// Хелпер: имена файлов секции → массив {src, alt} для ImageRow.
+function imgItems(files: string[], alt: string) {
+  return files.filter((f) => assets[f]).map((f) => ({ src: assets[f], alt }));
+}
 ---
 
 <main class="mx-auto max-w-5xl px-6 py-12">
   <a href={`${base}/#works`} class="text-sm opacity-70 hover:underline">← {t('case.back')}</a>
 
-  <!-- Шапка: лого + клиент + заголовок + ссылка + соцсети -->
-  <header class="mt-8 max-w-3xl pb-8">
+  <!-- Шапка: лого слева, текст + ссылка + соцсети справа (как на доске) -->
+  <header class="mt-8 flex flex-col gap-6 border-b border-ink/10 pb-10 sm:flex-row sm:items-start sm:gap-8">
     {logo && (
-      <div class="mb-6 h-16 w-auto overflow-hidden">
-        <Image src={logo} alt={client} class="h-full w-auto object-contain" />
+      <div class="w-[120px] shrink-0 overflow-hidden rounded-[5px] sm:w-[150px]">
+        <Image src={logo} alt={client} class="h-auto w-full object-contain" />
       </div>
     )}
-    <p class="text-sm uppercase tracking-widest opacity-70">{client}</p>
-    <h1 class="mt-2 text-4xl font-bold sm:text-5xl">{title}</h1>
-    <div class="mt-6 flex flex-wrap items-center gap-4">
-      {external && (
-        <a href={external} target="_blank" rel="noopener noreferrer"
-          class="rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
-          {t('case.visit')} ↗
-        </a>
-      )}
-      {social.length > 0 && <SocialLinks items={social} />}
+    <div>
+      <p class="text-sm uppercase tracking-widest opacity-70">{client}</p>
+      <h1 class="mt-2 text-4xl font-bold sm:text-5xl">{title}</h1>
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        {external && (
+          <a href={external} target="_blank" rel="noopener noreferrer"
+            class="rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+            {t('case.visit')} ↗
+          </a>
+        )}
+        {social.length > 0 && <SocialLinks items={social} />}
+      </div>
     </div>
   </header>
 
   <!-- Секции кейса -->
-  <div class="mt-4 space-y-16">
+  <div class="mt-12 space-y-16">
     {sections.map((s) => {
       const hasHeading = Boolean(s.heading);
       const hasBody = Boolean(s.body);
       const hasImages = s.images.length > 0;
       const hasVideos = s.videos.length > 0;
 
-      // Чистый медиа-блок без текста (heading="" body="")
+      // Чистый медиа-блок без текста
       if (!hasHeading && !hasBody) {
-        // video-image: видео(шире) | картинка(уже)
+        // video-image: видео (горизонт.) + картинка в один ряд общей высоты
         if (s.layout === 'video-image' && hasVideos && hasImages) {
           return (
-            <section class="grid items-start gap-6 sm:grid-cols-[2fr_1fr]">
-              <VideoGroup videos={s.videos} title={`${title} media`} />
-              <div class="space-y-4">
-                {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px]" />
-                ))}
-              </div>
+            <section class="flex flex-col gap-4 sm:flex-row sm:items-start" style={`--row-h:${ROW_H}px`}>
+              {s.videos.map((v) => (
+                <div class="aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 sm:h-[var(--row-h)] sm:w-auto">
+                  <iframe src={embedUrl(v.url)} title={`${title} media`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+                </div>
+              ))}
+              {s.images.map((f) => assets[f] && (
+                <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
+              ))}
             </section>
           );
         }
         return (
           <section class="space-y-4">
-            {hasImages && (
-              <div class:list={['grid gap-4', s.images.length > 1 && 'sm:grid-cols-2']}>
-                {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px]" />
-                ))}
-              </div>
-            )}
-            {hasVideos && <VideoGroup videos={s.videos} title={`${title} media`} />}
+            {hasImages && <ImageRow images={imgItems(s.images, `${client} media`)} height={ROW_H} />}
+            {hasVideos && <VideoGroup videos={s.videos} title={`${title} media`} height={ROW_H} />}
           </section>
         );
       }
@@ -103,7 +114,7 @@ const proseText = 'text-lg leading-relaxed';
       if (s.layout === 'aside-right' && hasImages) {
         return (
           <section>
-            <div class="grid items-start gap-8 sm:grid-cols-2">
+            <div class="grid items-start gap-8 sm:grid-cols-[3fr_2fr]">
               <p class={proseText}>
                 {hasHeading && <strong>{s.heading} </strong>}{s.body}
               </p>
@@ -113,7 +124,7 @@ const proseText = 'text-lg leading-relaxed';
                 ))}
               </div>
             </div>
-            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} /></div>}
+            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
                 class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
@@ -128,7 +139,7 @@ const proseText = 'text-lg leading-relaxed';
       if (s.layout === 'aside-left' && hasImages) {
         return (
           <section>
-            <div class="grid items-start gap-8 sm:grid-cols-2">
+            <div class="grid items-start gap-8 sm:grid-cols-[2fr_3fr]">
               <div class="space-y-4">
                 {s.images.map((f) => assets[f] && (
                   <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
@@ -138,7 +149,7 @@ const proseText = 'text-lg leading-relaxed';
                 {hasHeading && <strong>{s.heading} </strong>}{s.body}
               </p>
             </div>
-            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} /></div>}
+            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
                 class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
@@ -149,20 +160,14 @@ const proseText = 'text-lg leading-relaxed';
         );
       }
 
-      // Default: текст (читаемая ширина) → изображения → видео → ссылка
+      // Default: текст (читаемая ширина) → картинки (ряд) → видео (ряд) → ссылка
       return (
         <section>
-          <p class:list={[proseText, 'max-w-3xl']}>
+          <p class={proseText}>
             {hasHeading && <strong>{s.heading} </strong>}{s.body}
           </p>
-          {hasImages && (
-            <div class:list={['mt-6 grid gap-4', s.images.length > 1 && 'sm:grid-cols-2']}>
-              {s.images.map((f) => assets[f] && (
-                <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
-              ))}
-            </div>
-          )}
-          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} /></div>}
+          {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={ROW_H} /></div>}
+          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
           {s.link && (
             <a href={s.link.url} target="_blank" rel="noopener noreferrer"
               class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
@@ -174,15 +179,14 @@ const proseText = 'text-lg leading-relaxed';
     })}
   </div>
 
-  <!-- Media-слоты (gold video и т.п.) — самый конец страницы -->
+  <!-- Media-слоты (gold video и т.п.) — конец страницы -->
   {media.length > 0 && (
     <section class="mt-16">
       <div class="grid gap-4 sm:grid-cols-2">
         {media.map((item) => (
           item.video ? (
             <div class="aspect-video overflow-hidden rounded-[5px] bg-ink/5">
-              <iframe src={`https://www.youtube.com/embed/${item.video.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/)?.[1] ?? ''}`} title={item.label}
-                loading="lazy" class="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
+              <iframe src={embedUrl(item.video)} title={item.label} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
             </div>
           ) : (
             <div class="flex aspect-video items-center justify-center rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50">

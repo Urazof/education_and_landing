@@ -1,0 +1,24 @@
+---
+// Несколько картинок ОДНИМ рядом одинаковой высоты (как на доске: пара кадров стоит в линию,
+// общая высота, ширина — по натуральным пропорциям). На мобиле — стопкой во всю ширину.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Item {
+  src: ImageMetadata;
+  alt: string;
+}
+interface Props {
+  images: Item[];
+  height?: number; // высота ряда на десктопе (px)
+}
+const { images, height = 300 } = Astro.props;
+---
+
+{images.length > 0 && (
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start" style={`--row-h:${height}px`}>
+    {images.map((im) => (
+      <Image src={im.src} alt={im.alt} class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
+    ))}
+  </div>
+)}

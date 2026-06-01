@@ -1,8 +1,8 @@
 ---
-// Рендер группы видео секции с учётом ориентации.
-// Вертикальные (9:16, Shorts/сторис) — узкие, встают в ряд (flex-wrap).
-// Горизонтальные (16:9) — на всю ширину контейнера, стопкой.
-// Так раскладка повторяет замысел доски Miro: высокие боксы = вертикаль, широкие = горизонталь.
+// Рендер группы видео секции ОДНИМ рядом одинаковой высоты (как на доске Miro:
+// боксы видео стоят в линию, общая высота, ширина зависит от ориентации).
+// Вертикальные (9:16) — узкие, горизонтальные (16:9) — широкие, высота общая.
+// На мобиле — стопкой во всю ширину.
 interface Video {
   url: string;
   vertical: boolean;
@@ -10,10 +10,11 @@ interface Video {
 interface Props {
   videos: Video[];
   title?: string;
+  // высота ряда на десктопе (px). По умолчанию 300.
+  height?: number;
 }
-const { videos, title = 'video' } = Astro.props;
+const { videos, title = 'video', height = 300 } = Astro.props;
 
-// YouTube URL (watch / shorts / youtu.be) → embed-URL.
 function embedUrl(url: string): string {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
   return m ? `https://www.youtube.com/embed/${m[1]}` : url;
@@ -21,24 +22,19 @@ function embedUrl(url: string): string {
 
 const allow =
   'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-
-const verticals = videos.filter((v) => v.vertical);
-const horizontals = videos.filter((v) => !v.vertical);
 ---
 
 {videos.length > 0 && (
-  <div class="space-y-4">
-    {verticals.length > 0 && (
-      <div class="flex flex-wrap gap-4">
-        {verticals.map((v) => (
-          <div class="aspect-[9/16] w-full max-w-[260px] overflow-hidden rounded-[5px] bg-ink/5">
-            <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
-          </div>
-        ))}
-      </div>
-    )}
-    {horizontals.map((v) => (
-      <div class="aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5">
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start" style={`--row-h:${height}px`}>
+    {videos.map((v) => (
+      <div
+        class:list={[
+          'overflow-hidden rounded-[5px] bg-ink/5',
+          v.vertical
+            ? 'aspect-[9/16] w-full max-w-[220px] sm:h-[var(--row-h)] sm:w-auto sm:max-w-none'
+            : 'aspect-video w-full sm:h-[var(--row-h)] sm:w-auto',
+        ]}
+      >
         <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
       </div>
     ))}
