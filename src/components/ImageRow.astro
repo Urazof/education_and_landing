@@ -16,7 +16,7 @@ const { images, height = 300 } = Astro.props;
 ---
 
 {images.length > 0 && (
-  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start" style={`--row-h:${height}px`}>
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center" style={`--row-h:${height}px`}>
     {images.map((im) => (
       <Image src={im.src} alt={im.alt} class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
     ))}

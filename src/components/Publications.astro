@@ -15,19 +15,19 @@ interface Pub {
   url?: string;
 }
 const items: Pub[] = [
-  { label: 'Budget Brand Positioning' },
-  { label: 'Brand transformation' },
-  { label: 'Expert Commentary' },
-  { label: 'Industry Insight' },
-  { label: 'Marketing Conspiracies (Podcast)' },
-  { label: 'The Anatomy of Advertising (Podcast)' },
+  { label: 'Budget Brand Positioning', url: 'https://pro.rbc.ru/demo/68c2a7fc9a79471e2ffb35a2' },
+  { label: 'Brand transformation', url: 'https://www.sostav.ru/publication/grow-food-54891.html' },
+  { label: 'Expert Commentary', url: 'https://incrussia.ru/understand/vzglyad-iznutri/' },
+  { label: 'Industry Insight', url: 'https://www.pravilamag.ru/articles/717169-s-pristavkoi-e-kak-razvivayutsya-onlain-servisy-taksi-dostavki-i-bronirovaniya-v-rossii/?utm_source=google.com&utm_medium=organic&utm_campaign=google.com&utm_referrer=google.com' },
+  { label: 'Marketing Conspiracies (Podcast)', url: 'https://music.yandex.ru/album/10812233/track/109049947?utm_medium=copy_link&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnLqGAJEaly5HLuOb__A6zUmb8-LuoRu6sEtvQQoDCotPr07k3ypbycg7Qavg_aem_GCezesp2oI18RKxZQxylGw' },
+  { label: 'The Anatomy of Advertising (Podcast)', url: 'https://music.yandex.ru/album/11092212/track/109138048?utm_medium=copy_link&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnZoHF4aH7fpzzgbuUrigljqvj5vMHuuYyF4uFNcDrjbTUrLRzHBRHq8wUzNo_aem_o2v7M8Ut_-h_kWCsQqlXnA' },
 ];
-const fullWidth: Pub = { label: 'Jury Member, E+ Awards (formerly Effie), 2024' };
+const fullWidth: Pub = { label: 'Jury Member, E+ Awards (formerly Effie), 2024', url: 'https://eplus.marketing/award/jury/jury-old/2024' };
 
 // Общие классы чипа: тонкая обводка, скругление 5px, мягкий hover.
 const chip =
   'flex min-h-[3.25rem] items-center justify-center rounded-[5px] border border-ink/30 px-4 py-3 text-center text-sm font-medium transition-colors';
-const chipLink = `${chip} hover:border-ink hover:bg-ink hover:text-paper`;
+const chipLink = `${chip} hover:bg-ink/[0.06]`;
 const chipStatic = `${chip} text-ink/80`;
 ---
 
