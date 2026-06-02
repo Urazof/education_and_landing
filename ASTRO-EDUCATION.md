@@ -21,6 +21,7 @@
 - [10. Этап 3: страницы кейсов и динамические маршруты](#10-этап-3-страницы-кейсов-и-динамические-маршруты)
 - [11. Этап 4: SEO-фундамент](#11-этап-4-seo-фундамент)
 - [12. Этап 5: дизайн-полировка и computer-vision-воркфлоу](#12-этап-5-дизайн-полировка-и-computer-vision-воркфлоу)
+- [13. Этап 6: UI-полировка — hero-layout, медиа-выравнивание, адаптив фото](#13-этап-6-ui-полировка)
 - [Журнал этапов](#журнал-этапов)
 
 ---
@@ -1513,3 +1514,214 @@ w-full">`. Так видео не «плющится»: рамка держит 
 
 > Разрешения: `bypassPermissions` откатывается в project-local settings; стоят `deny` на git
 > commit/push/merge и gh pr — коммиты/PR делает пользователь. Перед продолжением — рестарт сессии.
+
+---
+
+## 13. Этап 6: UI-полировка
+
+### 13.1 CLAUDE.md — автоматизация контекста
+
+Файл `CLAUDE.md` в корне проекта читается Claude Code **автоматически** при старте каждой сессии.
+Это полный эквивалент системного промта для проекта. Содержит инструкции:
+- читать `CONTEXT_LANDING.md` и `ASTRO-EDUCATION.md` при старте;
+- если файлы не существуют — создать со скелетом;
+- дополнять оба файла после каждого изменения.
+
+Это устраняет необходимость писать вручную «восстанови контекст» в начале каждой сессии.
+
+### 13.2 Hero: flush-фото с object-cover
+
+**Задача:** фото справа от текста должно упираться в правый, верхний и нижний края баннера.
+Банальные `self-end` + негативные отступы давали артефакты. Финальное решение:
+
+```html
+<!-- Внешняя оболочка: overflow-hidden клипает углы фото по радиусу div -->
+<div class="overflow-hidden rounded-[5px] bg-ink/[0.08] sm:min-h-[260px]">
+  <div class="grid items-stretch gap-4 p-4
+              sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-0 sm:p-0">
+
+    <!-- Текст: собственный padding на десктопе -->
+    <div class="flex flex-col justify-center sm:py-4 sm:pl-7 sm:pr-5">
+      ...текст...
+    </div>
+
+    <!-- Фото: центрируется на мобиле, flush-right на десктопе -->
+    <div class="flex justify-center sm:block sm:self-stretch">
+      <Image
+        class="w-44 rounded-[5px]
+               sm:h-full sm:w-full sm:rounded-l-[5px] sm:object-cover sm:object-top"
+        loading="eager"
+      />
+    </div>
+  </div>
+</div>
+```
+
+**Почему `overflow-hidden` на внешнем div, а не рамки у фото:**
+- `overflow-hidden` + `rounded-[5px]` на контейнере автоматически клипает всё внутри по радиусу.
+- Не нужно дублировать `rounded-*` для каждого дочернего элемента у краёв.
+- Левые углы фото НЕ у края внешнего div — overflow-hidden их не трогает. Нужен явный `sm:rounded-l-[5px]`.
+
+**`sm:self-stretch`** — grid-item растягивается на всю высоту строки. Без него элемент центрируется
+(`items-stretch` тут управляет всеми дочерними). Потом `sm:h-full` на `<Image>` заполняет wrapper.
+
+**`sm:object-cover sm:object-top`** — изображение заполняет контейнер с кропом. `object-top` гарантирует,
+что верхняя часть (лицо) не обрезается при кропе снизу.
+
+**`sm:min-h-[260px]`** — якорная высота баннера. Без неё при коротком тексте баннер схлопывается.
+Фото с `h-full` заполнит высоту в любом случае — но нужна база.
+
+**Мобиль:** `flex justify-center sm:block` на wrapper → на мобиле wrapper flex-ом центрирует фото.
+На десктопе `sm:block` сбрасывает flex → обычный блок, который растягивается grid-ом.
+
+### 13.3 VideoGroup: isSingleHorizontal + flex-1 для пар
+
+**Одиночное горизонтальное видео — чуть крупнее:**
+```ts
+const isSingleHorizontal = videos.length === 1 && !videos[0].vertical;
+const rowH = isSingleHorizontal ? Math.round(height * 1.3) : height;
+// 300px * 1.3 = 390px → ширина 390 * 16/9 ≈ 693px
+```
+Применяется через CSS-переменную `--row-h` в inline-стиле контейнера.
+
+**Согласование ширины media-секции с VideoGroup:**
+Секция `media[]` в конце кейса рендерит видео не через VideoGroup, а напрямую. Чтобы одиночное
+видео там имело ту же ширину, что одиночное в VideoGroup (693px):
+```jsx
+// вместо sm:w-[65%] (≈634px)
+media.length === 1 ? 'sm:h-[390px] sm:w-auto' : 'sm:w-[48%]'
+```
+`aspect-video` + `sm:h-[390px] sm:w-auto` → браузер считает ширину из aspect-ratio: 390 × 16/9 ≈ 693px.
+
+**Два элемента в ряд — одинаковая суммарная ширина:**
+Проблема: ImageRow (2 картинки) и VideoGroup (2 видео) в одной секции могут иметь разные суммарные
+ширины из-за разных aspect-ratio контента.
+Решение: при `length === 2` используем `sm:flex-1 sm:min-w-0` вместо `sm:w-auto`:
+
+```tsx
+// ImageRow
+class={`... sm:h-[var(--row-h)] ${images.length === 2 ? 'sm:flex-1 sm:min-w-0' : 'sm:w-auto'}`}
+
+// VideoGroup
+v.vertical
+  ? `... sm:h-[var(--row-h)] sm:max-w-none ${videos.length === 2 ? 'sm:flex-1 sm:min-w-0' : 'sm:w-auto'}`
+  : `... sm:h-[var(--row-h)] ${videos.length === 2 ? 'sm:flex-1 sm:min-w-0' : 'sm:w-auto'}`
+```
+
+`sm:flex-1` = `flex: 1 1 0%` → каждый item занимает равную долю ширины flex-row.
+При height фикс. и `object-cover` — изображения не деформируются. Iframes заполняют контейнер. ✓
+
+### 13.4 Publications: data-модель + hover
+
+Чипы переведены на объект `{ label, url? }`. Если `url` задан — рендерится `<a>`, иначе `<div>`:
+```tsx
+const chipLink = `${chip} hover:bg-ink/[0.06]`; // мягкое затемнение, не инверт
+const chipStatic = `${chip} text-ink/80`;
+
+items.map(item =>
+  item.url
+    ? <a href={item.url} target="_blank" class={chipLink}>...</a>
+    : <div class={chipStatic}>...</div>
+)
+```
+`hover:bg-ink/[0.06]` = 6% непрозрачности — поверх светлого фона едва заметное потемнение без инверта.
+
+### 13.5 Якорная навигация: убираем автоскролл
+
+Ссылка «← Back to home» в `CaseArticle.astro` вела на `${base}/#works`. При переходе браузер
+прокручивал страницу к секции Works — неожиданное поведение для пользователя.
+Исправление: `${base}/` (без якоря) → возврат на верх страницы.
+
+### 13.6 Адаптивные паттерны этой сессии
+
+| Паттерн | Tailwind | Результат |
+|---|---|---|
+| Элемент flush к краю | `overflow-hidden` на родителе | клип по border-radius |
+| Фото на всю высоту grid-строки | `self-stretch` + `h-full w-full object-cover` | photo fills row |
+| Центрирование одиночного flex-item | `justify-center` на контейнере | элемент по центру |
+| Равная ширина N элементов | `flex-1 min-w-0` | поровну делят ширину ряда |
+| Пропорциональная ширина по ratio | `flex: ratio 1 0%` + CSS var | широкое шире, узкое уже |
+| Фиксированная ширина из aspect+height | `h-[390px] w-auto` + `aspect-video` | ширина = 390×16/9 |
+| Мягкий hover | `hover:bg-ink/[0.06]` | 6% затемнение |
+
+### 13.7 ImageRow: пропорциональный flex по aspect ratio
+
+**Проблема.** Ряд из широкого (`priem-execution-wide.jpg`) и вертикального (`priem-execution-tall.jpg`)
+фото с `flex-1` (равные доли) давал каждому 50% ширины. Вертикальное фото в 50% × 300px — широкий
+прямоугольник с сильным кропом по высоте. Узкое по природе изображение не должно занимать столько же
+места, сколько широкое.
+
+**Решение — `flex-grow = aspect_ratio`.**  
+Если задать каждому item `flex: ratio 1 0%`, flex распределит ширину пропорционально:
+```
+item_width_i = (ratio_i / Σ ratio_j) × container_width
+```
+Широкое (16:9 ≈ 1.78) → ~73% ряда ≈ 698px. Вертикальное (2:3 ≈ 0.67) → ~27% ≈ 262px.
+Высота у обоих фиксирована через `--row-h`. `object-cover` убирает небольшой кроп.
+
+**Доступ к размерам оригинала в Astro.**  
+`astro:assets` обогащает импортированные изображения метаданными. `ImageMetadata` включает
+`width` и `height` оригинала — они доступны в frontmatter как `im.src.width / im.src.height`.
+
+**Реализация.**  
+CSS-переменная `--r` задаётся per-item через inline `style`. Применяется только на десктопе
+через scoped `<style>` + `@media`. На мобиле элементы стекают в колонку естественно.
+
+```astro
+---
+const isMulti = images.length >= 2;
+---
+<div class="flex flex-col gap-4 sm:flex-row sm:items-stretch" style={`--row-h:${height}px`}>
+  {images.map((im) => {
+    const ratio = (im.src.width / im.src.height).toFixed(4);
+    return isMulti ? (
+      <div class="img-item overflow-hidden rounded-[5px]" style={`--r:${ratio}`}>
+        <Image src={im.src} alt={im.alt} class="w-full object-cover sm:h-full" />
+      </div>
+    ) : (
+      <Image src={im.src} alt={im.alt}
+        class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
+    );
+  })}
+</div>
+
+<style>
+  @media (min-width: 640px) {
+    .img-item {
+      flex: var(--r) 1 0%;   /* пропорциональная ширина */
+      height: var(--row-h);  /* фиксированная высота ряда */
+      min-width: 0;          /* не выходит за границы flex */
+    }
+  }
+</style>
+```
+
+**Почему scoped `<style>` вместо Tailwind?**  
+Tailwind не поддерживает динамические значения из JS-переменных в utility-классах (JIT генерирует
+только статические классы из исходников). Inline `style` работает, но медиа-запросы в inline style
+невозможны. Решение: CSS-переменная через inline style + правило в `<style>` на нужном breakpoint.
+Astro автоматически скоупит `<style>` к компоненту через `data-astro-cid-*`.
+
+**Почему `toFixed(4)`?**  
+`parseFloat` хранит много знаков. `toFixed(4)` обрезает до 4 знаков после запятой — достаточно
+для точного позиционирования и сокращает объём HTML.
+
+---
+
+### Этап 6 — UI-полировка (2026-06-01) ✅
+
+- **CLAUDE.md**: автоматическая загрузка контекстных файлов при старте сессии.
+- **Hero layout**: `overflow-hidden` + `object-cover` + `self-stretch` — фото flush к 3 краям баннера.
+  Bridge-текст перенесён внутрь баннера (`text-ink/50 font-bold`). Шрифты уменьшены (h1 `text-xl`).
+- **Publications**: 7 реальных URL подключены к чипам. Hover — мягкое `bg-ink/[0.06]`.
+- **SocialLinks**: `rounded-full` → `rounded-[5px]` (квадрат со скруглением, весь проект однородный).
+- **Heading-размеры**: Works/Archive/Publications `text-2xl` → `text-xl` (пропорционально меньше).
+- **Соц-ссылки кейсов**: реальные URL (GF: IG+TG, Priem: IG+VK).
+- **VideoGroup**: `isSingleHorizontal` ×1.3 высоты; 2-item → `flex-1`; `justify-center items-center`.
+- **ImageRow**: 2-item → `flex-1`; затем переработан в пропорциональный flex (§13.7).
+- **Media-секция**: 1 видео → `h-[390px] w-auto` (совпадает с isSingleHorizontal); flex+justify-center.
+- **aside-right/aside-left**: `items-start` → `items-center` (текст вертикально по центру картинки).
+- **Навигация**: убран `/#works` из back-link → нет автоскролла.
+- **Works**: `pt-16` → `pt-8` (убран лишний зазор между hero и Works).
+- **ImageRow пропорциональный flex**: `flex-grow = aspect_ratio` через CSS var `--r` + scoped style (§13.7).
+- `npm run check` — зелёный (0/0/0).
