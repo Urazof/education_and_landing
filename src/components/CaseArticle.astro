@@ -9,6 +9,8 @@ import ImageRow from './ImageRow.astro';
 
 import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
+import wrcLogo from '../assets/wrc-logo.png';
+import philipsLogo from '../assets/philips-logo.png';
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/*.{png,jpg,jpeg,webp,avif}',
@@ -31,6 +33,8 @@ const base = localePrefix(lang);
 const logos: Record<string, ImageMetadata> = {
   'grow-food': growFood,
   priem: priemLogo,
+  wrc: wrcLogo,
+  philips: philipsLogo,
 };
 const logo = logos[entry.id];
 const { title, client, external, social, sections } = entry.data;
@@ -40,8 +44,11 @@ const proseText = 'text-lg leading-relaxed';
 const ROW_H = 300; // общая высота рядов медиа на десктопе (px)
 
 function embedUrl(url: string): string {
-  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
-  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vi = url.match(/vimeo\.com\/(\d+)/);
+  if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
+  return url;
 }
 const allow =
   'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';

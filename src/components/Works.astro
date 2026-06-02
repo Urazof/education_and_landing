@@ -7,6 +7,9 @@ import CaseCard from './CaseCard.astro';
 // Фоновые изображения карточек Works — реальные кейс-медиа, а не логотипы.
 import growFoodCardBg from '../assets/growfood-card-bg.png';
 import priemCardBg from '../assets/priem-card-bg.png';
+import wrcCardBg from '../assets/wrc-card-bg.jpg';
+import philipsCardBg from '../assets/philips-card-bg.png';
+import worksPreview from '../assets/works-preview.png';
 
 interface Props {
   lang: Lang;
@@ -18,6 +21,8 @@ const base = localePrefix(lang);
 const images: Record<string, ImageMetadata> = {
   'grow-food': growFoodCardBg,
   priem: priemCardBg,
+  wrc: wrcCardBg,
+  philips: philipsCardBg,
 };
 
 const cases = (await getCollection('cases')).sort(
@@ -34,7 +39,7 @@ const cases = (await getCollection('cases')).sort(
           href={`${base}/cases/${entry.id}`}
           title={entry.data.title}
           client={entry.data.client}
-          image={images[entry.id]}
+          image={images[entry.id] ?? worksPreview}
           alt={entry.data.client}
         />
       ))
