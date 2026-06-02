@@ -47,6 +47,8 @@ const cases = defineCollection({
         layout: z.enum(['default', 'aside-right', 'aside-left', 'video-image']).default('default'),
         // Ссылка-кнопка под текстом секции (напр. themeal.menu в «What came next»).
         link: z.object({ label: z.string(), url: z.string().url() }).optional(),
+        // Список ссылок-референсов (напр. Credentials в WRC). label опционален — дефолт URL.
+        links: z.array(z.object({ label: z.string().optional(), url: z.string().url() })).default([]),
       }),
     ),
     // Маркированные результаты (метрики).

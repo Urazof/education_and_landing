@@ -167,7 +167,7 @@ function imgItems(files: string[], alt: string) {
         );
       }
 
-      // Default: текст (читаемая ширина) → картинки (ряд) → видео (ряд) → ссылка
+      // Default: текст (читаемая ширина) → картинки (ряд) → видео (ряд) → ссылки → кнопка
       return (
         <section>
           <p class={proseText}>
@@ -175,6 +175,18 @@ function imgItems(files: string[], alt: string) {
           </p>
           {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={ROW_H} /></div>}
           {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+          {s.links.length > 0 && (
+            <ul class="mt-4 space-y-1">
+              {s.links.map((l) => (
+                <li>
+                  <a href={l.url} target="_blank" rel="noopener noreferrer"
+                     class="break-all text-sm opacity-60 hover:opacity-100 hover:underline">
+                    {l.label ?? l.url}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
           {s.link && (
             <a href={s.link.url} target="_blank" rel="noopener noreferrer"
               class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">

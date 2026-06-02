@@ -43,6 +43,14 @@ sections:
     body: >-
       Managed communications with international rally teams, drivers, and championship
       representatives, supporting the team's participation throughout the FIA WRC Academy season.
+  - heading: Credentials
+    body: ""
+    links:
+      - url: https://www.wrc.com/en/news/portugal-2011-the-rally-that-pushed-woda-to-breaking-point
+      - url: https://www.sportireland.ie/news/baltic-battle-for-breen-in-rally-estonia
+      - url: https://wrc.fandom.com/wiki/2011_WRC_Academy_Season
+      - url: https://www.justmedia.ru/news/sport/111757
+      - url: https://www.justmedia.ru/analitika/society/27545
 results: []
 media: []
 ---
