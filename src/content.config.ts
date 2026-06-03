@@ -49,10 +49,14 @@ const cases = defineCollection({
         link: z.object({ label: z.string(), url: z.string().url() }).optional(),
         // Список ссылок-референсов (напр. Credentials в WRC). label опционален — дефолт URL.
         links: z.array(z.object({ label: z.string().optional(), url: z.string().url() })).default([]),
+        // Метрик-чипы (напр. Results в Eucerin): крупное значение + подпись.
+        metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
       }),
     ),
     // Маркированные результаты (метрики).
     results: z.array(z.string()).default([]),
+    // archive: true — кейс не отображается в Works, доступен только по прямой ссылке (напр. через Archive-чип).
+    archive: z.boolean().default(false),
     // Медиа-слоты: label = название, video = YouTube URL (пусто = плейсхолдер).
     media: z.array(z.object({
       label: z.string(),

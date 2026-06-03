@@ -1,6 +1,7 @@
 ---
 title: Faster than ever
 client: WRC Academy
+archive: true
 order: 3
 sections:
   - heading: Context
