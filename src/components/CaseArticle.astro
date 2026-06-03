@@ -11,6 +11,7 @@ import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
 import wrcLogo from '../assets/wrc-logo.png';
 import philipsLogo from '../assets/philips-logo.png';
+import eucerincardLogo from '../assets/eucerin-logo.png';
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/*.{png,jpg,jpeg,webp,avif}',
@@ -35,6 +36,7 @@ const logos: Record<string, ImageMetadata> = {
   priem: priemLogo,
   wrc: wrcLogo,
   philips: philipsLogo,
+  eucerin: eucerincardLogo,
 };
 const logo = logos[entry.id];
 const { title, client, external, social, sections } = entry.data;
@@ -167,12 +169,22 @@ function imgItems(files: string[], alt: string) {
         );
       }
 
-      // Default: текст (читаемая ширина) → картинки (ряд) → видео (ряд) → ссылки → кнопка
+      // Default: текст → метрик-чипы → картинки (ряд) → видео (ряд) → ссылки → кнопка
       return (
         <section>
           <p class={proseText}>
             {hasHeading && <strong>{s.heading} </strong>}{s.body}
           </p>
+          {s.metrics.length > 0 && (
+            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {s.metrics.map((m) => (
+                <div class="rounded-[5px] border border-[#eeeeee] bg-[#f5f5ed] px-5 py-6">
+                  <p class="text-4xl font-bold text-ink">{m.value}</p>
+                  <p class="mt-1 text-sm text-ink/60">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
           {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={ROW_H} /></div>}
           {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
           {s.links.length > 0 && (

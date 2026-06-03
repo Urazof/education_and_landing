@@ -4,6 +4,99 @@
 
 ---
 
+## 🗂 СЕССИЯ 2026-06-03: EUCERIN + ARCHIVE-РЕДИЗАЙН (Этап 8)
+
+**Что сделано** (технический разбор — `ASTRO-EDUCATION.md` §15):
+
+### Archive-секция: чип вместо заголовка + ссылка на WRC
+- Убран `<h2>Archive</h2>` — секция больше не имеет отдельного заголовка.
+- Пустой dashed-плейсхолдер заменён на `<a>` с `href="/cases/wrc"`.
+- Стиль чипа совпадает с Publications: `border border-ink/30 rounded-[5px] px-4 py-3
+  text-sm font-medium transition-colors hover:bg-ink/[0.06]`.
+- Высота сохранена (`h-32 w-full`) — чип широкий, занимает всю ширину секции.
+- Текст чипа: `t('archive.title')` — «Archive» (en) / «Архив» (ru).
+
+### WRC → archive (скрыт из Works, доступен по прямой ссылке)
+- В схему добавлено поле `archive: z.boolean().default(false)`.
+- `wrc.md` получил `archive: true`.
+- `Works.astro` фильтрует: `.filter((e) => !e.data.archive)`.
+- WRC-страница `/cases/wrc` остаётся рабочей — Archive-чип на неё ссылается.
+
+### Новый кейс — Eucerin (`eucerin.md`, `order: 3`)
+- **Title**: Brand launch. **Client**: Eucerin.
+- Контент полностью взят с Miro-доски (все тексты, порядок секций):
+  Context → Challenge → Strategy → Execution → empty-heading (Community) → Results.
+- Все 10 ассетов скачаны с Miro через `image_get_url` + PowerShell:
+  `eucerin-logo.png`, `eucerin-card-bg.png`, `eucerin-context-1/2.png`,
+  `eucerin-challenge-1/2.png`, `eucerin-strategy-1/2.png`, `eucerin-execution-1/2.png`.
+  Astro оптимизировал в WebP: суммарно ~10 MB PNG → ~380 kB WebP.
+- `media: [{label: Brand film, video: https://vimeo.com/418987467}]` — реальный Vimeo-ролик.
+- `social: [IG, VK, YT]` — добавлены реальные ссылки.
+- **Results-секция** — первая в списке секций; три метрик-чипа (15M+ / 30K+ / 3%) через новое поле
+  `sections[].metrics`. Стиль — бежевый фон `#f5f5ed` из доски Miro. Схема расширена: `metrics: [{value, label}]`.
+
+### Итог
+- Works: 4 карточки — GF, Priem, Eucerin, Philips (WRC отфильтрован).
+- `npm run check` — 0/0/0. `npm run build` — 12 страниц, зелёный.
+
+**⏳ ОТКРЫТО:**
+- Добавить реальные ссылки на соцсети Eucerin (IG/VK/YT) в `eucerin.md → social: [...]`.
+- `growfood-context-new.png` — серый плейсхолдер, заменить на реальный кадр.
+- `og:image` 1200×630, Lighthouse-прогон.
+
+---
+
+## 🗂 СЕССИЯ 2026-06-02: ДВА НОВЫХ КЕЙСА (Этап 7)
+
+**Что сделано** (технический разбор — `ASTRO-EDUCATION.md` §14):
+
+### Кейс 3 — WRC Academy (`wrc.md`, `order: 3`)
+- Сезон 2011 FIA WRC Academy, российский раллийный гонщик Сергей Карякин.
+  Задача: выстроить медиаприсутствие и личный бренд спортсмена с нуля на международном уровне.
+- Секции: Context → Challenge → Execution (три подсекции без heading) → Credentials.
+- **Новый паттерн: `heading: ""`** — продолжение нарратива без нового заголовка (несколько
+  подряд идущих секций с одной темой, но разным текстом; рендерится как обычный абзац без `<strong>`).
+- **Новый паттерн: `links`** — секция Credentials: массив `{ url }` (label опционален) —
+  ссылки-референсы (wrc.com, sportireland.ie, wrc.fandom.com, justmedia.ru).
+  Рендер: `<ul>` с muted-ссылками `opacity-60 hover:opacity-100`.
+- Активы: `wrc-logo.png`, `wrc-card-bg.jpg`, 6 фото.
+
+### Кейс 4 — Philips (`philips.md`, `order: 4`, title: «Philthemusic»)
+- Платформа «Feel the Music» для наушников Philips Audio, Gen Y & Z, 2019–2020.
+  10M+ охват, 70+ influencer-размещений, ×3 рост подписчиков, ×1.5 трафик на карточки.
+- `layout: aside-right` у Context — картинка справа от текста.
+- Видео в Execution (YouTube embed через `VideoGroup`).
+- Секция без heading с двумя картинками результатов (`ImageRow`).
+- **Первый кейс с реальным `media`-видео:** `{ label: 'Brand film', video: 'vimeo.com/513292169' }` —
+  рендерится iframe (не плейсхолдер).
+- Активы: `philips-logo.png`, `philips-card-bg.png`, 6 фото.
+
+### Изменения в схеме (`content.config.ts`)
+- **`sections[].links`** — новое поле: `z.array(z.object({ label?: string, url }))`.
+  Если `label` не задан — показывается сам URL.
+- **`media`** — тип изменён с `string[]` на `{ label: string, video?: string }[]`.
+  Поддерживает и iframe-видео, и плейсхолдеры в одном массиве.
+
+### Изменения в `CaseArticle.astro`
+- Рендер `links`: `<ul class="mt-4 space-y-1">` → `<a class="break-all text-sm opacity-60 hover:opacity-100 hover:underline">`.
+- Рендер `media`: `item.video ? <iframe embed> : <dashed placeholder>`.
+- Логотипы `wrc` и `philips` добавлены в `logos`-словарь компонента.
+
+### `Works.astro` — 4 карточки
+- `wrc-card-bg.jpg` и `philips-card-bg.png` добавлены в `images`-словарь.
+- `sm:grid-cols-2` с 4 кейсами даёт сетку 2×2 автоматически.
+
+### Прочие правки
+- `priem-case-logo.png` заменён: 80 kB → 11 kB (более лёгкая версия).
+
+**⏳ ОТКРЫТО:**
+- `growfood-context-new.png` — серый плейсхолдер «GF», заменить на реальный кадр.
+- Визуальное направление (дизайн-токены, стиль hero) — вопрос не закрыт.
+- `og:image` 1200×630 — нет файла, тег опущен.
+- Lighthouse-прогон после деплоя.
+
+---
+
 ## 🎨 СЕССИЯ 2026-06-01 (финальная): UI-ПОЛИРОВКА (Этап 6)
 
 **Что сделано** (детальный учебный разбор — `ASTRO-EDUCATION.md` §13):
@@ -378,14 +471,12 @@ If you are uploading a directory of assets, you can either:
 
 ## 7. Next actions — что сделать сразу в новой сессии
 
-1. Прочитать этот файл (особенно блок «ТЕКУЩИЙ ФОКУС» вверху).
-2. **Деплой** — первый приоритет (открыто с прошлой сессии):
-   - Уточнить у пользователя: проект в Cloudflare как **Pages** или **Worker**?
-   - Если Pages: `wrangler.jsonc` не нужен, удалить; build command = `npm run build`, output = `dist`.
-   - Если Workers: оставить `wrangler.jsonc` (имя = имя проекта в дашборде), указать build command.
-   - Проверить ветку: код в `develop`, прод = `main`. Слить если нужно или переключить ветку деплоя.
-3. После деплоя — заменить `growfood-context-new.png` на реальный кадр.
-4. Опциональные следующие шаги: визуальное направление (токены / стиль hero), Lighthouse, og:image.
+1. Прочитать этот файл (особенно последний блок «СЕССИЯ» вверху).
+2. **Текущий фокус — контент и качество:**
+   - Заменить `growfood-context-new.png` (серый плейсхолдер) на реальный кадр.
+   - `og:image` 1200×630 — создать и подключить (сейчас тег опущен).
+   - Lighthouse-прогон на живом сайте.
+3. **Опционально:** визуальное направление (дизайн-токены, стиль hero), JSON-LD.
 
 ---
 

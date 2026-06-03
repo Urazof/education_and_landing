@@ -22,6 +22,8 @@
 - [11. Этап 4: SEO-фундамент](#11-этап-4-seo-фундамент)
 - [12. Этап 5: дизайн-полировка и computer-vision-воркфлоу](#12-этап-5-дизайн-полировка-и-computer-vision-воркфлоу)
 - [13. Этап 6: UI-полировка — hero-layout, медиа-выравнивание, адаптив фото](#13-этап-6-ui-полировка)
+- [14. Этап 7: два новых кейса — WRC Academy и Philips](#14-этап-7-два-новых-кейса--wrc-academy-и-philips)
+- [15. Этап 8: Eucerin + Archive-редизайн](#15-этап-8-eucerin--archive-редизайн)
 - [Журнал этапов](#журнал-этапов)
 
 ---
@@ -1412,6 +1414,439 @@ w-full">`. Так видео не «плющится»: рамка держит 
 > отвечают **breakpoint-классы Tailwind** (`sm:` ≈640px, `md:` ≈768px, `lg:` ≈1024px). Мы пишем
 > mobile-first: базовые классы = телефон, `sm:`/`md:` добавляют поведение для широких экранов. Astro
 > тут ни при чём — он бы так же отдал эти классы в любом фреймворке.
+
+---
+
+## 14. Этап 7: два новых кейса — WRC Academy и Philips
+
+Два новых кейса добавлены **по аналогии** с Grow Food и Priem, но каждый ввёл новые паттерны
+в схему и рендер. Цель этого раздела — разобрать только то, что появилось впервые.
+
+### 14.1 Паттерн «секция без заголовка» — продолжение нарратива
+
+В WRC кейсе секция Execution физически одна, но текст разбит на несколько тематических кусков
+(соцсети, коммуникации со стейкхолдерами, работа с командами). Каждый кусок — отдельный абзац,
+но они не заслуживают отдельного heading-уровня.
+
+В `.md` это выглядит так:
+```yaml
+sections:
+  - heading: Execution
+    body: >-
+      Built the full communications infrastructure…
+    images:
+      - wrc-execution-2.png
+      - wrc-execution-1.jpg
+
+  - heading: ""           # пустая строка = нет заголовка
+    body: >-
+      Led communications with stakeholders…
+    images:
+      - wrc-execution-3.jpg
+      - wrc-execution-4.jpg
+
+  - heading: ""
+    body: >-
+      Managed communications with international rally teams…
+```
+
+В `CaseArticle.astro` рендер уже учитывал `hasHeading`:
+```astro
+const hasHeading = Boolean(s.heading);
+…
+<p class={proseText}>
+  {hasHeading && <strong>{s.heading} </strong>}{s.body}
+</p>
+```
+Если `heading: ""` — `Boolean("")` = `false` → `<strong>` не рендерится, остаётся чистый абзац.
+**Никаких изменений в коде не потребовалось** — паттерн работал уже с Этапа 3.
+
+> **Почему несколько секций, а не один большой `body`?** Потому что у каждой части могут быть
+> свои `images` или `videos`. Yaml-блок `>-` — это одна строка без переносов; разбить на абзацы
+> внутри него нельзя. Поэтому «продолжение» моделируем как новую секцию с пустым heading.
+
+### 14.2 Поле `links` — список ссылок-референсов
+
+WRC кейс добавил секцию Credentials — список источников (статьи, вики, медиа). Это не кнопка
+«Visit website» (`link: {label, url}`) и не соц-иконка — просто перечень URL для дотошного
+читателя.
+
+**Схема (`content.config.ts`):**
+```ts
+links: z.array(
+  z.object({
+    label: z.string().optional(),   // необязателен: если нет — покажем URL
+    url: z.string().url(),
+  }),
+).default([]),
+```
+
+**В `.md`:**
+```yaml
+- heading: Credentials
+  body: ""
+  links:
+    - url: https://www.wrc.com/en/news/portugal-2011-the-rally-that-pushed-woda-to-breaking-point
+    - url: https://www.sportireland.ie/news/baltic-battle-for-breen-in-rally-estonia
+    - url: https://wrc.fandom.com/wiki/2011_WRC_Academy_Season
+```
+`label` не указан — отобразится сам URL.
+
+**Рендер в default-layout (`CaseArticle.astro`):**
+```astro
+{s.links.length > 0 && (
+  <ul class="mt-4 space-y-1">
+    {s.links.map((l) => (
+      <li>
+        <a href={l.url} target="_blank" rel="noopener noreferrer"
+           class="break-all text-sm opacity-60 hover:opacity-100 hover:underline">
+          {l.label ?? l.url}
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+```
+
+Разбор классов:
+- `break-all` — URL-ы длинные и без пробелов; без этого они вылезают за границы контейнера на мобиле.
+- `opacity-60` — ссылки визуально приглушены (референсы вторичны, не контент); `hover:opacity-100` —
+  при наведении становятся чёткими.
+- `{l.label ?? l.url}` — оператор `??` (nullish coalescing): если `label` `null`/`undefined` →
+  взять `url` как текст. Это позволяет в `.md` не писать `label` для длинных URL — они сами читаются
+  как подтверждение источника.
+
+> Отличие от `link` (кнопка): `link` — один призыв к действию с красивым ярлыком (кнопка styled
+> как border-button). `links` — список сырых ссылок-источников; стилизованы намеренно тише.
+
+### 14.3 Изменение типа `media`: от строк к объектам
+
+В Этапе 3 `media` хранил массив **строк** — просто ярлыки для плейсхолдеров:
+```ts
+// было (Этап 3)
+media: z.array(z.string()).default([]),
+```
+```yaml
+media:
+  - Brand film
+  - Product video
+```
+
+Это работало, пока реальных видео не было. Philips кейс добавил **реальный Vimeo-ролик** — нужно
+хранить и label, и URL видео. Поле переделано в массив объектов:
+
+```ts
+// стало
+media: z.array(z.object({
+  label: z.string(),
+  video: z.string().optional(),   // URL для iframe; отсутствует = плейсхолдер
+})).default([]),
+```
+
+**В `.md`:**
+```yaml
+# Philips — реальное видео
+media:
+  - label: Brand film
+    video: https://vimeo.com/513292169
+
+# Если видео ещё нет — плейсхолдер (video: не указан)
+media:
+  - label: Brand film
+  - label: Product video
+```
+
+**Рендер (`CaseArticle.astro`):**
+```astro
+{media.map((item) => (
+  item.video ? (
+    // реальный embed
+    <div class={`aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5
+                 ${media.length === 1 ? 'sm:h-[390px] sm:w-auto' : 'sm:w-[48%]'}`}>
+      <iframe src={embedUrl(item.video)} title={item.label} loading="lazy"
+              class="h-full w-full" allow={allow} allowfullscreen />
+    </div>
+  ) : (
+    // плейсхолдер
+    <div class={`flex aspect-video w-full items-center justify-center
+                 rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50
+                 ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
+      {item.label}
+    </div>
+  )
+))}
+```
+
+Ключевой момент: **один и тот же массив** может содержать оба варианта — готовые видео и
+плейсхолдеры. Когда появится реальный URL → просто добавить `video:` в `.md`.
+
+> **Почему `media` отдельно от `sections`?** Медиа-блок вынесен в конец страницы — это «финальный
+> аккорд» (кино, ролик, бренд-фильм), а не иллюстрация к конкретному разделу. Структурно это
+> другой уровень: не «картинка к тексту», а «видео само по себе».
+
+### 14.4 Логотипы новых кейсов
+
+В `CaseArticle.astro` словарь `logos` — явный Map `id → ImageMetadata`. Добавить кейс = добавить
+два импорта и одну строку:
+```astro
+import wrcLogo from '../assets/wrc-logo.png';
+import philipsLogo from '../assets/philips-logo.png';
+
+const logos: Record<string, ImageMetadata> = {
+  'grow-food': growFood,
+  priem:       priemLogo,
+  wrc:         wrcLogo,      // новый
+  philips:     philipsLogo,  // новый
+};
+```
+`entry.id` (= имя файла без `.md`) используется как ключ. Это работает надёжно, пока файл называется
+`wrc.md` → id `wrc`, и логотип кладётся как `wrc-logo.png`. Соглашение стоит соблюдать при добавлении новых кейсов.
+
+### 14.5 Works: 4 карточки, сетка 2×2
+
+`Works.astro` накапливает фоновые изображения карточек в словарь `images`. Для новых кейсов:
+```astro
+import wrcCardBg     from '../assets/wrc-card-bg.jpg';
+import philipsCardBg from '../assets/philips-card-bg.png';
+
+const images: Record<string, ImageMetadata> = {
+  'grow-food': growFoodCardBg,
+  priem:       priemCardBg,
+  wrc:         wrcCardBg,
+  philips:     philipsCardBg,
+};
+```
+Если для нового кейса фона нет — подставляется `worksPreview` (fallback):
+```astro
+image={images[entry.id] ?? worksPreview}
+```
+
+Сетка `sm:grid-cols-2` с 4 кейсами автоматически даёт **2 ряда по 2** — дополнительных стилей
+не требовалось. `order` в `.md` управляет порядком через сортировку `getCollection → sort`.
+
+### 14.6 Паттерн «кейс без results-блока»
+
+Grow Food и Priem имели поле `results: [...]` — маркированный блок метрик. WRC и Philips передают
+метрики **внутри тела секции** (последний section.body) и оставляют `results: []`.
+
+В `CaseArticle.astro` рендер `results` был ещё в Этапе 3:
+```astro
+{results.length > 0 && (
+  <section class="mt-16 ...">
+    <ul>…</ul>
+  </section>
+)}
+```
+`results: []` → `length === 0` → блок не рендерится. Ничего менять не нужно.
+
+> Этот паттерн учит важному принципу: **данные нейтральны, рендер — условный**. Поле может быть
+> пустым, и это не ошибка. Компонент сам решает, что показывать, в зависимости от наличия данных.
+
+---
+
+### Этап 7 — Два новых кейса (2026-06-02) ✅
+
+- **WRC Academy** (`wrc.md`, order 3): кейс про спортивный бренд 2011 г. Новые паттерны:
+  пустой `heading` (продолжение нарратива), поле `links` (референс-список), `results: []`.
+- **Philips** (`philips.md`, order 4): бренд-платформа «Feel the Music». Новые паттерны:
+  реальный embed в `media` (`{label, video}`), YouTube в `sections[].videos`.
+- **Схема** расширена: добавлено `sections[].links`; `media` переделан с `string[]` на `{label, video?}[]`.
+- **CaseArticle**: рендер `links` (`<ul>` muted-ссылок) + рендер `media` с iframe-ветвлением.
+- **Works**: 4 фоновых изображения, 4 карточки в сетке 2×2.
+- `priem-case-logo.png` заменён на более лёгкий файл (80 kB → 11 kB).
+- `npm run build` + `check` — должны быть зелёные (схема расширена обратно-совместимо: `.default([])`).
+
+---
+
+## 15. Этап 8: Eucerin + Archive-редизайн
+
+### 15.1 Archive: чип-ссылка вместо раздела с заголовком
+
+**До:** секция `#archive` содержала `<h2>Archive</h2>` и dashed-плейсхолдер с текстом
+«More projects — coming soon.»
+
+**После:** заголовок убран; весь раздел — один кликабельный чип, ведущий на кейс WRC.
+
+```astro
+<section id="archive" class="border-t-1 border-ink py-16">
+  <a
+    href={`${base}/cases/wrc`}
+    class="flex h-32 w-full items-center justify-center rounded-[5px]
+           border border-ink/30 px-4 py-3 text-center text-sm font-medium
+           transition-colors hover:bg-ink/[0.06]"
+  >
+    {t('archive.title')}
+  </a>
+</section>
+```
+
+**Почему такой дизайн:**
+- Чип выглядит как Publications — «нарочито скромная» ссылка, не кричащая кнопка.
+- `h-32 w-full` сохраняет визуальный вес секции (прежний плейсхолдер тоже был `h-32`).
+- `t('archive.title')` = «Archive» / «Архив» — одна строка уже переводится из словаря.
+- Убранный `<h2>` — намеренный выбор: сам чип несёт роль заголовка.
+
+> **`w-full` на `<a>`:** по умолчанию `<a>` — строчный элемент, он не растягивается на ширину
+> родителя. Класс `flex` переводит его в flex-контейнер (блочный), `w-full` — на всю ширину.
+> Без `w-full` `<a>` сжался бы к тексту.
+
+### 15.2 Поле `archive` в схеме — фильтрация кейсов из Works
+
+Проблема: WRC переходит из Works в Archive, но страница `/cases/wrc` должна остаться рабочей.
+Нужен механизм «этот кейс существует, но не показывается в сетке Works».
+
+**Схема (`content.config.ts`):**
+```ts
+archive: z.boolean().default(false),
+// archive: true → кейс скрыт из Works, доступен только по прямой ссылке.
+```
+
+**`wrc.md`:**
+```yaml
+archive: true
+```
+
+**`Works.astro`:**
+```ts
+const cases = (await getCollection('cases'))
+  .filter((e) => !e.data.archive)   // скрываем archive-кейсы
+  .sort((a, b) => a.data.order - b.data.order);
+```
+
+`getCollection` возвращает ВСЕ кейсы из коллекции. Фильтрация до сортировки — правильный
+порядок: сначала убираем ненужные, потом сортируем оставшиеся. Иначе порядок может нарушиться
+из-за «дырок» в `order`.
+
+> **Почему не удалять `wrc.md`:** страница `/cases/wrc` должна работать (Archive-чип на неё
+> ссылается). Удаление `.md` уничтожило бы страницу. Флаг `archive: true` — это «мягкое
+> исключение» из выборки без удаления контента.
+
+### 15.3 Новый кейс Eucerin: структура и особенности
+
+**Структура контента (в порядке секций на доске Miro):**
+
+```
+Заголовок: Brand launch / Eucerin
+Соцсети на доске: IG / VK / YT (URL не известны → social: [])
+Медиа: Vimeo 418987467 (Brand film)
+
+Секции:
+  Context    → 2 изображения (eucerin-context-1/2)
+  Challenge  → 2 изображения (eucerin-challenge-1/2)
+  Strategy   → 2 изображения (eucerin-strategy-1/2)
+  Execution  → текст (Content & production, без изображений)
+  ""         → текст (Community & engagement) + 2 изображения (eucerin-execution-1/2)
+  Results    → сводный текст метрик (15M+ reach, 30K+ followers, 3% ER)
+```
+
+**Почему Results — последняя секция, хотя на Miro они в начале:**
+На доске Miro метрики показаны вверху как «сводка» — типичный дизайн для презентации. В кейсе
+(нарративный формат) правильнее рассказать историю сначала, а результаты — в конце. Это осознанное
+отклонение от компоновки доски в пользу читабельности страницы.
+
+**Две колонки Execution → две последовательные секции:**
+На доске Execution разбита на две параллельные колонки: «Content and production» (слева) и
+«Community and engagement» (справа). В HTML/Markdown параллельность невозможна без компонента.
+Решение: две секции подряд — первая с heading «Execution», вторая с `heading: ""` (паттерн из §14.1).
+
+### 15.4 Скачивание ассетов из Miro через MCP + PowerShell
+
+Изображений Eucerin в репо не было. Логотип и card-bg были скачаны прямо из Miro в рамках
+сессии без участия пользователя:
+
+**Шаг 1 — получить временный download URL через MCP:**
+```
+mcp__miro__image_get_url(miro_url: "https://miro.com/app/board/...?moveToWidget=<item_id>")
+→ { download_url: "https://r.miro.com/..." }
+```
+
+**Шаг 2 — скачать через PowerShell:**
+```powershell
+Invoke-WebRequest -Uri $downloadUrl -OutFile "src\assets\eucerin-logo.png" -UseBasicParsing
+```
+
+URL действителен временно (~15 мин), поэтому загрузка должна быть сразу после получения URL.
+Astro затем автоматически оптимизирует PNG → WebP при сборке:
+- `eucerin-logo.png`: 107 kB → 13 kB WebP
+- `eucerin-card-bg.png`: 1354 kB → 70 kB WebP
+
+> **Изображения внутри секций** (eucerin-context-1/2, challenge, strategy, execution) пока
+> отсутствуют — это плейсхолдеры в `.md`. `CaseArticle` проверяет `assets[file]` и просто
+> пропускает отсутствующие файлы без ошибки. Страница работает без них, картинки появятся
+> когда пользователь добавит файлы.
+
+### 15.5 Поле `metrics` — метрик-чипы внутри секции
+
+На доске Miro у Eucerin Results показаны не буллет-листом, а тремя стилизованными блоками:
+крупное число + подпись, бежевый фон. Это невозможно выразить через `body: string` — нужна
+структура `{value, label}`.
+
+**Схема (внутри `sections[]`):**
+```ts
+metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
+```
+
+**В `.md`:**
+```yaml
+- heading: Results
+  body: >-
+    Built awareness and loyalty... 80%+ of all SMM content was produced locally...
+  metrics:
+    - { value: "15M+", label: "target audience reached" }
+    - { value: "30K+", label: "brand followers gained" }
+    - { value: "3%",   label: "average ER" }
+```
+
+**Рендер (`CaseArticle.astro`, default layout):**
+```astro
+{s.metrics.length > 0 && (
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    {s.metrics.map((m) => (
+      <div class="rounded-[5px] border border-[#eeeeee] bg-[#f5f5ed] px-5 py-6">
+        <p class="text-4xl font-bold text-ink">{m.value}</p>
+        <p class="mt-1 text-sm text-ink/60">{m.label}</p>
+      </div>
+    ))}
+  </div>
+)}
+```
+
+Цвета (`#f5f5ed` фон, `#eeeeee` бордер) взяты точно с доски Miro. На мобиле — стопкой
+(`grid-cols-1`), на десктопе — три в ряд (`sm:grid-cols-3`).
+
+> **Порядок секций как дизайн-решение.** На доске Results идёт ПЕРЕД Context — это намеренный
+> выбор: «покажи результат сразу, потом рассказывай историю». В `.md` секция Results просто
+> стоит первой в массиве `sections[]`. Компонент рендерит их в том порядке, в каком они
+> записаны — никаких специальных флагов не нужно.
+
+### 15.7 Итог: Works с 4 кейсами, WRC в Archive
+
+**Сетка Works после изменений:**
+
+| Позиция | Кейс | order | archive |
+|---|---|---|---|
+| 1 (верх-лево) | Grow Food | 1 | false |
+| 2 (верх-право) | Priem | 2 | false |
+| 3 (низ-лево) | Eucerin | 3 | false |
+| 4 (низ-право) | Philips | 4 | false |
+| — (только /cases/wrc) | WRC Academy | 3 | **true** |
+
+WRC имеет `order: 3` и Eucerin тоже `order: 3` — конфликта нет, т.к. WRC отфильтрован до сортировки.
+
+---
+
+### Этап 8 — Eucerin + Archive-редизайн (2026-06-03) ✅
+
+- **Archive.astro**: убран `<h2>`, заменён на `<a>`-чип `h-32 w-full` стиля Publications,
+  ссылающийся на `/cases/wrc`. §15.1.
+- **Схема**: поле `archive: boolean` добавлено в `content.config.ts`. §15.2.
+- **wrc.md**: `archive: true` — скрыт из Works, страница существует. §15.2.
+- **eucerin.md**: новый кейс из Miro (order 3, Brand launch, 6 секций, Vimeo-медиа). §15.3.
+- **Ассеты**: `eucerin-logo.png` + `eucerin-card-bg.png` скачаны через `image_get_url` + PowerShell. §15.4.
+- **Works.astro**: фильтр `!e.data.archive` + Eucerin в `images`-словаре. §15.2, §15.5.
+- **CaseArticle.astro**: `eucerin` добавлен в `logos`-словарь. 
+- `npm run check` — 0/0/0. `npm run build` — 12 страниц (2 языка × 6 кейсов), зелёный.
+- **Ожидает пользователя**: изображения секций Eucerin, реальные соцссылки (IG/VK/YT).
 
 ---
 
