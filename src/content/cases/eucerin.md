@@ -70,7 +70,7 @@ social:
 results: []
 media:
   - label: Brand film
-    video: https://vimeo.com/418987467
+    video: https://youtu.be/T0p_5wnAo7Y
 ---
 
 Brand launch and community growth in a new market.

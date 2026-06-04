@@ -7,6 +7,16 @@ social:
   - { label: IG, url: "https://www.instagram.com/growfoodrus?igsh=eHVuZjJleXVpYmth" }
   - { label: TG, url: "https://t.me/growfoodrus" }
 sections:
+  - heading: Results
+    body: >-
+      Rebuilding the brand platform, visual identity, and product communication for a
+      ready-to-eat meal delivery service at scale. Results held stable into the following
+      year. The new brand platform became the foundation for new product launches, audience
+      segmentation, and expansion into new markets.
+    metrics:
+      - { value: "+200%", label: "brand awareness growth within a year of rebrand" }
+      - { value: "+40%",  label: "customer base growth after launch" }
+      - { value: "2х",    label: "product activity in first months post-launch" }
   - heading: Context
     body: >-
       Grow Food is a ready-to-eat meal delivery service founded in 2015 that scaled primarily
@@ -51,13 +61,6 @@ sections:
     images:
       - growfood-packaging.jpg
     layout: video-image
-  - heading: Results
-    body: >-
-      +200% brand awareness growth within a year after the rebrand. +40% customer base growth
-      following the launch of campaigns in the new brand system. 2x product activity in the first
-      months after launch, with results holding stable over the following year. The new brand
-      platform became the foundation for new product launches, audience segmentation, and expansion
-      into new markets.
 results: []
 media:
   - label: Ad campaign — Gold

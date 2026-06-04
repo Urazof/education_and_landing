@@ -3,6 +3,17 @@ title: Philthemusic
 client: Philips
 order: 4
 sections:
+  - heading: Results
+    body: >-
+      Built a new brand identity and social presence for the Philips headphones category,
+      targeting Generations Y and Z.
+    metrics:
+      - { value: "31M+", label: "total audience reached" }
+      - { value: "6M+",  label: "video ad views" }
+      - { value: "2%",   label: "avg ER across channels" }
+      - { value: "7K+",  label: "new brand followers" }
+      - { value: "5K+",  label: "detailed product reviews published" }
+      - { value: "70+",  label: "influencer placements" }
   - heading: Context
     body: >-
       Philips had strong name recognition in consumer electronics, but its audio category had gone
@@ -28,8 +39,10 @@ sections:
       approach. Instead of talking about specs, we talked about music as an experience. We
       positioned Philips Audio as a brand for people who are genuinely obsessed with sound,
       curious about its history, excited by experiments, and always chasing the next great listen.
-    images:
-      - philips-strategy.png
+  - heading: ""
+    body: ""
+    videos:
+      - https://www.youtube.com/watch?v=T0llWVVP9V8
   - heading: Execution
     body: >-
       We launched a full brand platform across social media with a visual style built around music
@@ -39,13 +52,12 @@ sections:
       created native content that felt organic to their audiences. Over 70 influencer placements
       ran between June 2019 and September 2020, alongside a full suite of social media promo
       materials.
-    videos:
-      - https://www.youtube.com/watch?v=T0llWVVP9V8
-  - heading: Results
-    body: >-
-      The platform delivered strong, measurable impact: 10M+ total reach post-launch, influencer
-      marketing program at full scale, 1.5x growth in traffic to product cards, and 3x growth in
-      brand social media following.
+  - heading: ""
+    body: ""
+    images:
+      - philips-strategy.png
+  - heading: ""
+    body: ""
     images:
       - philips-execution.png
   - heading: ""
@@ -54,9 +66,12 @@ sections:
       - philips-results-1.png
       - philips-results-2.png
 results: []
+social:
+  - { label: VK, url: "https://vk.com/philthemusic" }
+  - { label: IG, url: "https://www.instagram.com/_phil_the_music_/" }
 media:
   - label: Brand film
-    video: https://vimeo.com/513292169
+    video: https://youtu.be/XX5SGexsTGE
 ---
 
 Creating a brand platform for the Philips Audio headphones category.
