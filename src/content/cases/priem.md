@@ -1,5 +1,5 @@
 ---
-title: Building from zero
+title: Building brand from zero
 client: Priem.menu
 order: 2
 external: https://priem.menu/
@@ -7,6 +7,18 @@ social:
   - { label: IG, url: "https://www.instagram.com/priemfood?igsh=Y3cyYmRqNGI2cm1u" }
   - { label: VK, url: "https://vk.ru/priemfood" }
 sections:
+  - heading: Results
+    body: >-
+      Launched a new budget meal delivery brand within the Grow Food ecosystem, from brand
+      platform, naming and identity to MVP and market expansion. Partnerships channel built
+      from zero to ~40% of total acquisition.
+    metrics:
+      - { value: "$20M+",  label: "revenue run rate reached within 1.5 years" }
+      - { value: "50%+",   label: "of total revenue from organic channels" }
+      - { value: "+90%",   label: "revenue growth YoY" }
+      - { value: "-55%",   label: "CAC reduction YoY" }
+      - { value: "15+",    label: "cities and regions in first 6 months" }
+      - { value: "+180%",  label: "brand awareness growth YoY" }
   - heading: Context
     body: >-
       Priem is a ready-to-eat meal delivery service launched in 2023 as a new vertical within the
@@ -27,24 +39,29 @@ sections:
       involved. Stripped-down by design — no ingredient filters, no overwhelming choices. Just a
       clean offer built around one headline: a month of food for $50. Everything from brand naming
       to UX was built to make that offer feel obvious and trustworthy.
-  - heading: Execution
-    body: >-
-      I built the brand from scratch, starting with research and naming. The name "Priem" works on
-      three levels in Russian: a meal, a radio signal acknowledgment ("copy that"), and a sports
-      term for a powerful move. I developed the full visual identity, brand voice, guidelines, and
-      designed the main storefront as a landing page, including UX and UI.
+  - heading: ""
+    body: ""
     images:
       - priem-execution-wide.jpg
       - priem-execution-tall.jpg
+  - heading: Execution
+    body: >-
+      Developed the name "Priem" — works on three levels in Russian: a meal, a radio signal
+      acknowledgment, and a sports term for a powerful move. Built the full visual identity,
+      brand voice, and guidelines from scratch. Designed the main storefront as a landing
+      page, including UX and UI.
+  - heading: ""
+    body: ""
     videos:
       - { url: "https://www.youtube.com/shorts/miRtqwE-jn4", vertical: true }
       - https://www.youtube.com/watch?v=dCQZeO8Ter0
-  - heading: Results
+  - heading: ""
     body: >-
-      Scaled to $20M+ revenue run rate within 1.5 years. Expanded into 15+ cities and regions in
-      the first 6 months. Organic channels reached 50%+ of total revenue. Built a partnerships
-      channel from zero to ~40% of total acquisition. Reduced CAC by 55% YoY while growing revenue
-      by 90%. Increased brand awareness by 180% YoY.
+      Launched as a lean MVP and scaled to 15+ cities within 6 months. Built an organic
+      channel strategy that reached 50%+ of total revenue. Developed a partnerships
+      acquisition channel from zero to ~40% of total acquisition.
+  - heading: ""
+    body: ""
     videos:
       - https://www.youtube.com/watch?v=wHJYcF63Q3c
   - heading: What came next
