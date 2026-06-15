@@ -15,7 +15,7 @@ export const ui = {
     'hero.role': 'Marketing leader & brand strategist',
     'hero.greeting': 'Hi! My name is Maria Tkachenko.',
     'hero.intro':
-      "I'm a marketing leader and brand strategist with 12+ years of experience building consumer and tech-driven brands across subscriptions, digital products, and international markets.",
+      'I build brands that drive growth. Turning customer insight into clear positioning and marketing strategy, I help complex products become brands people instantly understand and genuinely connect with.',
     'hero.photoAlt': 'Portrait of Maria Tkachenko',
     'about.p1':
       "Since 2011, I've been building and scaling brands across consumer, tech, subscription, and digital products. I know how to turn complex products into brands people instantly understand and genuinely connect with.",
@@ -39,7 +39,7 @@ export const ui = {
     'hero.role': 'Маркетинг-лидер и бренд-стратег',
     'hero.greeting': 'Привет! Меня зовут Мария Ткаченко.',
     'hero.intro':
-      'Я маркетинг-лидер и бренд-стратег с опытом 12+ лет: строю потребительские и технологичные бренды в подписках, цифровых продуктах и на международных рынках.',
+      'Я строю бренды, которые двигают рост. Превращая клиентские инсайты в чёткое позиционирование и маркетинговую стратегию, я помогаю сложным продуктам становиться брендами, которые люди мгновенно понимают и к которым по-настоящему привязываются.',
     'hero.photoAlt': 'Портрет Марии Ткаченко',
     'about.p1':
       'С 2011 года я строю и масштабирую бренды в потребительском, технологичном, подписочном и цифровом сегментах. Я умею превращать сложные продукты в бренды, которые люди мгновенно понимают и к которым по-настоящему привязываются.',
