@@ -20,15 +20,18 @@ sections:
       quiet. The brand had no distinct voice, no ownable positioning, and no real connection with
       younger audiences. Competitors were dominating the conversation while Philips Audio faded
       into the background.
+    layout: aside-right
     images:
       - philips-challenge.jpg
-    layout: aside-right
-  - heading: Challenge
-    body: >-
-      Revive the headphones category from scratch: build a new brand platform, define a
-      communication strategy, and establish a presence in digital channels relevant to Generations
-      Y & Z. The brand needed more than a campaign — it needed a new identity and a reason for
-      people to care.
+    extra:
+      - heading: Challenge
+        body: >-
+          Revive the headphones category from scratch: build a new brand platform, define a
+          communication strategy, and establish a presence in digital channels relevant to Generations
+          Y & Z. The brand needed more than a campaign — it needed a new identity and a reason for
+          people to care.
+  - heading: ""
+    body: ""
     images:
       - philips-context.png
   - heading: Strategy

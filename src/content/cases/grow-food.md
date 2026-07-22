@@ -10,13 +10,15 @@ sections:
   - heading: Results
     body: >-
       Rebuilding the brand platform, visual identity, and product communication for a
-      ready-to-eat meal delivery service at scale. Results held stable into the following
-      year. The new brand platform became the foundation for new product launches, audience
-      segmentation, and expansion into new markets.
+      ready-to-eat meal delivery service at scale.
     metrics:
       - { value: "+200%", label: "brand awareness growth within a year of rebrand" }
       - { value: "+40%",  label: "customer base growth after launch" }
       - { value: "2х",    label: "product activity in first months post-launch" }
+    after: >-
+      Results held stable into the following year. The new brand platform became the
+      foundation for new product launches, audience segmentation, and expansion into new
+      markets.
   - heading: Context
     body: >-
       Grow Food is a ready-to-eat meal delivery service founded in 2015 that scaled primarily

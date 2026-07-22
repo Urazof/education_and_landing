@@ -1,0 +1,67 @@
+---
+// Микс видео + картинок в ОДНОМ ряду общей высоты (сначала videos, потом images).
+// Та же логика, что в ImageRow: ширина ∝ аспекту (flex-grow), высота через aspect-ratio
+// (равная у всех, без кропа), max-width = cap × аспект ограничивает высоту сверху.
+// Вертикальное видео = 9/16, горизонтальное = 16/9. На мобиле — стопкой во всю ширину.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Video {
+  url: string;
+  vertical: boolean;
+}
+interface Img {
+  src: ImageMetadata;
+  alt: string;
+}
+interface Props {
+  videos?: Video[];
+  images?: Img[];
+  height?: number; // cap высоты ряда на десктопе, px
+  title?: string;
+}
+const { videos = [], images = [], height = 460, title = 'media' } = Astro.props;
+const has = videos.length + images.length > 0;
+
+function embedUrl(url: string): string {
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vi = url.match(/vimeo\.com\/(\d+)/);
+  if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
+  return url;
+}
+const allow =
+  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+---
+
+{has && (
+  <div
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-10"
+    style={`--cap:${height}px`}
+  >
+    {videos.map((v) => (
+      <div class="media-item overflow-hidden rounded-[5px] bg-ink/5" style={`--r:${(v.vertical ? 9 / 16 : 16 / 9).toFixed(4)}`}>
+        <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+      </div>
+    ))}
+    {images.map((im) => (
+      <div class="media-item overflow-hidden rounded-[5px]" style={`--r:${(im.src.width / im.src.height).toFixed(4)}`}>
+        <Image src={im.src} alt={im.alt} class="h-full w-full object-cover" />
+      </div>
+    ))}
+  </div>
+)}
+
+<style>
+  /* aspect-ratio на всех ширинах → задаёт высоту и на мобиле (для iframe нет intrinsic-размера). */
+  .media-item {
+    aspect-ratio: var(--r);
+  }
+  @media (min-width: 640px) {
+    .media-item {
+      flex: var(--r) 1 0%;
+      max-width: calc(var(--cap) * var(--r));
+      min-width: 0;
+    }
+  }
+</style>

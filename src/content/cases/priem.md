@@ -10,8 +10,7 @@ sections:
   - heading: Results
     body: >-
       Launched a new budget meal delivery brand within the Grow Food ecosystem, from brand
-      platform, naming and identity to MVP and market expansion. Partnerships channel built
-      from zero to ~40% of total acquisition.
+      platform, naming and identity to MVP and market expansion.
     metrics:
       - { value: "$20M+",  label: "revenue run rate reached within 1.5 years" }
       - { value: "50%+",   label: "of total revenue from organic channels" }
@@ -19,20 +18,23 @@ sections:
       - { value: "-55%",   label: "CAC reduction YoY" }
       - { value: "15+",    label: "cities and regions in first 6 months" }
       - { value: "+180%",  label: "brand awareness growth YoY" }
+    after: >-
+      Partnerships channel built from zero to ~40% of total acquisition.
   - heading: Context
     body: >-
       Priem is a ready-to-eat meal delivery service launched in 2023 as a new vertical within the
       Grow Food ecosystem, built specifically for the budget segment.
-  - heading: Challenge
-    body: >-
-      By 2023, Grow Food had already expanded into big cities in Russia and into Madrid, Spain, and
-      was looking for ways to reach new audiences. The core GF brand had settled into a
-      mid-to-premium perception, so reaching budget-conscious customers required a separate product.
-      The decision was made to launch a lean MVP with a straightforward value proposition: simple,
-      home-style food at an accessible price.
+    layout: aside-right
     images:
       - priem-fridge.jpg
-    layout: aside-right
+    extra:
+      - heading: Challenge
+        body: >-
+          By 2023, Grow Food had already expanded into big cities in Russia and into Madrid, Spain, and
+          was looking for ways to reach new audiences. The core GF brand had settled into a
+          mid-to-premium perception, so reaching budget-conscious customers required a separate product.
+          The decision was made to launch a lean MVP with a straightforward value proposition: simple,
+          home-style food at an accessible price.
   - heading: Strategy
     body: >-
       The product and brand needed to serve one clear need: eat well without cooking, no complexity

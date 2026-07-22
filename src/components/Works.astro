@@ -9,6 +9,7 @@ import growFoodCardBg from '../assets/growfood-card-bg.png';
 import priemCardBg from '../assets/priem-card-bg.jpg';
 import eucerincardBg from '../assets/eucerin-card-bg.png';
 import philipsCardBg from '../assets/philips-card-bg.png';
+import cofixCardBg from '../assets/cofix-card-bg.jpg';
 import worksPreview from '../assets/works-preview.png';
 
 interface Props {
@@ -23,6 +24,7 @@ const images: Record<string, ImageMetadata> = {
   priem: priemCardBg,
   eucerin: eucerincardBg,
   philips: philipsCardBg,
+  cofix: cofixCardBg,
 };
 
 const cases = (await getCollection('cases'))
@@ -34,15 +36,25 @@ const cases = (await getCollection('cases'))
   <h2 class="mb-8 text-xl font-bold">{t('works.title')}</h2>
   <div class="grid gap-6 sm:grid-cols-2">
     {
-      cases.map((entry) => (
-        <CaseCard
-          href={`${base}/cases/${entry.id}`}
-          title={entry.data.title}
-          client={entry.data.client}
-          image={images[entry.id] ?? worksPreview}
-          alt={entry.data.client}
-        />
-      ))
+      cases.map((entry, i) => {
+        const card = (
+          <CaseCard
+            href={`${base}/cases/${entry.id}`}
+            title={entry.data.title}
+            client={entry.data.client}
+            image={images[entry.id] ?? worksPreview}
+            alt={entry.data.client}
+          />
+        );
+        // Нечётное число кейсов → последняя карточка одна в ряду.
+        // Растягиваем на 2 колонки и центрируем по ширине обычной карточки.
+        const isLastOdd = cases.length % 2 === 1 && i === cases.length - 1;
+        return isLastOdd ? (
+          <div class="sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.75rem)]">{card}</div>
+        ) : (
+          card
+        );
+      })
     }
   </div>
 </section>
