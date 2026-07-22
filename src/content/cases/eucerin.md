@@ -6,13 +6,14 @@ sections:
   - heading: Results
     body: >-
       Built awareness and loyalty for a science-led dermocosmetics brand entering
-      a competitive new market from zero. 80%+ of all SMM content was produced locally —
-      the brand's communities became a benchmark for visual quality among Eucerin's
-      global markets.
+      a competitive new market from zero.
     metrics:
       - { value: "15M+", label: "target audience reached" }
       - { value: "30K+", label: "brand followers gained" }
       - { value: "3%",   label: "average ER" }
+    after: >-
+      80%+ of all SMM content was produced locally — the brand's communities became a
+      benchmark for visual quality among Eucerin's global markets.
   - heading: Context
     body: >-
       Beiersdorf (Nivea's parent company) was entering a new market with Eucerin — a
