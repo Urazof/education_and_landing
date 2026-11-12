@@ -7,6 +7,7 @@
 // `height` = максимальная высота ряда (cap) на десктопе, px.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { aspectRatio } from '../lib/image';
 
 interface Item {
   src: ImageMetadata;
@@ -26,7 +27,7 @@ const isMulti = images.length >= 2;
     style={`--cap:${height}px`}
   >
     {images.map((im) => {
-      const ratio = (im.src.width / im.src.height).toFixed(4);
+      const ratio = aspectRatio(im.src); // не читаем width/height напрямую — см. lib/image.ts
       return isMulti ? (
         <div class="img-item overflow-hidden rounded-base" style={`--r:${ratio}`}>
           <Image src={im.src} alt={im.alt} class="w-full object-cover sm:h-full" />

@@ -5,6 +5,7 @@
 // Вертикальное видео = 9/16, горизонтальное = 16/9. На мобиле — стопкой во всю ширину.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { aspectRatio } from '../lib/image';
 
 interface Video {
   url: string;
@@ -45,7 +46,7 @@ const allow =
       </div>
     ))}
     {images.map((im) => (
-      <div class="media-item overflow-hidden rounded-base" style={`--r:${(im.src.width / im.src.height).toFixed(4)}`}>
+      <div class="media-item overflow-hidden rounded-base" style={`--r:${aspectRatio(im.src)}`}>
         <Image src={im.src} alt={im.alt} class="h-full w-full object-cover" />
       </div>
     ))}

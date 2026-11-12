@@ -68,8 +68,18 @@ const allow =
 
 // Хелпер: имена файлов секции → массив {src, alt} для ImageRow.
 function imgItems(files: string[], alt: string) {
-  return files.filter((f) => assets[f]).map((f) => ({ src: assets[f], alt }));
+  const list = files.filter((f) => assets[f]);
+  // несколько картинок в секции различаем номером: «… (1/2)», «… (2/2)»
+  return list.map((f, i) => ({ src: assets[f], alt: list.length > 1 ? `${alt} (${i + 1}/${list.length})` : alt }));
 }
+
+// Контекст секции для alt-текстов: её заголовок, а у чистых медиа-блоков без заголовка — ближайший предыдущий заголовок
+// (картинки после «Strategy» относятся к Strategy). Если заголовков ещё не было — название кейса.
+let lastHeading = '';
+const sectionLabels = sections.map((s) => {
+  if (s.heading) lastHeading = s.heading;
+  return lastHeading || title;
+});
 ---
 
 <main id="main" class="container-page py-12 md:py-16">
@@ -105,6 +115,8 @@ function imgItems(files: string[], alt: string) {
       const hasImages = s.images.length > 0;
       const hasVideos = s.videos.length > 0;
       const vt = `${title} — video ${si + 1}`; // уникальный title для iframe секции
+      const altBase = `${client} — ${sectionLabels[si]}`;
+      const altAt = (i: number, n: number) => (n > 1 ? `${altBase} (${i + 1}/${n})` : altBase);
 
       // Чистый медиа-блок без текста (нет ни heading, ни body, ни подзаголовка, ни буллетов)
       if (!hasHeading && !hasBody && !s.subheading && s.bullets.length === 0) {
@@ -112,7 +124,7 @@ function imgItems(files: string[], alt: string) {
         if (s.layout === 'media-row' && (hasVideos || hasImages)) {
           return (
             <section>
-              <MediaRow videos={s.videos} images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} title={vt} />
+              <MediaRow videos={s.videos} images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} title={vt} />
             </section>
           );
         }
@@ -125,15 +137,15 @@ function imgItems(files: string[], alt: string) {
                   <iframe src={embedUrl(v.url)} title={`${vt} (${vi + 1})`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
                 </div>
               ))}
-              {s.images.map((f) => assets[f] && (
-                <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-base object-cover sm:h-[var(--row-h)] sm:w-auto" />
+              {s.images.map((f, ii) => assets[f] && (
+                <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base object-cover sm:h-[var(--row-h)] sm:w-auto" />
               ))}
             </section>
           );
         }
         return (
           <section class="space-y-4">
-            {hasImages && <ImageRow images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} />}
+            {hasImages && <ImageRow images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} />}
             {hasVideos && <VideoGroup videos={s.videos} title={vt} height={ROW_H} />}
           </section>
         );
@@ -180,8 +192,8 @@ function imgItems(files: string[], alt: string) {
                 ))}
               </div>
               <div class="space-y-4">
-                {hasImages && s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-base" />
+                {hasImages && s.images.map((f, ii) => assets[f] && (
+                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
                 ))}
                 {asideVideo && s.videos.map((v, vi) => (
                   <div class={`overflow-hidden rounded-base bg-paper-2 ${v.vertical ? 'aspect-[9/16]' : 'aspect-video'} w-full`}>
@@ -207,8 +219,8 @@ function imgItems(files: string[], alt: string) {
           <section>
             <div class="grid items-center gap-8 sm:grid-cols-[2fr_3fr]">
               <div class="space-y-4">
-                {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-base" />
+                {s.images.map((f, ii) => assets[f] && (
+                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
                 ))}
               </div>
               <div class="space-y-6">
@@ -258,7 +270,7 @@ function imgItems(files: string[], alt: string) {
               {s.bullets.map((b) => <li>{b}</li>)}
             </ul>
           )}
-          {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={IMG_ROW_CAP} /></div>}
+          {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} /></div>}
           {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
           {s.links.length > 0 && (
             <ul class="mt-4 space-y-1">
