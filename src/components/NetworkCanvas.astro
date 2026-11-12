@@ -1,0 +1,38 @@
+---
+// Разметка сети: canvas на всю секцию hero + декоративный счётчик. Сама логика — в NetworkCanvas.ts.
+// Всё декоративное → aria-hidden. Размеры задаёт родитель (секция hero: relative + overflow-hidden),
+// поэтому у canvas нет собственного размера в потоке и он не вызывает CLS.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<canvas id="hero-network" aria-hidden="true" class="absolute inset-0 block h-full w-full cursor-crosshair"
+></canvas>
+<div
+  aria-hidden="true"
+  class="pointer-events-none absolute right-5 top-5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted sm:right-8"
+>
+  {t('hero.counter')}
+  <b class="ml-2 text-sm font-semibold text-ink"><span id="hero-network-score">0000</span></b>
+</div>
+
+<script>
+  // Astro собирает этот <script> в один маленький ES-модуль (единственный JS на сайте).
+  import { initNetwork } from './NetworkCanvas.ts';
+
+  const canvas = document.getElementById('hero-network');
+  if (canvas instanceof HTMLCanvasElement) {
+    const start = () => initNetwork(canvas, document.getElementById('hero-network-score'));
+    // Стартуем в простое браузера, чтобы не конкурировать с LCP (портрет/H1).
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(start, { timeout: 2000 });
+    } else {
+      setTimeout(start, 200);
+    }
+  }
+</script>

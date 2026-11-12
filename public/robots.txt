@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# ⚠️ PROVISIONAL домен (см. astro.config.mjs → site). Заменить при выборе реального домена.
 Sitemap: https://mariatkachenko.savor.ing/sitemap-index.xml

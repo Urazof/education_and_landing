@@ -1,23 +1,33 @@
 ---
+import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
 import Works from '../components/Works.astro';
-import Archive from '../components/Archive.astro';
 import Publications from '../components/Publications.astro';
+import Recognition from '../components/Recognition.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
+import mariaPhoto from '../assets/maria-photo.jpg';
+import { useTranslations } from '../i18n/ui';
+import { personJsonLd } from '../lib/seo';
 
 const lang = 'en';
+const t = useTranslations(lang);
+// Портрет для JSON-LD: те же параметры, что у Hero → Astro отдаёт тот же оптимизированный файл (без дубля).
+const portrait = await getImage({ src: mariaPhoto, width: 600, height: 750, position: 'top' });
+const jsonLd = personJsonLd(Astro.site!, new URL(portrait.src, Astro.site!).href);
 ---
 
-<Base title="Maria Tkachenko — Brand strategist" lang={lang}>
+<Base title={t('meta.title')} description={t('meta.description')} lang={lang} jsonLd={jsonLd}>
   <Nav lang={lang} />
-  <main class="mx-auto max-w-5xl px-6">
+  <main id="main">
     <Hero lang={lang} />
+    <About lang={lang} />
     <Works lang={lang} />
-    <Archive lang={lang} />
     <Publications lang={lang} />
+    <Recognition lang={lang} />
     <Contact lang={lang} />
   </main>
   <Footer lang={lang} />

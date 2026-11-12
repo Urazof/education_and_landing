@@ -1,0 +1,35 @@
+---
+// Тёмная плашка Recognition: слева текст о жюри E+ Awards (ссылка на страницу жюри), справа крупный курсивный «E+».
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const juryUrl = 'https://eplus.marketing/award/jury/jury-old/2024';
+---
+
+<section class="bg-ink">
+  <div class="container-page flex items-center justify-between gap-8 py-[72px] md:py-[96px]">
+    <div>
+      <p class="eyebrow !text-accent-on-dark">{t('recognition.eyebrow')}</p>
+      <p class="mt-5 text-[clamp(1.5rem,3vw,2.25rem)] leading-tight text-paper font-display">
+        <a
+          href={juryUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline decoration-paper/60 underline-offset-8 transition-colors hover:decoration-accent-on-dark focus-visible:outline-accent-on-dark"
+        >
+          {t('recognition.a')}<em class="font-light italic">{t('recognition.em')}</em>{t('recognition.b')}
+        </a>
+      </p>
+    </div>
+    <span
+      aria-hidden="true"
+      class="font-display text-[clamp(4rem,12vw,9rem)] font-light italic leading-none text-accent-on-dark"
+    >
+      E+
+    </span>
+  </div>
+</section>

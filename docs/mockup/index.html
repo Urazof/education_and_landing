@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maria Tkachenko — design reference (not production code)</title>
+<!-- Design reference for the Astro rebuild. Source of truth for look and spacing; see docs/DESIGN.md.
+     Inline styles here are for reference only: in the real site use tokens from global.css and Tailwind. -->
+<style>
+@font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:Fraunces;font-style:italic;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-wght-italic.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/inter-latin-wght-normal.woff2) format('woff2')}
+
+body{margin:0;background:#F6F3EE}
+a{color:#17150F;text-decoration:none}
+a:hover{color:#2E6A4F}
+.ulink{border-bottom:1px solid #CFC7BA;padding-bottom:2px}
+.ulink:hover{border-color:#2E6A4F}
+.card .thumb{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.card:hover .thumb{transform:scale(1.03)}
+.card:hover .ctitle{color:#2E6A4F}
+.row:hover{background:#EFEBE4}
+.row:hover .arrow{transform:translateX(4px);color:#2E6A4F}
+.arrow{transition:transform .2s ease}
+.btn-primary:hover{background:#245640;color:#F6F3EE}
+.btn-ghost:hover{background:#17150F;color:#F6F3EE}
+html{scroll-behavior:smooth}</style>
+</head>
+<body>
+
+
+<div style="font-family: Inter, system-ui, sans-serif; color: #17150F; background: #F6F3EE; min-height: 100vh">
+
+  <header style="position: sticky; top: 0; z-index: 20; background: rgba(246,243,238,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid #E2DCD2">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <a href="#top" style="font-family: Fraunces, serif; font-size: 20px">Maria Tkachenko</a>
+      <nav aria-label="Main" style="display: flex; gap: 28px; flex-wrap: wrap; font-size: 14px">
+        <a href="#about">About</a>
+        <a href="#work">Work</a>
+        <a href="#press">Publications</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section id="top" style="position: relative; overflow: hidden; border-bottom: 1px solid #E2DCD2">
+    <canvas id="net" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair"></canvas>
+    <div style="position: absolute; top: 20px; right: 28px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: 0.12em; color: #6B645A; display: flex; gap: 14px; pointer-events: none">
+      <span>INSIGHTS LINKED <b style="color: #17150F; font-size: 14px"><span id="score">0000</span></b></span>
+    </div>
+    <div style="position: relative; max-width: 1200px; margin: 0 auto; padding: 120px 32px 112px; display: flex; flex-wrap: wrap; gap: 64px; align-items: flex-end; pointer-events: none">
+      <div style="flex: 999 1 560px; min-width: 0">
+        <p style="margin: 0 0 36px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #6B645A">Maria Tkachenko</p>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-weight: 400; font-size: clamp(52px, 8vw, 124px); line-height: 0.98; letter-spacing: -0.02em">I build brands<br>that <em style="font-style: italic; font-weight: 300">drive</em> growth<span style="color: #2E6A4F">.</span></h1>
+        <p style="margin: 36px 0 0; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #17150F; font-weight: 500">Marketing leader <span style="color: #A39C90">/</span> Brand strategist <span style="color: #A39C90">/</span> <span style="color: #6B645A">E+ Awards jury, 2024</span></p>
+        <p style="margin: 28px 0 0; max-width: 520px; font-size: 18px; line-height: 1.6; color: #4F493F">I turn customer insight into positioning and marketing strategy, and make complex products easy to understand.</p>
+        <div style="margin-top: 44px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; pointer-events: auto">
+          <a class="btn-primary" href="#work" style="background: #2E6A4F; color: #F6F3EE; padding: 14px 22px; border-radius: 4px; font-size: 14px; font-weight: 600">See selected work →</a>
+          <a class="ulink" href="#contact" style="font-size: 14px">Get in touch</a>
+        </div>
+      </div>
+      <figure style="flex: 1 1 300px; max-width: 360px; margin: 0; pointer-events: auto">
+        <div role="img" aria-label="Portrait placeholder" style="aspect-ratio: 4 / 5; background: #E6E0D6; border: 1px dashed #B9B1A4; display: flex; align-items: center; justify-content: center; color: #6B645A; font-size: 13px; letter-spacing: 0.08em">[PORTRAIT — WebP]</div>
+        <figcaption style="margin-top: 10px; font-size: 12px; color: #6B645A">Click the network — every node is a customer insight.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="about" style="max-width: 1200px; margin: 0 auto; padding: 120px 32px; display: flex; flex-wrap: wrap; gap: 64px">
+    <div style="flex: 1 1 280px">
+      <p style="margin: 0 0 16px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #2E6A4F">About</p>
+      <h2 style="margin: 0; font-family: Fraunces, serif; font-weight: 400; font-size: 48px; line-height: 1.05">Insight first.<br><em style="font-weight: 300">Then</em> the brand.</h2>
+    </div>
+    <div style="flex: 2 1 480px; font-size: 17px; line-height: 1.7; color: #4F493F; display: flex; flex-direction: column; gap: 18px">
+      <p style="margin: 0">[2–3 sentences about Maria: her path, the industries she has worked in, and the approach — positioning built on research into how real customers decide.]</p>
+      <p style="margin: 0">Here are some of the brands, systems and campaigns I have built over the years.</p>
+    </div>
+  </section>
+
+  <section id="work" style="background: #EFEBE4; border-top: 1px solid #E2DCD2; border-bottom: 1px solid #E2DCD2">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 120px 32px">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 56px">
+        <div>
+          <p style="margin: 0 0 16px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #2E6A4F">Selected work</p>
+          <h2 style="margin: 0; font-family: Fraunces, serif; font-weight: 400; font-size: 48px; line-height: 1.05">Brands, systems<br>and campaigns</h2>
+        </div>
+        <a class="ulink" href="#work" style="font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #2E6A4F">Archive →</a>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 40px 32px">
+        
+          <a class="card" href="#work" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #E2DCD2">
+              <div class="thumb" style="width: 100%; height: 100%; background: #DCE6DA; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box">
+                <span style="font-family: Fraunces, serif; font-size: 34px; color: #2E6A4F; font-style: italic">Grow Food</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #6B645A">Brand transformation</div>
+            <div class="ctitle" style="font-family: Fraunces, serif; font-size: 26px; line-height: 1.15; margin-top: -6px">Repositioning a food-tech brand for its next stage of growth</div>
+          </a>
+        
+          <a class="card" href="#work" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #E2DCD2">
+              <div class="thumb" style="width: 100%; height: 100%; background: #E9DFD0; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box">
+                <span style="font-family: Fraunces, serif; font-size: 34px; color: #7A4E2B; font-style: italic">Priem.menu</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #6B645A">Brand from zero</div>
+            <div class="ctitle" style="font-family: Fraunces, serif; font-size: 26px; line-height: 1.15; margin-top: -6px">Building a brand from a blank page</div>
+          </a>
+        
+          <a class="card" href="#work" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #E2DCD2">
+              <div class="thumb" style="width: 100%; height: 100%; background: #DCE3EC; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box">
+                <span style="font-family: Fraunces, serif; font-size: 34px; color: #2B4C7E; font-style: italic">Eucerin</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #6B645A">Brand launch</div>
+            <div class="ctitle" style="font-family: Fraunces, serif; font-size: 26px; line-height: 1.15; margin-top: -6px">Launching the brand in a new market</div>
+          </a>
+        
+          <a class="card" href="#work" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #E2DCD2">
+              <div class="thumb" style="width: 100%; height: 100%; background: #E4DDEA; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box">
+                <span style="font-family: Fraunces, serif; font-size: 34px; color: #5A3F72; font-style: italic">Philips</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #6B645A">Campaign</div>
+            <div class="ctitle" style="font-family: Fraunces, serif; font-size: 26px; line-height: 1.15; margin-top: -6px">Philthemusic</div>
+          </a>
+        
+          <a class="card" href="#work" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; background: #E2DCD2">
+              <div class="thumb" style="width: 100%; height: 100%; background: #F0DCD3; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box">
+                <span style="font-family: Fraunces, serif; font-size: 34px; color: #A2462B; font-style: italic">Cofix</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #6B645A">Communication refresh</div>
+            <div class="ctitle" style="font-family: Fraunces, serif; font-size: 26px; line-height: 1.15; margin-top: -6px">Refreshing how the brand speaks</div>
+          </a>
+        
+      </div>
+    </div>
+  </section>
+
+  <section id="press" style="max-width: 1200px; margin: 0 auto; padding: 120px 32px">
+    <p style="margin: 0 0 16px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #2E6A4F">Publications &amp; podcasts</p>
+    <h2 style="margin: 0 0 48px; font-family: Fraunces, serif; font-weight: 400; font-size: 48px; line-height: 1.05">On the record</h2>
+    <div style="border-top: 1px solid #17150F">
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">RBC Pro</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">Brand positioning on a budget</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Article</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">Sostav</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">Grow Food: brand transformation</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Case study</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">INC Russia</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">Expert commentary</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Commentary</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">Pravila</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">Online services in Russia: taxi, delivery, booking</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Industry insight</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">Yandex Music</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">Marketing Conspiracies</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Podcast</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+        <a class="row" href="#press" style="display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap; padding: 24px 8px; border-bottom: 1px solid #E2DCD2">
+          <span style="flex: 0 0 150px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B645A">Yandex Music</span>
+          <span style="flex: 1 1 320px; font-family: Fraunces, serif; font-size: 24px">The Anatomy of Advertising</span>
+          <span style="flex: 0 0 auto; font-size: 13px; color: #6B645A">Podcast</span>
+          <span class="arrow" style="flex: 0 0 auto; font-size: 18px">↗</span>
+        </a>
+      
+    </div>
+  </section>
+
+  <section style="background: #17150F; color: #F6F3EE">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 96px 32px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between">
+      <div style="flex: 1 1 520px">
+        <p style="margin: 0 0 16px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #9CC8B2">Recognition</p>
+        <p style="margin: 0; font-family: Fraunces, serif; font-size: 40px; line-height: 1.15; font-weight: 300">Jury member, <em>E+ Awards</em> (formerly Effie), 2024</p>
+      </div>
+      <div style="font-family: Fraunces, serif; font-size: 120px; line-height: 1; color: #9CC8B2; font-style: italic" aria-hidden="true">E+</div>
+    </div>
+  </section>
+
+  <section id="contact" style="max-width: 1200px; margin: 0 auto; padding: 140px 32px 120px">
+    <p style="margin: 0 0 16px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: #2E6A4F">Contact</p>
+    <h2 style="margin: 0; font-family: Fraunces, serif; font-weight: 400; font-size: clamp(48px, 7vw, 96px); line-height: 1">Let’s keep <em style="font-weight: 300">in touch</em><span style="color: #2E6A4F">.</span></h2>
+    <p style="margin: 28px 0 0; max-width: 520px; font-size: 18px; line-height: 1.6; color: #4F493F">Brand strategy, positioning, launches — or just a conversation about marketing.</p>
+    <div style="margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap">
+      <a class="btn-primary" href="https://www.linkedin.com/in/maria-tkachenko-k" style="background: #2E6A4F; color: #F6F3EE; padding: 14px 22px; border-radius: 4px; font-size: 14px; font-weight: 600">LinkedIn ↗</a>
+      <a class="btn-ghost" href="https://t.me/marymishel" style="border: 1px solid #17150F; padding: 13px 22px; border-radius: 4px; font-size: 14px; font-weight: 500">Telegram</a>
+      <a class="btn-ghost" href="#contact" style="border: 1px solid #17150F; padding: 13px 22px; border-radius: 4px; font-size: 14px; font-weight: 500">WhatsApp</a>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid #E2DCD2">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 28px 32px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #6B645A">
+      <span>© 2026 Maria Tkachenko</span>
+      <span>RSS · sitemap.xml · llms.txt · Built with Astro</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const c = document.getElementById('net'), ctx = c.getContext('2d'), scoreEl = document.getElementById('score');
+  const ACCENT = '#2E6A4F', DENSITY = 70, LINK = 120;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w = 0, h = 0, dpr = 1, nodes = [], pulses = [], score = 0, visible = true;
+  function setup() {
+    const r = c.getBoundingClientRect(); dpr = devicePixelRatio || 1;
+    w = r.width; h = r.height; c.width = w * dpr; c.height = h * dpr;
+    const n = Math.round(DENSITY * (w * h) / (1440 * 760));
+    nodes = Array.from({ length: n }, () => ({ x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - .5) * .18, vy: (Math.random() - .5) * .18, lit: 0, hot: Math.random() < .08 }));
+  }
+  function ignite(n, depth) {
+    if (n.lit > .5 || depth > 6) return;
+    n.lit = 1; score++; scoreEl.textContent = String(score).padStart(4, '0');
+    pulses.push({ x: n.x, y: n.y, r: 0, a: .5 });
+    for (const m of nodes) if (m !== n && Math.hypot(m.x - n.x, m.y - n.y) < LINK && Math.random() < .55)
+      setTimeout(() => ignite(m, depth + 1), 120 + Math.random() * 120);
+  }
+  c.addEventListener('click', e => {
+    const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    let best = null, bd = 40;
+    for (const n of nodes) { const d = Math.hypot(n.x - x, n.y - y); if (d < bd) { bd = d; best = n; } }
+    if (best) ignite(best, 0);
+  });
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!visible || document.hidden) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    for (const n of nodes) {
+      if (!reduced) { n.x += n.vx; n.y += n.vy; }
+      if (n.x < 0 || n.x > w) n.vx *= -1; if (n.y < 0 || n.y > h) n.vy *= -1; n.lit *= .985;
+    }
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < LINK) { const lit = Math.max(a.lit, b.lit), on = lit > .05;
+        ctx.strokeStyle = on ? ACCENT : '#17150F'; ctx.globalAlpha = (1 - d / LINK) * (on ? .25 + lit * .5 : .08);
+        ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+    }
+    for (const n of nodes) { const on = n.lit > .05;
+      ctx.globalAlpha = on ? .4 + n.lit * .6 : (n.hot ? .55 : .22); ctx.fillStyle = (on || n.hot) ? ACCENT : '#17150F';
+      ctx.beginPath(); ctx.arc(n.x, n.y, 2.2 + n.lit * 2.5, 0, Math.PI * 2); ctx.fill(); }
+    pulses = pulses.filter(p => p.a > .01);
+    for (const p of pulses) { p.r += 2.2; p.a *= .93; ctx.globalAlpha = p.a; ctx.strokeStyle = ACCENT; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  }
+  new ResizeObserver(setup).observe(c);
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(c);
+  setup(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
