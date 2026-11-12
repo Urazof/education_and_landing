@@ -2,6 +2,11 @@
 // === Frontmatter (между --- ) — серверный код, выполняется при сборке, в браузер НЕ попадает ===
 import '../styles/global.css';
 import { alternateLinks, localeTag, type Lang } from '../i18n/ui';
+// Два шрифта «над сгибом» preload'им. ?url отдаёт hashed-адрес файла из сборки — тот же,
+// что подставляет @font-face из fontsource, поэтому браузер не качает файл дважды.
+// Относительный путь (а не пакетный) нужен, т.к. exports пакета не открывают /files/*.woff2.
+import interUrl from '../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import fraunces from '../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
 
 // Props, которые принимает layout. interface + TypeScript = типобезопасность в шаблонах.
 interface Props {
@@ -10,6 +15,7 @@ interface Props {
   lang?: Lang;
   ogType?: 'website' | 'article'; // тип для Open Graph: главная — website, кейсы — article
   ogImage?: string; // путь к соц-картинке (root-relative, напр. "/og.png"). Опционально.
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]; // структурированные данные (Person / CreativeWork)
 }
 
 // Деструктуризация Astro.props со значениями по умолчанию.
@@ -19,6 +25,7 @@ const {
   lang = 'en',
   ogType = 'website',
   ogImage,
+  jsonLd,
 } = Astro.props;
 
 // site задан в astro.config.mjs → доступен как Astro.site. Из него строим абсолютные URL.
@@ -35,6 +42,9 @@ const siteName = 'Maria Tkachenko';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f6f3ee" />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
 
@@ -63,6 +73,9 @@ const siteName = 'Maria Tkachenko';
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+    <!-- JSON-LD: set:html, чтобы Astro не экранировал кавычки внутри JSON -->
+    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
     <!-- именованный слот: страницы смогут добавить свои теги в <head> -->
     <slot name="head" />

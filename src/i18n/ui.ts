@@ -11,7 +11,10 @@ export const defaultLang = 'en';
 export const ui = {
   en: {
     'nav.about': 'About',
-    'nav.works': 'Works',
+    'nav.works': 'Work',
+    'nav.publications': 'Publications',
+    'nav.contact': 'Contact',
+    'footer.sitemap': 'Sitemap',
     'hero.role': 'Marketing leader & brand strategist',
     'hero.greeting': 'Hi! My name is Maria Tkachenko.',
     'hero.intro':
@@ -36,6 +39,9 @@ export const ui = {
   ru: {
     'nav.about': 'Обо мне',
     'nav.works': 'Работы',
+    'nav.publications': 'Публикации',
+    'nav.contact': 'Контакты',
+    'footer.sitemap': 'Карта сайта',
     'hero.role': 'Маркетинг-лидер и бренд-стратег',
     'hero.greeting': 'Привет! Меня зовут Мария Ткаченко.',
     'hero.intro':

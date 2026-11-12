@@ -8,6 +8,14 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const base = localePrefix(lang);
 
+// Пункты меню (порядок по docs/DESIGN.md). id — якорь секции на главной.
+const navLinks = [
+  { id: 'about', key: 'nav.about' },
+  { id: 'works', key: 'nav.works' },
+  { id: 'publications', key: 'nav.publications' },
+  { id: 'contact', key: 'nav.contact' },
+] as const;
+
 // Соц-иконки — единый набор: одинаковый viewBox 24×24, один цвет (ink), один размер.
 // SVG-глифы (simple-icons) вместо растровых PNG → гарантированно одинаковый размер и углы.
 const socials: { label: string; url: string; path: string; circle?: boolean }[] = [
@@ -32,12 +40,22 @@ const socials: { label: string; url: string; path: string; circle?: boolean }[] 
 ];
 ---
 
-<header class="border-b border-ink/15">
-  <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-    <ul class="flex gap-6 text-sm">
-      <li><a href={`${base}/#about`} class="font-semibold hover:underline">{t('nav.about')}</a></li>
-      <li><a href={`${base}/#works`} class="font-semibold hover:underline">{t('nav.works')}</a></li>
+<header
+  class="sticky top-0 z-50 border-b border-line bg-paper/[0.88] backdrop-blur-[10px]"
+>
+  <nav
+    class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-4 sm:px-8"
+    aria-label="Main"
+  >
+    <a href={`${base}/`} class="font-display text-xl text-ink">Maria Tkachenko</a>
+    <ul class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
+      {navLinks.map((l) => (
+        <li>
+          <a href={`${base}/#${l.id}`} class="text-ink-2 transition-colors hover:text-accent">{t(l.key)}</a>
+        </li>
+      ))}
     </ul>
+    {/* Соц-иконки пока остаются в шапке; в Фазе 2 переедут в блок Contact (по макету). */}
     <ul class="flex items-center gap-4">
       {socials.map((s) => (
         <li>

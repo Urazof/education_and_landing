@@ -2,34 +2,74 @@
 @import "tailwindcss";
 
 /*
-  @theme — способ Tailwind v4 объявлять дизайн-токены прямо в CSS (вместо tailwind.config.js).
-  Каждая переменная автоматически становится утилитой: --color-brand-green → bg-brand-green, text-brand-green и т.д.
-  Токены взяты из логотипов на Miro-доске (см. .design/specs/00-site-overview.md).
+  Шрифты (self-hosted через fontsource, в сборку попадают hashed-файлами, внешних запросов нет).
+  Inter — текст; Fraunces — заголовки (normal + italic для акцентных слов).
+  Fraunces не содержит кириллицы → на /ru/ заголовки уйдут в запасной serif (см. --font-display).
+*/
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/fraunces/wght-italic.css";
+
+/*
+  @theme — дизайн-токены (docs/DESIGN.md). Каждая --color-* становится утилитой:
+  --color-accent → bg-accent / text-accent / border-accent, а bg-ink/5 даёт прозрачность.
+  Имена ink и paper сохранены (используются по всему проекту), изменились только значения.
 */
 @theme {
-  /* Палитра вайрфрейма (макет на доске — ч/б) */
-  --color-ink: #1a1a1a;
-  --color-paper: #ffffff;
+  --color-paper: #f6f3ee; /* фон страницы */
+  --color-paper-2: #efebe4; /* фон чередующихся секций */
+  --color-line: #e2ddd2; /* волосяные линии, рамки */
+  --color-ink: #17150f; /* основной текст, тёмная плашка */
+  --color-ink-2: #4f493f; /* основной текст абзацев */
+  --color-muted: #6b645a; /* подписи (контраст ≥ 4.5:1 на paper) */
+  --color-accent: #2e6a4f; /* CTA, подписи-эйбровы, точка в заголовках */
+  --color-accent-ink: #245640; /* hover CTA */
+  --color-accent-on-dark: #9cc8b2; /* акцент на тёмном фоне */
 
-  /* Бренд Grow Food */
-  --color-gf-green: #21c24b;
-  --color-gf-lime: #b6f03c;
-  --color-gf-dark: #0e3b1e;
-
-  /* Бренд Priem */
-  --color-priem-purple: #5b2a86;
-  --color-priem-yellow: #f4c400;
+  --radius-base: 4px;
+  --container-page: 1200px;
 
   /* Типографика */
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, "Times New Roman", serif;
 }
 
 /* Базовые стили документа */
 html {
   scroll-behavior: smooth;
+  /* якоря не прячутся под sticky-шапкой */
+  scroll-padding-top: 4.5rem;
 }
 body {
   font-family: var(--font-sans);
-  color: var(--color-ink);
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.65;
+  color: var(--color-ink-2);
   background: var(--color-paper);
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* Цвет заголовков НЕ задаём глобально: preflight даёт inherit, и заголовки на фото-карточках
+     (text-paper) остаются читаемыми. На светлом фоне цвет ставим классом text-ink. */
+}
+
+/* Видимый фокус с клавиатуры (a11y) */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

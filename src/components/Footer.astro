@@ -1,6 +1,6 @@
 ---
-// В макете отдельного футера нет (соцсети — в шапке). Оставляем тонкую строку копирайта —
-// это хорошая практика и не спорит с макетом.
+// Подвал: копирайт слева, мелкие служебные ссылки справа (docs/DESIGN.md, секция 8).
+// llms.txt добавится в Фазе 5, когда появится сам эндпоинт (иначе ссылка вела бы в 404).
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -11,8 +11,11 @@ const t = useTranslations(lang);
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t-1 border-ink">
-  <div class="mx-auto max-w-5xl px-6 py-8 text-sm opacity-70">
-    © {year} Maria Tkachenko. {t('footer.rights')}.
+<footer class="border-t border-line">
+  <div
+    class="mx-auto flex max-w-5xl flex-col gap-2 px-5 py-8 text-sm text-muted sm:flex-row sm:justify-between sm:px-8"
+  >
+    <span>© {year} Maria Tkachenko. {t('footer.rights')}.</span>
+    <a href="/sitemap-index.xml" class="transition-colors hover:text-accent">{t('footer.sitemap')}</a>
   </div>
 </footer>
