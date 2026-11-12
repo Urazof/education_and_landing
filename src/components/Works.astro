@@ -50,12 +50,20 @@ const cases = (await getCollection('cases'))
       </a>
     </div>
 
-    <!-- Flex-wrap вместо жёсткой сетки: карточки от 320px, неполный последний ряд растягивается
-         (3 + 2 карточки на десктопе, как в макете). Нечётную карточку центрировать больше не нужно. -->
-    <div class="mt-12 flex flex-wrap gap-x-8 gap-y-14">
+    <!-- Сетка: 1 колонка на телефоне, 2 на планшете, 6-колоночная на десктопе. Первые две карточки занимают
+         по 3 колонки (2 крупные сверху), остальные по 2 (по 3 в ряд ниже) → 2 + 3 при пяти кейсах.
+         Утилиты написаны целиком (не собираются из строк), иначе Tailwind их не найдёт. Если кейсов нечётное
+         число, на планшете последняя карточка растягивается на обе колонки. -->
+    <div class="mt-12 grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-6">
       {
-        cases.map((entry) => (
-          <div class="min-w-0 flex-[1_1_320px]">
+        cases.map((entry, i) => (
+          <div
+            class:list={[
+              'min-w-0',
+              i < 2 ? 'lg:col-span-3' : 'lg:col-span-2',
+              cases.length % 2 === 1 && i === cases.length - 1 && 'md:col-span-2 lg:col-span-2',
+            ]}
+          >
             <CaseCard
               href={`${base}/cases/${entry.id}`}
               title={entry.data.title}
