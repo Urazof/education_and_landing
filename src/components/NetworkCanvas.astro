@@ -13,12 +13,18 @@ const t = useTranslations(lang);
 
 <canvas id="hero-network" aria-hidden="true" class="absolute inset-0 block h-full w-full cursor-crosshair"
 ></canvas>
+<!-- Верхний правый угол hero: подсказка «Click the network…» над счётчиком. Оба элемента декоративные (aria-hidden):
+     сеть не управляется с клавиатуры и скринридером, подсказка про клик им не нужна. -->
 <div
   aria-hidden="true"
-  class="pointer-events-none absolute right-5 top-5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted sm:right-8"
+  class="pointer-events-none absolute right-5 top-5 flex max-w-[calc(100%-2.5rem)] flex-col items-end gap-1 text-left sm:right-8"
 >
-  {t('hero.counter')}
-  <b class="ml-2 text-sm font-semibold text-ink"><span id="hero-network-score">0000</span></b>
+  <!-- w-0 min-w-full: подпись не расширяет блок, а переносится по его ширине (= ширина строки счётчика) -->
+  <p class="w-0 min-w-full text-[10px] leading-snug text-muted">{t('hero.caption')}</p>
+  <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+    {t('hero.counter')}
+    <b class="ml-2 text-sm font-semibold text-ink"><span id="hero-network-score">0000</span></b>
+  </p>
 </div>
 
 <script>
