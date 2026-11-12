@@ -3,7 +3,7 @@
 // в шаблонах будет автодополнение и проверка типов контента.
 
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { glob, file } from 'astro/loaders';
 
 const cases = defineCollection({
   // glob-loader забирает все .md из папки. Имя файла (без .md) становится id записи.
@@ -84,4 +84,22 @@ const cases = defineCollection({
   }),
 });
 
-export const collections = { cases };
+// Публикации и подкасты (секция Publications на главной). Один JSON-файл — loader `file`:
+// каждый элемент массива = запись коллекции, поле `id` обязательно (loader берёт его как id записи).
+// kind — ключ перевода (`press.<kind>` в ui.ts), поэтому enum, а не свободная строка.
+// url БЕЗ utm_*/fbclid — схема это проверяет (правило проекта: никаких трекинг-параметров).
+const press = defineCollection({
+  loader: file('./src/content/press.json'),
+  schema: z.object({
+    outlet: z.string(),
+    title: z.string(),
+    kind: z.enum(['article', 'case', 'commentary', 'insight', 'podcast']),
+    url: z
+      .string()
+      .url()
+      .refine((u) => !/[?&](utm_[a-z]+|fbclid)=/i.test(u), 'URL contains tracking parameters'),
+    order: z.number(),
+  }),
+});
+
+export const collections = { cases, press };

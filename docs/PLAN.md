@@ -28,9 +28,9 @@ Decisions (agreed with the user):
 Acceptance: `npm run build` passes; a page renders with the right fonts and colours; no font layout shift.
 
 ## Phase 2: content model + home sections
-- [ ] `src/content.config.ts`: add `press` (`outlet`, `title`/`label`, `kind`, `url`, `order`) — no utm/fbclid in URLs; `cases` schema untouched.
-- [ ] Components (en + ru): Nav, Hero (no canvas yet; H1 with italic word and accent full stop, roles, CTAs, portrait 4:5), About, Works grid on `--paper-2`, Publications as list rows, Recognition band, Contact, Footer.
-- [ ] Responsive at 375, 768, 1280, 1440.
+- [x] `src/content.config.ts`: add `press` (`outlet`, `title`/`label`, `kind`, `url`, `order`) — no utm/fbclid in URLs; `cases` schema untouched.
+- [x] Components (en + ru): Nav, Hero (no canvas yet; H1 with italic word and accent full stop, roles, CTAs, portrait 4:5), About, Works grid on `--paper-2`, Publications as list rows, Recognition band, Contact, Footer.
+- [x] Responsive at 375, 768, 1280, 1440. (checked at 390, 768, 1280, 1440; Works min card width 320px instead of 340 so 768 gets two columns)
 Acceptance: matches DESIGN.md and `docs/mockup/`; zero client JS in `dist/`.
 
 ## Phase 3: hero network canvas

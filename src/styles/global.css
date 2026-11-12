@@ -9,6 +9,10 @@
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/fraunces";
 @import "@fontsource-variable/fraunces/wght-italic.css";
+/* Playfair Display закрывает кириллицу для заголовков /ru/ (у Fraunces её нет). Браузер берёт глиф
+   из первого семейства стека, где он есть: латиница — Fraunces, кириллица — Playfair. */
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
 
 /*
   @theme — дизайн-токены (docs/DESIGN.md). Каждая --color-* становится утилитой:
@@ -18,7 +22,7 @@
 @theme {
   --color-paper: #f6f3ee; /* фон страницы */
   --color-paper-2: #efebe4; /* фон чередующихся секций */
-  --color-line: #e2ddd2; /* волосяные линии, рамки */
+  --color-line: #e2dcd2; /* волосяные линии, рамки */
   --color-ink: #17150f; /* основной текст, тёмная плашка */
   --color-ink-2: #4f493f; /* основной текст абзацев */
   --color-muted: #6b645a; /* подписи (контраст ≥ 4.5:1 на paper) */
@@ -31,7 +35,7 @@
 
   /* Типографика */
   --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
-  --font-display: "Fraunces Variable", "Fraunces", Georgia, "Times New Roman", serif;
+  --font-display: "Fraunces Variable", "Fraunces", "Playfair Display Variable", Georgia, "Times New Roman", serif;
 }
 
 /* Базовые стили документа */
@@ -71,5 +75,26 @@ h3 {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+}
+
+/* Подпись-эйброу над заголовками секций: 12px, капс, трекинг .22em, цвет accent (docs/DESIGN.md). */
+@utility eyebrow {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* Общий контейнер страницы: 1200px, поля 20px на телефонах и 32px от sm. */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--container-page);
+  padding-inline: 1.25rem;
+  @media (min-width: 40rem) {
+    padding-inline: 2rem;
   }
 }

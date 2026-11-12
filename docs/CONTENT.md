@@ -64,3 +64,12 @@ descriptive and not confirmed by Maria. Use the current labels unless she approv
 
 ## Footer
 - © {current year} Maria Tkachenko. (`footer.rights`: All rights reserved / Все права защищены)
+
+## Новые строки редизайна — ждут подтверждения Марии (Phase 2)
+Копирайт ниже взят из макета набора или переведён на RU черновым образом; в старом сайте его не было.
+- `works.h2` «Brands, systems and campaigns» / «Бренды, системы и кампании» (парафраз строки `bridge`).
+- `publications.h2` «On the record» / «В прессе и эфире».
+- Типы публикаций: Article, Case study, Commentary, Industry insight, Podcast (RU: Статья, Кейс, Комментарий, Отраслевой разбор, Подкаст).
+- RU: роли в hero, CTA «Смотреть работы →» / «Связаться», About H2 «Сначала инсайт. Потом бренд.», строка Contact.
+- Названия изданий и заголовки публикаций на `/ru/` остаются английскими (текущие подписи чипов).
+- Ссылка «Archive →» ведёт прямо на кейс WRC (`/cases/wrc`): отдельной страницы архива нет. Решить: оставить, переименовать или сделать страницу архива.

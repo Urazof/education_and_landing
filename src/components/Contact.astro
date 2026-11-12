@@ -1,4 +1,6 @@
 ---
+// Contact: большой H2 с курсивом и акцентной точкой, короткая строка, три кнопки-соцсети
+// (LinkedIn — залитая, Telegram и WhatsApp — контурные). Соцсети переехали сюда из шапки.
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -6,15 +8,42 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const links = [
+  { label: 'LinkedIn ↗', url: 'https://www.linkedin.com/in/maria-tkachenko-k/', primary: true },
+  { label: 'Telegram ↗', url: 'https://t.me/marymishel', primary: false },
+  { label: 'WhatsApp ↗', url: 'https://wa.me/message/DLSCXFQCCOVPA1', primary: false },
+];
+const btn = 'rounded-[4px] px-5 py-3 text-sm font-medium transition-colors';
 ---
 
-<section id="contact" class="py-8">
-  <a
-    href="https://www.linkedin.com/in/maria-tkachenko-k/"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="text-lg font-semibold transition-colors hover:underline"
-  >
-    {t('contact.title')}
-  </a>
+<section id="contact" class="border-t border-line">
+  <div class="container-page py-[72px] md:py-[120px]">
+    <p class="eyebrow">{t('contact.eyebrow')}</p>
+    <h2 class="mt-5 text-[clamp(3rem,7vw,6rem)] leading-[1] tracking-[-0.02em] text-ink">
+      {t('contact.h2.a')}<em class="font-light italic">{t('contact.h2.em')}</em><span class="text-accent"
+        >.</span
+      >
+    </h2>
+    <p class="mt-6 max-w-md text-pretty">{t('contact.line')}</p>
+    <div class="mt-9 flex flex-wrap gap-3">
+      {
+        links.map((l) => (
+          <a
+            href={l.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class:list={[
+              btn,
+              l.primary
+                ? 'bg-accent text-paper hover:bg-accent-ink'
+                : 'border border-ink/30 text-ink hover:border-accent hover:text-accent',
+            ]}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
 </section>
