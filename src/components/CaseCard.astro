@@ -2,8 +2,8 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-// Карточка кейса в Works. Показываем реальное изображение кейса с тёмным градиентом снизу,
-// поверх — клиент + заголовок. Единое оформление для всех карточек → одинаковое скругление/вид.
+// Карточка кейса: обложка 4:3 (hover — scale 1.03), под ней клиент (подпись) и заголовок кейса (Fraunces).
+// Раньше подпись лежала поверх картинки на градиенте — теперь под ней, как в docs/DESIGN.md.
 interface Props {
   href: string;
   title: string;
@@ -14,19 +14,18 @@ interface Props {
 const { href, title, client, image, alt } = Astro.props;
 ---
 
-<a
-  href={href}
-  class="group relative block aspect-[4/3] overflow-hidden rounded-[5px] border border-ink/10"
->
-  <Image
-    src={image}
-    alt={alt}
-    class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-  />
-  <!-- Градиент снизу для читаемости подписи -->
-  <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent"></div>
-  <div class="absolute inset-x-0 bottom-0 p-5">
-    <p class="text-xs font-medium uppercase tracking-wide text-paper/80">{client}</p>
-    <h3 class="mt-1 text-xl font-bold text-paper sm:text-2xl">{title}</h3>
+<a href={href} class="group block">
+  <div class="aspect-[4/3] overflow-hidden rounded-base border border-line bg-paper">
+    <Image
+      src={image}
+      alt={alt}
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+    />
   </div>
+  <p class="mt-4 text-xs font-medium uppercase tracking-[0.18em] text-muted">{client}</p>
+  <h3
+    class="mt-1.5 text-[1.625rem] leading-tight text-ink transition-colors group-hover:text-accent"
+  >
+    {title}
+  </h3>
 </a>

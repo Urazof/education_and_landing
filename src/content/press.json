@@ -1,0 +1,50 @@
+[
+  {
+    "id": "rbc-budget-brand-positioning",
+    "outlet": "RBC Pro",
+    "title": "Budget Brand Positioning",
+    "kind": "article",
+    "url": "https://pro.rbc.ru/demo/68c2a7fc9a79471e2ffb35a2",
+    "order": 1
+  },
+  {
+    "id": "sostav-brand-transformation",
+    "outlet": "Sostav",
+    "title": "Brand transformation",
+    "kind": "case",
+    "url": "https://www.sostav.ru/publication/grow-food-54891.html",
+    "order": 2
+  },
+  {
+    "id": "incrussia-expert-commentary",
+    "outlet": "INC Russia",
+    "title": "Expert Commentary",
+    "kind": "commentary",
+    "url": "https://incrussia.ru/understand/vzglyad-iznutri/",
+    "order": 3
+  },
+  {
+    "id": "pravila-industry-insight",
+    "outlet": "Pravila",
+    "title": "Industry Insight",
+    "kind": "insight",
+    "url": "https://www.pravilamag.ru/articles/717169-s-pristavkoi-e-kak-razvivayutsya-onlain-servisy-taksi-dostavki-i-bronirovaniya-v-rossii/",
+    "order": 4
+  },
+  {
+    "id": "yandex-marketing-conspiracies",
+    "outlet": "Yandex Music",
+    "title": "Marketing Conspiracies",
+    "kind": "podcast",
+    "url": "https://music.yandex.ru/album/10812233/track/109049947",
+    "order": 5
+  },
+  {
+    "id": "yandex-anatomy-of-advertising",
+    "outlet": "Yandex Music",
+    "title": "The Anatomy of Advertising",
+    "kind": "podcast",
+    "url": "https://music.yandex.ru/album/11092212/track/109138048",
+    "order": 6
+  }
+]

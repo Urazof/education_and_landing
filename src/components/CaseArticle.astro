@@ -7,14 +7,18 @@ import SocialLinks from './SocialLinks.astro';
 import VideoGroup from './VideoGroup.astro';
 import ImageRow from './ImageRow.astro';
 import MediaRow from './MediaRow.astro';
+import type { NextCase } from '../lib/cases';
 
 import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
 import wrcLogo from '../assets/wrc-logo.png';
 import philipsLogo from '../assets/philips-logo.png';
-import eucerincardLogo from '../assets/eucerin-logo.png';
+import eucerinLogo from '../assets/eucerin-logo.png';
 import cofixLogo from '../assets/cofix-logo.png';
 
+// Имя файла из frontmatter кейса → ImageMetadata. Ленивый glob (без eager) не помогает: Vite всё равно собирает
+// чанк на каждый файл из маски и оригиналы остаются в dist/_astro, а ещё сыпятся предупреждения про логотипы,
+// которые импортируются и статически. Поэтому eager.
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/*.{png,jpg,jpeg,webp,avif}',
   { eager: true },
@@ -28,8 +32,9 @@ for (const [path, mod] of Object.entries(imageModules)) {
 interface Props {
   entry: CollectionEntry<'cases'>;
   lang: Lang;
+  next?: NextCase; // следующий кейс для ссылки в конце страницы (у архивного кейса нет)
 }
-const { entry, lang } = Astro.props;
+const { entry, lang, next } = Astro.props;
 const t = useTranslations(lang);
 const base = localePrefix(lang);
 
@@ -38,21 +43,22 @@ const logos: Record<string, ImageMetadata> = {
   priem: priemLogo,
   wrc: wrcLogo,
   philips: philipsLogo,
-  eucerin: eucerincardLogo,
+  eucerin: eucerinLogo,
   cofix: cofixLogo,
 };
 const logo = logos[entry.id];
 const { title, client, external, social, sections } = entry.data;
 const media = entry.data.media;
 
-const proseText = 'text-lg leading-relaxed';
+// [&_strong]: заголовок секции внутри абзаца («Context …») — чернила и полужирный, остальной текст — ink-2
+const proseText = 'text-lg leading-relaxed [&_strong]:font-semibold [&_strong]:text-ink';
 const ROW_H = 300; // общая высота рядов ВИДЕО на десктопе (px)
 const IMG_ROW_CAP = 500; // макс. высота рядов картинок (cap): квадрат/ландшафт-пары заполняют
 // ширину (≤cap), только высокие портретные пары упираются в cap и центрируются
 
 function embedUrl(url: string): string {
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
   const vi = url.match(/vimeo\.com\/(\d+)/);
   if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
   return url;
@@ -62,27 +68,37 @@ const allow =
 
 // Хелпер: имена файлов секции → массив {src, alt} для ImageRow.
 function imgItems(files: string[], alt: string) {
-  return files.filter((f) => assets[f]).map((f) => ({ src: assets[f], alt }));
+  const list = files.filter((f) => assets[f]);
+  // несколько картинок в секции различаем номером: «… (1/2)», «… (2/2)»
+  return list.map((f, i) => ({ src: assets[f], alt: list.length > 1 ? `${alt} (${i + 1}/${list.length})` : alt }));
 }
+
+// Контекст секции для alt-текстов: её заголовок, а у чистых медиа-блоков без заголовка — ближайший предыдущий заголовок
+// (картинки после «Strategy» относятся к Strategy). Если заголовков ещё не было — название кейса.
+let lastHeading = '';
+const sectionLabels = sections.map((s) => {
+  if (s.heading) lastHeading = s.heading;
+  return lastHeading || title;
+});
 ---
 
-<main class="mx-auto max-w-5xl px-6 py-12">
-  <a href={`${base}/`} class="text-sm opacity-70 hover:underline">← {t('case.back')}</a>
+<main id="main" class="container-page py-12 md:py-16">
+  <a href={`${base}/`} class="text-sm text-muted transition-colors hover:text-accent">← {t('case.back')}</a>
 
   <!-- Шапка: лого слева, текст + ссылка + соцсети справа (как на доске) -->
-  <header class="mt-8 flex flex-col gap-6 border-b border-ink/10 pb-10 sm:flex-row sm:items-start sm:gap-8">
+  <header class="mt-8 flex flex-col gap-6 border-b border-line pb-10 sm:flex-row sm:items-start sm:gap-8">
     {logo && (
-      <div class="w-[120px] shrink-0 overflow-hidden rounded-[5px] sm:w-[150px]">
-        <Image src={logo} alt={client} class="h-auto w-full object-contain" />
+      <div class="w-[120px] shrink-0 overflow-hidden rounded-base sm:w-[150px]">
+        <Image src={logo} alt="" class="h-auto w-full object-contain" />
       </div>
     )}
     <div>
-      <p class="text-sm uppercase tracking-widest opacity-70">{client}</p>
-      <h1 class="mt-2 text-4xl font-bold sm:text-5xl">{title}</h1>
+      <p class="eyebrow">{client}</p>
+      <h1 class="mt-3 text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] tracking-[-0.01em] text-ink">{title}</h1>
       <div class="mt-6 flex flex-wrap items-center gap-4">
         {external && (
           <a href={external} target="_blank" rel="noopener noreferrer"
-            class="rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+            class="rounded-base bg-accent px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-accent-ink">
             {t('case.visit')} ↗
           </a>
         )}
@@ -93,19 +109,22 @@ function imgItems(files: string[], alt: string) {
 
   <!-- Секции кейса -->
   <div class="mt-12 space-y-16">
-    {sections.map((s) => {
+    {sections.map((s, si) => {
       const hasHeading = Boolean(s.heading);
       const hasBody = Boolean(s.body);
       const hasImages = s.images.length > 0;
       const hasVideos = s.videos.length > 0;
+      const vt = `${title} — video ${si + 1}`; // уникальный title для iframe секции
+      const altBase = `${client} — ${sectionLabels[si]}`;
+      const altAt = (i: number, n: number) => (n > 1 ? `${altBase} (${i + 1}/${n})` : altBase);
 
-      // Чистый медиа-блок без текста
-      if (!hasHeading && !hasBody) {
+      // Чистый медиа-блок без текста (нет ни heading, ни body, ни подзаголовка, ни буллетов)
+      if (!hasHeading && !hasBody && !s.subheading && s.bullets.length === 0) {
         // media-row: видео + картинки в один ряд (сначала videos, потом images)
         if (s.layout === 'media-row' && (hasVideos || hasImages)) {
           return (
             <section>
-              <MediaRow videos={s.videos} images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} title={`${title} media`} />
+              <MediaRow videos={s.videos} images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} title={vt} />
             </section>
           );
         }
@@ -113,21 +132,21 @@ function imgItems(files: string[], alt: string) {
         if (s.layout === 'video-image' && hasVideos && hasImages) {
           return (
             <section class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-center" style={`--row-h:${ROW_H}px`}>
-              {s.videos.map((v) => (
-                <div class="aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 sm:h-[var(--row-h)] sm:w-auto">
-                  <iframe src={embedUrl(v.url)} title={`${title} media`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+              {s.videos.map((v, vi) => (
+                <div class="aspect-video w-full overflow-hidden rounded-base bg-paper-2 sm:h-[var(--row-h)] sm:w-auto">
+                  <iframe src={embedUrl(v.url)} title={`${vt} (${vi + 1})`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
                 </div>
               ))}
-              {s.images.map((f) => assets[f] && (
-                <Image src={assets[f]} alt={`${client} media`} class="w-full rounded-[5px] object-cover sm:h-[var(--row-h)] sm:w-auto" />
+              {s.images.map((f, ii) => assets[f] && (
+                <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base object-cover sm:h-[var(--row-h)] sm:w-auto" />
               ))}
             </section>
           );
         }
         return (
           <section class="space-y-4">
-            {hasImages && <ImageRow images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} />}
-            {hasVideos && <VideoGroup videos={s.videos} title={`${title} media`} height={ROW_H} />}
+            {hasImages && <ImageRow images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} />}
+            {hasVideos && <VideoGroup videos={s.videos} title={vt} height={ROW_H} />}
           </section>
         );
       }
@@ -135,19 +154,19 @@ function imgItems(files: string[], alt: string) {
       // spotlight: выделенный callout с бейджем награды и опц. кнопкой-ссылкой
       if (s.layout === 'spotlight') {
         return (
-          <section class="rounded-[5px] bg-ink/[0.04] p-6 sm:p-8">
+          <section class="rounded-base bg-paper-2 p-6 sm:p-8">
             <div class="flex flex-wrap items-center gap-3">
-              {hasHeading && <p class="text-sm uppercase tracking-widest opacity-70">{s.heading}</p>}
+              {hasHeading && <p class="eyebrow">{s.heading}</p>}
               {s.award && (
-                <span class="rounded-full border border-ink/20 px-3 py-1 text-xs font-semibold">
-                  🥉 {s.award}
+                <span class="rounded-full border border-line bg-paper px-3 py-1 text-xs font-semibold text-ink">
+                  {s.award}
                 </span>
               )}
             </div>
             {hasBody && <p class={`mt-3 ${proseText}`}>{s.body}</p>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -166,27 +185,27 @@ function imgItems(files: string[], alt: string) {
             <div class:list={['grid items-center gap-8', asideCols]}>
               <div class="space-y-6">
                 <p class={proseText}>
-                  {hasHeading && <strong>{s.heading} </strong>}{s.body}
+                  {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
                 </p>
                 {s.extra.map((e) => (
-                  <p class={proseText}><strong>{e.heading} </strong>{e.body}</p>
+                  <p class={proseText}><strong role="heading" aria-level="2">{e.heading} </strong>{e.body}</p>
                 ))}
               </div>
               <div class="space-y-4">
-                {hasImages && s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
+                {hasImages && s.images.map((f, ii) => assets[f] && (
+                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
                 ))}
-                {asideVideo && s.videos.map((v) => (
-                  <div class={`overflow-hidden rounded-[5px] bg-ink/5 ${v.vertical ? 'aspect-[9/16]' : 'aspect-video'} w-full`}>
-                    <iframe src={embedUrl(v.url)} title={`${title} — ${s.heading}`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+                {asideVideo && s.videos.map((v, vi) => (
+                  <div class={`overflow-hidden rounded-base bg-paper-2 ${v.vertical ? 'aspect-[9/16]' : 'aspect-video'} w-full`}>
+                    <iframe src={embedUrl(v.url)} title={`${vt} (${vi + 1})`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
                   </div>
                 ))}
               </div>
             </div>
-            {hasImages && hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+            {hasImages && hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -200,23 +219,23 @@ function imgItems(files: string[], alt: string) {
           <section>
             <div class="grid items-center gap-8 sm:grid-cols-[2fr_3fr]">
               <div class="space-y-4">
-                {s.images.map((f) => assets[f] && (
-                  <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-[5px]" />
+                {s.images.map((f, ii) => assets[f] && (
+                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
                 ))}
               </div>
               <div class="space-y-6">
                 <p class={proseText}>
-                  {hasHeading && <strong>{s.heading} </strong>}{s.body}
+                  {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
                 </p>
                 {s.extra.map((e) => (
-                  <p class={proseText}><strong>{e.heading} </strong>{e.body}</p>
+                  <p class={proseText}><strong role="heading" aria-level="2">{e.heading} </strong>{e.body}</p>
                 ))}
               </div>
             </div>
-            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -224,31 +243,41 @@ function imgItems(files: string[], alt: string) {
         );
       }
 
-      // Default: текст → метрик-чипы → картинки (ряд) → видео (ряд) → ссылки → кнопка
+      // Default: текст → подзаголовок → метрик-чипы → after → буллеты → картинки → видео → ссылки → кнопка
       return (
         <section>
-          <p class={proseText}>
-            {hasHeading && <strong>{s.heading} </strong>}{s.body}
-          </p>
+          {(hasHeading || hasBody) && (
+            <p class={proseText}>
+              {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
+            </p>
+          )}
+          {s.subheading && (
+            <p class={`${(hasHeading || hasBody) ? 'mt-4' : ''} ${proseText} font-medium`}>{s.subheading}</p>
+          )}
           {s.metrics.length > 0 && (
             <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {s.metrics.map((m) => (
-                <div class="rounded-[5px] border border-[#eeeeee] bg-[#ededed] px-5 py-6">
-                  <p class="text-4xl font-bold text-ink">{m.value}</p>
-                  <p class="mt-1 text-sm text-ink/60">{m.label}</p>
+                <div class="rounded-base border border-line bg-paper-2 px-5 py-6">
+                  <p class="font-display text-4xl text-ink">{m.value}</p>
+                  <p class="mt-1 text-sm text-muted">{m.label}</p>
                 </div>
               ))}
             </div>
           )}
           {s.after && <p class={`mt-6 ${proseText}`}>{s.after}</p>}
-          {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={IMG_ROW_CAP} /></div>}
-          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+          {s.bullets.length > 0 && (
+            <ul class={`mt-4 list-disc space-y-2 pl-5 marker:text-accent ${proseText}`}>
+              {s.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          )}
+          {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, altBase)} height={IMG_ROW_CAP} /></div>}
+          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
           {s.links.length > 0 && (
             <ul class="mt-4 space-y-1">
               {s.links.map((l) => (
                 <li>
                   <a href={l.url} target="_blank" rel="noopener noreferrer"
-                     class="break-all text-sm opacity-60 hover:opacity-100 hover:underline">
+                     class="break-all text-sm text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent hover:decoration-accent">
                     {l.label ?? l.url}
                   </a>
                 </li>
@@ -257,7 +286,7 @@ function imgItems(files: string[], alt: string) {
           )}
           {s.link && (
             <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-              class="mt-4 inline-block rounded-[5px] border border-ink px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper">
+              class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
               {s.link.label} ↗
             </a>
           )}
@@ -272,16 +301,30 @@ function imgItems(files: string[], alt: string) {
       <div class="flex flex-wrap justify-center gap-4">
         {media.map((item) => (
           item.video ? (
-            <div class={`aspect-video w-full overflow-hidden rounded-[5px] bg-ink/5 ${media.length === 1 ? 'sm:h-[390px] sm:w-auto' : 'sm:w-[48%]'}`}>
+            <div class={`aspect-video w-full overflow-hidden rounded-base bg-paper-2 ${media.length === 1 ? 'sm:h-[390px] sm:w-auto' : 'sm:w-[48%]'}`}>
               <iframe src={embedUrl(item.video)} title={item.label} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
             </div>
           ) : (
-            <div class={`flex aspect-video w-full items-center justify-center rounded-[5px] border border-dashed border-ink/40 text-sm opacity-50 ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
+            <div class={`flex aspect-video w-full items-center justify-center rounded-base border border-dashed border-line text-sm text-muted ${media.length === 1 ? 'sm:w-[65%]' : 'sm:w-[48%]'}`}>
               {item.label}
             </div>
           )
         ))}
       </div>
     </section>
+  )}
+
+  <!-- Следующий кейс: большая ссылка-заголовок, hover как у карточек Works -->
+  {next && (
+    <nav aria-label={t('case.next')} class="mt-20 border-t border-ink pt-10 md:mt-28">
+      <p class="eyebrow">{t('case.next')}</p>
+      <a href={`${base}/cases/${next.id}/`} class="group mt-5 flex items-end justify-between gap-6">
+        <span>
+          <span class="block text-xs uppercase tracking-[0.18em] text-muted">{next.client}</span>
+          <span class="mt-2 block font-display text-3xl leading-tight text-ink transition-colors group-hover:text-accent md:text-5xl">{next.title}</span>
+        </span>
+        <span aria-hidden="true" class="pb-1 text-3xl text-ink transition-transform group-hover:translate-x-1">→</span>
+      </a>
+    </nav>
   )}
 </main>

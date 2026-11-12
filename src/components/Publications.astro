@@ -1,5 +1,8 @@
 ---
-import { useTranslations, type Lang } from '../i18n/ui';
+// Publications: список-строки из коллекции `press` (src/content/press.json).
+// Колонки: издание / заголовок (Fraunces) / тип / ↗. Hover: фон paper-2, стрелка сдвигается на 4px.
+import { getCollection } from 'astro:content';
+import { useTranslations, type Lang, type UiKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -7,50 +10,40 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-// Реальный контент из доски Miro (2026-05-31).
-// Каждый пункт: подпись + опциональная ссылка (url). Если url задан — чип становится <a>.
-// Сетка: 2 ряда по 3 чипа + 1 полноширинный (jury credential).
-interface Pub {
-  label: string;
-  url?: string;
-}
-const items: Pub[] = [
-  { label: 'Budget Brand Positioning', url: 'https://pro.rbc.ru/demo/68c2a7fc9a79471e2ffb35a2' },
-  { label: 'Brand transformation', url: 'https://www.sostav.ru/publication/grow-food-54891.html' },
-  { label: 'Expert Commentary', url: 'https://incrussia.ru/understand/vzglyad-iznutri/' },
-  { label: 'Industry Insight', url: 'https://www.pravilamag.ru/articles/717169-s-pristavkoi-e-kak-razvivayutsya-onlain-servisy-taksi-dostavki-i-bronirovaniya-v-rossii/?utm_source=google.com&utm_medium=organic&utm_campaign=google.com&utm_referrer=google.com' },
-  { label: 'Marketing Conspiracies (Podcast)', url: 'https://music.yandex.ru/album/10812233/track/109049947?utm_medium=copy_link&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnLqGAJEaly5HLuOb__A6zUmb8-LuoRu6sEtvQQoDCotPr07k3ypbycg7Qavg_aem_GCezesp2oI18RKxZQxylGw' },
-  { label: 'The Anatomy of Advertising (Podcast)', url: 'https://music.yandex.ru/album/11092212/track/109138048?utm_medium=copy_link&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnZoHF4aH7fpzzgbuUrigljqvj5vMHuuYyF4uFNcDrjbTUrLRzHBRHq8wUzNo_aem_o2v7M8Ut_-h_kWCsQqlXnA' },
-];
-const fullWidth: Pub = { label: 'Jury Member, E+ Awards (formerly Effie), 2024', url: 'https://eplus.marketing/award/jury/jury-old/2024' };
-
-// Общие классы чипа: тонкая обводка, скругление 5px, мягкий hover.
-const chip =
-  'flex min-h-[3.25rem] items-center justify-center rounded-[5px] border border-ink/30 px-4 py-3 text-center text-sm font-semibold transition-colors';
-const chipLink = `${chip} hover:bg-ink/[0.06]`;
-const chipStatic = `${chip} text-ink/80`;
+const items = (await getCollection('press')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section id="publications" class="py-16">
-  <h2 class="mb-6 text-xl font-bold">{t('publications.title')}</h2>
-  <div class="space-y-3">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      {items.map((item) =>
-        item.url ? (
-          <a href={item.url} target="_blank" rel="noopener noreferrer" class={chipLink}>
-            {item.label}
-          </a>
-        ) : (
-          <div class={chipStatic}>{item.label}</div>
-        ),
-      )}
-    </div>
-    {fullWidth.url ? (
-      <a href={fullWidth.url} target="_blank" rel="noopener noreferrer" class={chipLink}>
-        {fullWidth.label}
-      </a>
-    ) : (
-      <div class={chipStatic}>{fullWidth.label}</div>
-    )}
+<section id="publications">
+  <div class="container-page py-[72px] md:py-[120px]">
+    <p class="eyebrow">{t('publications.eyebrow')}</p>
+    <h2 class="mt-5 text-[clamp(2rem,4vw,3rem)] leading-[1.05] text-ink">{t('publications.h2')}</h2>
+
+    <ul class="mt-12 border-t border-ink">
+      {
+        items.map(({ data }) => (
+          <li class="border-b border-line">
+            <a
+              href={data.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 px-3 py-5 transition-colors hover:bg-paper-2 md:grid-cols-[160px_1fr_auto_auto] md:gap-x-8"
+            >
+              <span class="col-span-2 text-xs uppercase tracking-[0.18em] text-muted md:col-span-1">
+                {data.outlet}
+              </span>
+              <span class="font-display text-xl text-ink md:text-2xl">{data.title}</span>
+              <span class="hidden text-sm text-muted md:inline">{t(`press.${data.kind}` as UiKey)}</span>
+              <span
+                aria-hidden="true"
+                class="justify-self-end text-ink transition-transform group-hover:translate-x-1"
+              >
+                ↗
+              </span>
+              <span class="col-span-2 text-sm text-muted md:hidden">{t(`press.${data.kind}` as UiKey)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>

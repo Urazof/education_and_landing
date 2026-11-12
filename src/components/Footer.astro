@@ -1,6 +1,6 @@
 ---
-// В макете отдельного футера нет (соцсети — в шапке). Оставляем тонкую строку копирайта —
-// это хорошая практика и не спорит с макетом.
+// Подвал: копирайт слева, мелкие служебные ссылки справа (docs/DESIGN.md, секция 8).
+
 import { useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -11,8 +11,12 @@ const t = useTranslations(lang);
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t-1 border-ink">
-  <div class="mx-auto max-w-5xl px-6 py-8 text-sm opacity-70">
-    © {year} Maria Tkachenko. {t('footer.rights')}.
+<footer class="border-t border-line">
+  <div class="container-page flex flex-col gap-2 py-8 text-sm text-muted sm:flex-row sm:justify-between">
+    <span>© {year} Maria Tkachenko. {t('footer.rights')}.</span>
+    <span class="flex gap-5">
+      <a href="/sitemap-index.xml" class="transition-colors hover:text-accent">{t('footer.sitemap')}</a>
+      <a href="/llms.txt" class="transition-colors hover:text-accent">llms.txt</a>
+    </span>
   </div>
 </footer>

@@ -16,7 +16,7 @@ sections:
       - { value: "25K+", label: "audience actions within communities" }
   - heading: Campaign spotlight
     layout: spotlight
-    award: 2× Bronze — Tagline Awards
+    award: "🥉 2× Bronze — Tagline Awards"
     body: >-
       Pivoting to delivery during COVID-19 lockdown. When lockdowns hit, Cofix's offline
       model was at risk. We rebuilt the entire content and media strategy in days:
