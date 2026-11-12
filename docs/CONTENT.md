@@ -6,9 +6,12 @@ Anything still marked TODO must be supplied by Maria. Do not invent it.
 
 ## Site meta
 - Title: `Maria Tkachenko — Brand strategist & marketing leader`
-- Description: current default in `Base.astro` is `Maria Tkachenko — marketing leader and brand strategist.` (too short for SEO).
-  `[TODO: 150–160 chars; propose 3 variants built ONLY from the hero/about copy below and let Maria pick]`
-- OG image: `[TODO: 1200×630, name + headline on paper background]` (no file yet; tag currently omitted)
+- Description (на сайте сейчас, 150 символов, ждёт подтверждения Марии): `Marketing leader and brand strategist. I turn customer insight into clear positioning and marketing strategy for complex products people connect with.`
+  RU (146): «Маркетинг-лидер и бренд-стратег. Превращаю клиентские инсайты в чёткое позиционирование и маркетинговую стратегию для сложных продуктов и брендов.»
+  Альтернативы (EN, из той же лексики hero/About):
+  B (151): `Maria Tkachenko: marketing leader and brand strategist. Brands, systems and campaigns built on customer insight, from positioning to launch and growth.`
+  C: `Marketing leader and brand strategist since 2011. I turn customer insight into clear positioning and strategy for consumer, tech and digital brands.`
+- OG image: `public/og.png` (1200×630): имя, заголовок и роли из hero, домен, на фоне сеть как в hero. Собран из HTML-шаблона и отрисован Chrome с шрифтами сайта (см. `ASTRO-EDUCATION.md` §24). Ждёт одобрения Марии.
 - Domain / canonical: `https://mariatkachenko.savor.ing` (set as `site` in `astro.config.mjs`)
 
 ## Hero (keys in `src/i18n/ui.ts`)

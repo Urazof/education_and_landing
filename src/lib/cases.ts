@@ -22,11 +22,16 @@ export function getNextCase(all: CaseEntry[], current: CaseEntry): NextCase | un
 }
 
 // meta description кейса: первый непустой текст секции (Results / Context) — это уже написанный контент,
-// ничего не придумываем. Схлопываем пробелы и режем по границе слова до ~155 символов (лимит сниппета Google).
-export function caseDescription(entry: CaseEntry, max = 155): string {
+// ничего не придумываем. Схлопываем пробелы и режем по границе слова до 160 символов (лимит сниппета Google).
+export function caseDescription(entry: CaseEntry, max = 160): string {
   const raw = entry.data.sections.map((s) => s.body).find((b) => b && b.trim().length > 0) ?? '';
   const text = raw.replace(/\s+/g, ' ').trim();
   if (text.length <= max) return text;
+  // Предпочитаем целое предложение: последняя точка в пределах лимита (но не слишком рано — не короче 70 знаков).
+  const head = text.slice(0, max);
+  const sentenceEnd = Math.max(head.lastIndexOf('. '), head.lastIndexOf('! '), head.lastIndexOf('? '));
+  if (sentenceEnd >= 70) return head.slice(0, sentenceEnd + 1);
+  // Иначе режем по границе слова и ставим «…» (запас 1 знак под многоточие).
   const cut = text.slice(0, max - 1);
   return cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,.;:—-]+$/, '') + '…';
 }

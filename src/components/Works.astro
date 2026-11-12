@@ -43,7 +43,7 @@ const cases = (await getCollection('cases'))
       </div>
       <!-- Архив: был отдельной секцией-чипом, теперь ссылка справа от заголовка (макет). -->
       <a
-        href={`${base}/cases/wrc`}
+        href={`${base}/cases/wrc/`}
         class="eyebrow !text-accent border-b border-accent/40 pb-1 transition-colors hover:border-accent"
       >
         {t('archive.title')} →
@@ -65,7 +65,7 @@ const cases = (await getCollection('cases'))
             ]}
           >
             <CaseCard
-              href={`${base}/cases/${entry.id}`}
+              href={`${base}/cases/${entry.id}/`}
               title={entry.data.title}
               client={entry.data.client}
               image={images[entry.id] ?? worksPreview}

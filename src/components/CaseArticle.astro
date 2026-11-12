@@ -302,7 +302,7 @@ function imgItems(files: string[], alt: string) {
   {next && (
     <nav aria-label={t('case.next')} class="mt-20 border-t border-ink pt-10 md:mt-28">
       <p class="eyebrow">{t('case.next')}</p>
-      <a href={`${base}/cases/${next.id}`} class="group mt-5 flex items-end justify-between gap-6">
+      <a href={`${base}/cases/${next.id}/`} class="group mt-5 flex items-end justify-between gap-6">
         <span>
           <span class="block text-xs uppercase tracking-[0.18em] text-muted">{next.client}</span>
           <span class="mt-2 block font-display text-3xl leading-tight text-ink transition-colors group-hover:text-accent md:text-5xl">{next.title}</span>

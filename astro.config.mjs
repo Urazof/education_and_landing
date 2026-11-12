@@ -8,6 +8,10 @@ export default defineConfig({
   // Канонический адрес сайта. Используется для sitemap, OG, canonical, hreflang.
   site: 'https://mariatkachenko.savor.ing',
 
+  // Все страницы живут по адресу со слэшем в конце (/cases/priem/) — так же, как canonical и sitemap.
+  // Ссылки без слэша на части хостингов дают лишний редирект; единый вид убирает дубли URL.
+  trailingSlash: 'always',
+
   // Встроенная интернационализация Astro.
   i18n: {
     defaultLocale: 'en',          // язык по умолчанию (контент кейсов на доске — EN)

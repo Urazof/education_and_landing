@@ -43,8 +43,8 @@ Acceptance: one small JS file in `dist/` (< 8 KB gzip); reduced-motion respected
 Acceptance: every case has a unique title/description; layouts did not regress (screenshots).
 
 ## Phase 5: SEO and machine-readable files
-- [ ] `Person` JSON-LD on home; sitemap check; `robots.txt` with sitemap line; `src/pages/llms.txt.ts`; OG image 1200×630; real meta description.
-- [ ] Run `/seo-audit`, fix findings.
+- [x] `Person` JSON-LD on home; sitemap check; `robots.txt` with sitemap line; `src/pages/llms.txt.ts`; OG image 1200×630; real meta description.
+- [x] Run `/seo-audit`, fix findings.
 Acceptance: audit clean.
 
 ## Phase 6: review and deploy

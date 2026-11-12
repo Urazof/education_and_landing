@@ -14,7 +14,7 @@ interface Props {
   description?: string;
   lang?: Lang;
   ogType?: 'website' | 'article'; // тип для Open Graph: главная — website, кейсы — article
-  ogImage?: string; // путь к соц-картинке (root-relative, напр. "/og.png"). Опционально.
+  ogImage?: string; // путь к соц-картинке (root-relative). По умолчанию /og.png (1200×630, public/og.png).
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]; // структурированные данные (Person / CreativeWork)
 }
 
@@ -24,7 +24,7 @@ const {
   description = 'Maria Tkachenko — marketing leader and brand strategist.',
   lang = 'en',
   ogType = 'website',
-  ogImage,
+  ogImage = '/og.png',
   jsonLd,
 } = Astro.props;
 
@@ -66,7 +66,16 @@ const siteName = 'Maria Tkachenko';
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={localeTag[lang]} />
-    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    {
+      ogImageUrl && (
+        <>
+          <meta property="og:image" content={ogImageUrl} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={title} />
+        </>
+      )
+    }
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />

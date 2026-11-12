@@ -15,6 +15,9 @@ export const ui = {
     'nav.publications': 'Publications',
     'nav.contact': 'Contact',
     'footer.sitemap': 'Sitemap',
+    'meta.title': 'Maria Tkachenko — Brand strategist & marketing leader',
+    'meta.description':
+      'Marketing leader and brand strategist. I turn customer insight into clear positioning and marketing strategy for complex products people connect with.',
     'hero.eyebrow': 'Maria Tkachenko',
     // H1 собирается из трёх частей: курсивное слово + точка акцентным цветом ставятся в Hero.astro.
     'hero.h1.a': 'I build brands that ',
@@ -67,6 +70,9 @@ export const ui = {
     'nav.publications': 'Публикации',
     'nav.contact': 'Контакты',
     'footer.sitemap': 'Карта сайта',
+    'meta.title': 'Мария Ткаченко — бренд-стратег и маркетинг-лидер',
+    'meta.description':
+      'Маркетинг-лидер и бренд-стратег. Превращаю клиентские инсайты в чёткое позиционирование и маркетинговую стратегию для сложных продуктов и брендов.',
     'hero.eyebrow': 'Мария Ткаченко',
     'hero.h1.a': 'Я строю бренды, которые ',
     'hero.h1.em': 'двигают',
