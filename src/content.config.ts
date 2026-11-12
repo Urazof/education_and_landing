@@ -58,6 +58,13 @@ const cases = defineCollection({
         // Текст ПОД чипсами (на макете: интро → чипсы → ещё текст → Context). Рендерится
         // после metrics в обычной раскладке. `body` при этом — текст ДО чипсов.
         after: z.string().optional(),
+        // Маркированный список (буллеты) под текстом секции. Напр. Grow Food Execution:
+        // подзаголовок (heading) + буллеты. Рендерится в обычной раскладке после body/after.
+        bullets: z.array(z.string()).default([]),
+        // Смысловой ПОДзаголовок (менее жирный, чем heading). Напр. Grow Food: под «Execution»
+        // идут подзаголовки «Brand platform and identity» / «Product and digital». Рендерится
+        // отдельной строкой перед bullets/после heading в обычной раскладке.
+        subheading: z.string().optional(),
         // Бейдж награды для layout:spotlight (напр. "2× Bronze — Tagline Awards").
         award: z.string().optional(),
         // Доп. текст-блоки в ТОЙ ЖЕ колонке текста (для aside-right/aside-left): например

@@ -47,14 +47,15 @@ sections:
     videos:
       - https://www.youtube.com/watch?v=IS69SsgqiUQ
   - heading: Execution
-    body: >-
-      We built a full brand platform covering positioning, tone of voice, messaging architecture,
-      and guidelines. Redesigned the website and app UX to make product navigation simpler and
-      clearer. The new visual identity was rolled out consistently across all channels: packaging,
-      CRM, social media, digital, and product communication.
+    body: ""
+    subheading: Brand platform and identity
+    bullets:
+      - "Built the full brand platform: positioning, tone of voice, messaging architecture, and brand guidelines"
+      - "Developed a new visual identity rolled out consistently across packaging, CRM, social media, digital, and product communication"
+      - "Created a visual guideline system that could scale across product lines and campaign types"
+  - heading: ""
+    body: ""
     videos:
-      - { url: "https://www.youtube.com/shorts/4knLhGeQk_g", vertical: true }
-      - { url: "https://www.youtube.com/watch?v=f5pQcgWSdbw", vertical: true }
       - https://www.youtube.com/watch?v=KwDQtDInBhY
   - heading: ""
     body: ""
@@ -63,6 +64,26 @@ sections:
     images:
       - growfood-packaging.jpg
     layout: video-image
+  - heading: ""
+    body: ""
+    subheading: Product and digital
+    bullets:
+      - "Redesigned the website and app UX to make product navigation simpler and clearer for users"
+      - "Translated the brand platform into campaign materials across paid and owned channels"
+      - "Ensured consistency from packaging design through to performance ad creatives"
+  - heading: ""
+    body: ""
+    layout: media-row
+    videos:
+      - { url: "https://www.youtube.com/watch?v=f5pQcgWSdbw", vertical: true }
+      - { url: "https://www.youtube.com/shorts/4knLhGeQk_g", vertical: true }
+  - heading: Results
+    body: >-
+      +200% brand awareness growth within a year after the rebrand. +40% customer base growth
+      following the launch of campaigns in the new brand system. 2x product activity in the first
+      months after launch, with results holding stable over the following year. The new brand
+      platform became the foundation for new product launches, audience segmentation, and expansion
+      into new markets.
 results: []
 media:
   - label: Ad campaign — Gold

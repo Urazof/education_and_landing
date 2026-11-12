@@ -99,8 +99,8 @@ function imgItems(files: string[], alt: string) {
       const hasImages = s.images.length > 0;
       const hasVideos = s.videos.length > 0;
 
-      // Чистый медиа-блок без текста
-      if (!hasHeading && !hasBody) {
+      // Чистый медиа-блок без текста (нет ни heading, ни body, ни подзаголовка, ни буллетов)
+      if (!hasHeading && !hasBody && !s.subheading && s.bullets.length === 0) {
         // media-row: видео + картинки в один ряд (сначала videos, потом images)
         if (s.layout === 'media-row' && (hasVideos || hasImages)) {
           return (
@@ -224,12 +224,17 @@ function imgItems(files: string[], alt: string) {
         );
       }
 
-      // Default: текст → метрик-чипы → картинки (ряд) → видео (ряд) → ссылки → кнопка
+      // Default: текст → подзаголовок → метрик-чипы → after → буллеты → картинки → видео → ссылки → кнопка
       return (
         <section>
-          <p class={proseText}>
-            {hasHeading && <strong>{s.heading} </strong>}{s.body}
-          </p>
+          {(hasHeading || hasBody) && (
+            <p class={proseText}>
+              {hasHeading && <strong>{s.heading} </strong>}{s.body}
+            </p>
+          )}
+          {s.subheading && (
+            <p class={`${(hasHeading || hasBody) ? 'mt-4' : ''} ${proseText} font-medium`}>{s.subheading}</p>
+          )}
           {s.metrics.length > 0 && (
             <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               {s.metrics.map((m) => (
@@ -241,6 +246,11 @@ function imgItems(files: string[], alt: string) {
             </div>
           )}
           {s.after && <p class={`mt-6 ${proseText}`}>{s.after}</p>}
+          {s.bullets.length > 0 && (
+            <ul class={`mt-4 list-disc space-y-2 pl-5 marker:text-ink/40 ${proseText}`}>
+              {s.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          )}
           {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={IMG_ROW_CAP} /></div>}
           {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
           {s.links.length > 0 && (
