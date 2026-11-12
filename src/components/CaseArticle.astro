@@ -13,9 +13,12 @@ import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
 import wrcLogo from '../assets/wrc-logo.png';
 import philipsLogo from '../assets/philips-logo.png';
-import eucerincardLogo from '../assets/eucerin-logo.png';
+import eucerinLogo from '../assets/eucerin-logo.png';
 import cofixLogo from '../assets/cofix-logo.png';
 
+// Имя файла из frontmatter кейса → ImageMetadata. Ленивый glob (без eager) не помогает: Vite всё равно собирает
+// чанк на каждый файл из маски и оригиналы остаются в dist/_astro, а ещё сыпятся предупреждения про логотипы,
+// которые импортируются и статически. Поэтому eager.
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/*.{png,jpg,jpeg,webp,avif}',
   { eager: true },
@@ -40,7 +43,7 @@ const logos: Record<string, ImageMetadata> = {
   priem: priemLogo,
   wrc: wrcLogo,
   philips: philipsLogo,
-  eucerin: eucerincardLogo,
+  eucerin: eucerinLogo,
   cofix: cofixLogo,
 };
 const logo = logos[entry.id];
@@ -55,7 +58,7 @@ const IMG_ROW_CAP = 500; // макс. высота рядов картинок (
 
 function embedUrl(url: string): string {
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
   const vi = url.match(/vimeo\.com\/(\d+)/);
   if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
   return url;
@@ -69,14 +72,14 @@ function imgItems(files: string[], alt: string) {
 }
 ---
 
-<main class="container-page py-12 md:py-16">
+<main id="main" class="container-page py-12 md:py-16">
   <a href={`${base}/`} class="text-sm text-muted transition-colors hover:text-accent">← {t('case.back')}</a>
 
   <!-- Шапка: лого слева, текст + ссылка + соцсети справа (как на доске) -->
   <header class="mt-8 flex flex-col gap-6 border-b border-line pb-10 sm:flex-row sm:items-start sm:gap-8">
     {logo && (
       <div class="w-[120px] shrink-0 overflow-hidden rounded-base sm:w-[150px]">
-        <Image src={logo} alt={client} class="h-auto w-full object-contain" />
+        <Image src={logo} alt="" class="h-auto w-full object-contain" />
       </div>
     )}
     <div>
@@ -96,11 +99,12 @@ function imgItems(files: string[], alt: string) {
 
   <!-- Секции кейса -->
   <div class="mt-12 space-y-16">
-    {sections.map((s) => {
+    {sections.map((s, si) => {
       const hasHeading = Boolean(s.heading);
       const hasBody = Boolean(s.body);
       const hasImages = s.images.length > 0;
       const hasVideos = s.videos.length > 0;
+      const vt = `${title} — video ${si + 1}`; // уникальный title для iframe секции
 
       // Чистый медиа-блок без текста (нет ни heading, ни body, ни подзаголовка, ни буллетов)
       if (!hasHeading && !hasBody && !s.subheading && s.bullets.length === 0) {
@@ -108,7 +112,7 @@ function imgItems(files: string[], alt: string) {
         if (s.layout === 'media-row' && (hasVideos || hasImages)) {
           return (
             <section>
-              <MediaRow videos={s.videos} images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} title={`${title} media`} />
+              <MediaRow videos={s.videos} images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} title={vt} />
             </section>
           );
         }
@@ -116,9 +120,9 @@ function imgItems(files: string[], alt: string) {
         if (s.layout === 'video-image' && hasVideos && hasImages) {
           return (
             <section class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-center" style={`--row-h:${ROW_H}px`}>
-              {s.videos.map((v) => (
+              {s.videos.map((v, vi) => (
                 <div class="aspect-video w-full overflow-hidden rounded-base bg-paper-2 sm:h-[var(--row-h)] sm:w-auto">
-                  <iframe src={embedUrl(v.url)} title={`${title} media`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+                  <iframe src={embedUrl(v.url)} title={`${vt} (${vi + 1})`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
                 </div>
               ))}
               {s.images.map((f) => assets[f] && (
@@ -130,7 +134,7 @@ function imgItems(files: string[], alt: string) {
         return (
           <section class="space-y-4">
             {hasImages && <ImageRow images={imgItems(s.images, `${client} media`)} height={IMG_ROW_CAP} />}
-            {hasVideos && <VideoGroup videos={s.videos} title={`${title} media`} height={ROW_H} />}
+            {hasVideos && <VideoGroup videos={s.videos} title={vt} height={ROW_H} />}
           </section>
         );
       }
@@ -143,14 +147,14 @@ function imgItems(files: string[], alt: string) {
               {hasHeading && <p class="eyebrow">{s.heading}</p>}
               {s.award && (
                 <span class="rounded-full border border-line bg-paper px-3 py-1 text-xs font-semibold text-ink">
-                  🥉 {s.award}
+                  {s.award}
                 </span>
               )}
             </div>
             {hasBody && <p class={`mt-3 ${proseText}`}>{s.body}</p>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-base border border-ink/30 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -169,27 +173,27 @@ function imgItems(files: string[], alt: string) {
             <div class:list={['grid items-center gap-8', asideCols]}>
               <div class="space-y-6">
                 <p class={proseText}>
-                  {hasHeading && <strong>{s.heading} </strong>}{s.body}
+                  {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
                 </p>
                 {s.extra.map((e) => (
-                  <p class={proseText}><strong>{e.heading} </strong>{e.body}</p>
+                  <p class={proseText}><strong role="heading" aria-level="2">{e.heading} </strong>{e.body}</p>
                 ))}
               </div>
               <div class="space-y-4">
                 {hasImages && s.images.map((f) => assets[f] && (
                   <Image src={assets[f]} alt={`${client} — ${s.heading}`} class="w-full rounded-base" />
                 ))}
-                {asideVideo && s.videos.map((v) => (
+                {asideVideo && s.videos.map((v, vi) => (
                   <div class={`overflow-hidden rounded-base bg-paper-2 ${v.vertical ? 'aspect-[9/16]' : 'aspect-video'} w-full`}>
-                    <iframe src={embedUrl(v.url)} title={`${title} — ${s.heading}`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+                    <iframe src={embedUrl(v.url)} title={`${vt} (${vi + 1})`} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
                   </div>
                 ))}
               </div>
             </div>
-            {hasImages && hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+            {hasImages && hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-base border border-ink/30 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -209,17 +213,17 @@ function imgItems(files: string[], alt: string) {
               </div>
               <div class="space-y-6">
                 <p class={proseText}>
-                  {hasHeading && <strong>{s.heading} </strong>}{s.body}
+                  {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
                 </p>
                 {s.extra.map((e) => (
-                  <p class={proseText}><strong>{e.heading} </strong>{e.body}</p>
+                  <p class={proseText}><strong role="heading" aria-level="2">{e.heading} </strong>{e.body}</p>
                 ))}
               </div>
             </div>
-            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+            {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
             {s.link && (
               <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-                class="mt-4 inline-block rounded-base border border-ink/30 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
+                class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
                 {s.link.label} ↗
               </a>
             )}
@@ -232,7 +236,7 @@ function imgItems(files: string[], alt: string) {
         <section>
           {(hasHeading || hasBody) && (
             <p class={proseText}>
-              {hasHeading && <strong>{s.heading} </strong>}{s.body}
+              {hasHeading && <strong role="heading" aria-level="2">{s.heading} </strong>}{s.body}
             </p>
           )}
           {s.subheading && (
@@ -255,7 +259,7 @@ function imgItems(files: string[], alt: string) {
             </ul>
           )}
           {hasImages && <div class="mt-6"><ImageRow images={imgItems(s.images, `${client} — ${s.heading}`)} height={IMG_ROW_CAP} /></div>}
-          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={`${title} — ${s.heading}`} height={ROW_H} /></div>}
+          {hasVideos && <div class="mt-6"><VideoGroup videos={s.videos} title={vt} height={ROW_H} /></div>}
           {s.links.length > 0 && (
             <ul class="mt-4 space-y-1">
               {s.links.map((l) => (
@@ -270,7 +274,7 @@ function imgItems(files: string[], alt: string) {
           )}
           {s.link && (
             <a href={s.link.url} target="_blank" rel="noopener noreferrer"
-              class="mt-4 inline-block rounded-base border border-ink/30 px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
+              class="mt-4 inline-block rounded-base border border-muted px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
               {s.link.label} ↗
             </a>
           )}

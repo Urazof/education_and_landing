@@ -25,7 +25,7 @@ const has = videos.length + images.length > 0;
 
 function embedUrl(url: string): string {
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/\s]+)/);
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
   const vi = url.match(/vimeo\.com\/(\d+)/);
   if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
   return url;
@@ -39,9 +39,9 @@ const allow =
     class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-10"
     style={`--cap:${height}px`}
   >
-    {videos.map((v) => (
+    {videos.map((v, i) => (
       <div class="media-item overflow-hidden rounded-base bg-paper-2" style={`--r:${(v.vertical ? 9 / 16 : 16 / 9).toFixed(4)}`}>
-        <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
+        <iframe src={embedUrl(v.url)} title={videos.length > 1 ? `${title} (${i + 1})` : title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
       </div>
     ))}
     {images.map((im) => (

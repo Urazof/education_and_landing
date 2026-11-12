@@ -22,7 +22,7 @@ const jsonLd = personJsonLd(Astro.site!, new URL(portrait.src, Astro.site!).href
 
 <Base title={t('meta.title')} description={t('meta.description')} lang={lang} jsonLd={jsonLd}>
   <Nav lang={lang} />
-  <main>
+  <main id="main">
     <Hero lang={lang} />
     <About lang={lang} />
     <Works lang={lang} />

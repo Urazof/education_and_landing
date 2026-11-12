@@ -4,7 +4,7 @@ client: Priem.menu
 order: 2
 external: https://priem.menu/
 social:
-  - { label: IG, url: "https://www.instagram.com/priemfood?igsh=Y3cyYmRqNGI2cm1u" }
+  - { label: IG, url: "https://www.instagram.com/priemfood" }
   - { label: VK, url: "https://vk.ru/priemfood" }
 sections:
   - heading: Results

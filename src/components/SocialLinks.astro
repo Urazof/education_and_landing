@@ -9,6 +9,8 @@ interface Props {
   items: Social[];
 }
 const { items } = Astro.props;
+// Доступное имя ссылки — полное название сети (на экране остаётся короткая аббревиатура).
+const names: Record<string, string> = { IG: 'Instagram', TG: 'Telegram', VK: 'VKontakte', YT: 'YouTube', LI: 'LinkedIn', WA: 'WhatsApp' };
 ---
 
 <ul class="flex items-center gap-2">
@@ -19,8 +21,8 @@ const { items } = Astro.props;
           href={s.url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={s.label}
-          class="flex h-9 w-9 items-center justify-center rounded-base border border-ink/30 text-xs font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
+          aria-label={names[s.label] ?? s.label}
+          class="flex h-9 w-9 items-center justify-center rounded-base border border-muted text-xs font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
         >
           {s.label}
         </a>

@@ -1,7 +1,7 @@
 ---
 // Шапка: sticky + blur (docs/DESIGN.md). Слева имя (Fraunces), справа 4 якорных пункта.
 // Соцсети больше не в шапке — они в секции Contact. Якоря ведут на секции главной: ${base}/#id.
-import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
+import { useTranslations, localePrefix, alternateLinks, type Lang } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -9,6 +9,14 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const base = localePrefix(lang);
+
+// Переключатель языка: ведёт на ту же страницу в другом языке (en ↔ ru) по тем же правилам, что hreflang.
+const other: Lang = lang === 'en' ? 'ru' : 'en';
+// У страницы 404 нет языковой версии (/ru/404/ не существует) → ведём на главную другого языка.
+const isNotFound = /^\/404\/?$/.test(Astro.url.pathname);
+const otherPath = isNotFound
+  ? `${localePrefix(other)}/`
+  : (alternateLinks(Astro.url.pathname).find((a) => a.lang === other)?.path ?? `${localePrefix(other)}/`);
 
 const navLinks = [
   { id: 'about', key: 'nav.about' },
@@ -34,6 +42,17 @@ const navLinks = [
           </li>
         ))
       }
+      <li class="border-l border-line pl-6">
+        <a
+          href={otherPath}
+          hreflang={other}
+          lang={other}
+          aria-label={t('nav.switch')}
+          class="font-medium uppercase tracking-[0.12em] text-ink transition-colors hover:text-accent"
+        >
+          {other}
+        </a>
+      </li>
     </ul>
   </nav>
 </header>

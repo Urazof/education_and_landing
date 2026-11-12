@@ -5,6 +5,12 @@
 import { defineCollection, z } from 'astro:content';
 import { glob, file } from 'astro/loaders';
 
+// Любая ссылка в контенте: валидный URL без трекинг-параметров (utm_*, fbclid, igsh, gclid) — правило проекта.
+const cleanUrl = z
+  .string()
+  .url()
+  .refine((u) => !/[?&](utm_[a-z]+|fbclid|igsh|gclid)=/i.test(u), 'URL contains tracking parameters');
+
 const cases = defineCollection({
   // glob-loader забирает все .md из папки. Имя файла (без .md) становится id записи.
   loader: glob({ pattern: '**/*.md', base: './src/content/cases' }),
@@ -14,9 +20,9 @@ const cases = defineCollection({
     title: z.string(),               // заголовок кейса, напр. "Brand transformation"
     client: z.string(),              // "Grow Food" / "Priem"
     order: z.number(),               // порядок в списке Works
-    external: z.string().url().optional(), // ссылка на продукт
+    external: cleanUrl.optional(), // ссылка на продукт
     social: z
-      .array(z.object({ label: z.string(), url: z.string().url() }))
+      .array(z.object({ label: z.string(), url: cleanUrl }))
       .default([]),
     // Секции кейса: Context → Challenge → Strategy → Execution → Results → ...
     sections: z.array(
@@ -32,8 +38,8 @@ const cases = defineCollection({
         videos: z
           .array(
             z.union([
-              z.string().url(),
-              z.object({ url: z.string().url(), vertical: z.boolean().default(false) }),
+              cleanUrl,
+              z.object({ url: cleanUrl, vertical: z.boolean().default(false) }),
             ]),
           )
           .default([])
@@ -50,9 +56,9 @@ const cases = defineCollection({
         // с cap высоты как у ImageRow. Для секции без heading/body. Впервые: Cofix (видео + 3 фото).
         layout: z.enum(['default', 'aside-right', 'aside-left', 'video-image', 'spotlight', 'media-row']).default('default'),
         // Ссылка-кнопка под текстом секции (напр. themeal.menu в «What came next»).
-        link: z.object({ label: z.string(), url: z.string().url() }).optional(),
+        link: z.object({ label: z.string(), url: cleanUrl }).optional(),
         // Список ссылок-референсов (напр. Credentials в WRC). label опционален — дефолт URL.
-        links: z.array(z.object({ label: z.string().optional(), url: z.string().url() })).default([]),
+        links: z.array(z.object({ label: z.string().optional(), url: cleanUrl })).default([]),
         // Метрик-чипы (напр. Results в Eucerin): крупное значение + подпись.
         metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
         // Текст ПОД чипсами (на макете: интро → чипсы → ещё текст → Context). Рендерится
@@ -94,10 +100,7 @@ const press = defineCollection({
     outlet: z.string(),
     title: z.string(),
     kind: z.enum(['article', 'case', 'commentary', 'insight', 'podcast']),
-    url: z
-      .string()
-      .url()
-      .refine((u) => !/[?&](utm_[a-z]+|fbclid)=/i.test(u), 'URL contains tracking parameters'),
+    url: cleanUrl,
     order: z.number(),
   }),
 });

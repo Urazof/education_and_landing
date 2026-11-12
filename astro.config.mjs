@@ -28,7 +28,7 @@ export default defineConfig({
       // Ключи — наши locale-коды, значения — BCP-47 теги для поисковика.
       i18n: {
         defaultLocale: 'en',
-        locales: { en: 'en-US', ru: 'ru-RU' },
+        locales: { en: 'en', ru: 'ru' },
       },
     }),
   ],

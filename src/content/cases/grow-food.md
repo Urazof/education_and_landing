@@ -4,7 +4,7 @@ client: Grow Food
 order: 1
 external: https://growfood.pro/
 social:
-  - { label: IG, url: "https://www.instagram.com/growfoodrus?igsh=eHVuZjJleXVpYmth" }
+  - { label: IG, url: "https://www.instagram.com/growfoodrus" }
   - { label: TG, url: "https://t.me/growfoodrus" }
 sections:
   - heading: Results
@@ -14,7 +14,7 @@ sections:
     metrics:
       - { value: "+200%", label: "brand awareness growth within a year of rebrand" }
       - { value: "+40%",  label: "customer base growth after launch" }
-      - { value: "2х",    label: "product activity in first months post-launch" }
+      - { value: "2x",    label: "product activity in first months post-launch" }
     after: >-
       Results held stable into the following year. The new brand platform became the
       foundation for new product launches, audience segmentation, and expansion into new

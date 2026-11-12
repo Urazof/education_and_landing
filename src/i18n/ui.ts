@@ -1,11 +1,6 @@
 // Словарь интерфейсных строк. Контент кейсов живёт в content-коллекциях,
 // здесь — текст самой главной страницы и подписи UI, для каждого языка.
 
-export const languages = {
-  en: 'English',
-  ru: 'Русский',
-} as const;
-
 export const defaultLang = 'en';
 
 export const ui = {
@@ -14,6 +9,10 @@ export const ui = {
     'nav.works': 'Work',
     'nav.publications': 'Publications',
     'nav.contact': 'Contact',
+    'nav.switch': 'Русская версия',
+    'a11y.skip': 'Skip to content',
+    'notfound.title': 'Page not found',
+    'notfound.text': 'The page you are looking for does not exist or has moved.',
     'footer.sitemap': 'Sitemap',
     'meta.title': 'Maria Tkachenko — Brand strategist & marketing leader',
     'meta.description':
@@ -60,8 +59,6 @@ export const ui = {
     'case.back': 'Back to home',
     'case.next': 'Next case',
     'case.visit': 'Visit website',
-    'case.results': 'Results',
-    'case.video': 'Video coming soon',
     'footer.rights': 'All rights reserved',
   },
   ru: {
@@ -69,6 +66,10 @@ export const ui = {
     'nav.works': 'Работы',
     'nav.publications': 'Публикации',
     'nav.contact': 'Контакты',
+    'nav.switch': 'English version',
+    'a11y.skip': 'К содержимому',
+    'notfound.title': 'Страница не найдена',
+    'notfound.text': 'Такой страницы нет или она переехала.',
     'footer.sitemap': 'Карта сайта',
     'meta.title': 'Мария Ткаченко — бренд-стратег и маркетинг-лидер',
     'meta.description':
@@ -114,8 +115,6 @@ export const ui = {
     'case.back': 'На главную',
     'case.next': 'Следующий кейс',
     'case.visit': 'Перейти на сайт',
-    'case.results': 'Результаты',
-    'case.video': 'Видео скоро появится',
     'footer.rights': 'Все права защищены',
   },
 } as const;

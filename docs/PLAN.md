@@ -48,5 +48,5 @@ Acceptance: every case has a unique title/description; layouts did not regress (
 Acceptance: audit clean.
 
 ## Phase 6: review and deploy
-- [ ] `site-reviewer` subagent full pass; fix all "Must fix" items.
+- [x] `site-reviewer` subagent full pass; fix all "Must fix" items. (2 Must fix + most Should fix done; see ASTRO-EDUCATION §25)
 - [ ] Deploy target: Cloudflare (domain already there). Ask before deploying; deploy branch/flow to be confirmed (see `CONTEXT_LANDING.md` deploy notes).

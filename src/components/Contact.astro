@@ -14,7 +14,7 @@ const links = [
   { label: 'Telegram ↗', url: 'https://t.me/marymishel', primary: false },
   { label: 'WhatsApp ↗', url: 'https://wa.me/message/DLSCXFQCCOVPA1', primary: false },
 ];
-const btn = 'rounded-[4px] px-5 py-3 text-sm font-medium transition-colors';
+const btn = 'rounded-base px-5 py-3 text-sm font-medium transition-colors';
 ---
 
 <section id="contact" class="border-t border-line">
@@ -37,7 +37,7 @@ const btn = 'rounded-[4px] px-5 py-3 text-sm font-medium transition-colors';
               btn,
               l.primary
                 ? 'bg-accent text-paper hover:bg-accent-ink'
-                : 'border border-ink/30 text-ink hover:border-accent hover:text-accent',
+                : 'border border-muted text-ink hover:border-accent hover:text-accent',
             ]}
           >
             {l.label}

@@ -1,7 +1,7 @@
 ---
 // === Frontmatter (между --- ) — серверный код, выполняется при сборке, в браузер НЕ попадает ===
 import '../styles/global.css';
-import { alternateLinks, localeTag, type Lang } from '../i18n/ui';
+import { alternateLinks, localeTag, useTranslations, type Lang } from '../i18n/ui';
 // Два шрифта «над сгибом» preload'им. ?url отдаёт hashed-адрес файла из сборки — тот же,
 // что подставляет @font-face из fontsource, поэтому браузер не качает файл дважды.
 // Относительный путь (а не пакетный) нужен, т.к. exports пакета не открывают /files/*.woff2.
@@ -15,6 +15,7 @@ interface Props {
   lang?: Lang;
   ogType?: 'website' | 'article'; // тип для Open Graph: главная — website, кейсы — article
   ogImage?: string; // путь к соц-картинке (root-relative). По умолчанию /og.png (1200×630, public/og.png).
+  noindex?: boolean; // служебные страницы (404) не должны попадать в индекс
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]; // структурированные данные (Person / CreativeWork)
 }
 
@@ -26,7 +27,9 @@ const {
   ogType = 'website',
   ogImage = '/og.png',
   jsonLd,
+  noindex = false,
 } = Astro.props;
+const t = useTranslations(lang);
 
 // site задан в astro.config.mjs → доступен как Astro.site. Из него строим абсолютные URL.
 const site = Astro.site!;
@@ -47,6 +50,7 @@ const siteName = 'Maria Tkachenko';
     <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
 
     <!-- Канонический URL — какой адрес страницы считать главным (защита от дублей) -->
     <link rel="canonical" href={canonical} />
@@ -90,6 +94,13 @@ const siteName = 'Maria Tkachenko';
     <slot name="head" />
   </head>
   <body class="min-h-screen antialiased">
+    <!-- Skip-link: первый фокусируемый элемент, виден только при фокусе с клавиатуры -->
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-base focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-paper"
+    >
+      {t('a11y.skip')}
+    </a>
     <!-- безымянный слот: сюда подставится содержимое страницы -->
     <slot />
   </body>

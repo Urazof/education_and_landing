@@ -27,7 +27,7 @@ const t = useTranslations(lang);
           'mt-6 leading-[0.98] tracking-[-0.02em] text-ink',
           lang === 'ru'
             ? 'text-[clamp(2.5rem,6.25vw,5.75rem)]'
-            : 'text-[clamp(2.75rem,8vw,7.75rem)]',
+            : 'text-[clamp(3.25rem,8vw,7.75rem)]',
         ]}
       >
         {t('hero.h1.a')}<em class="font-light italic">{t('hero.h1.em')}</em>{t('hero.h1.b')}<span
@@ -41,13 +41,13 @@ const t = useTranslations(lang);
       <div class="pointer-events-auto mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
         <a
           href="#works"
-          class="rounded-[4px] bg-accent px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-accent-ink"
+          class="rounded-base bg-accent px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-accent-ink"
         >
           {t('hero.ctaWork')}
         </a>
         <a
           href="#contact"
-          class="text-sm font-medium text-ink underline underline-offset-4 decoration-ink/30 transition-colors hover:text-accent hover:decoration-accent"
+          class="text-sm font-medium text-ink underline underline-offset-4 decoration-ink/60 transition-colors hover:text-accent hover:decoration-accent"
         >
           {t('hero.ctaContact')}
         </a>
@@ -64,7 +64,7 @@ const t = useTranslations(lang);
         position="top"
         loading="eager"
         fetchpriority="high"
-        class="aspect-[4/5] w-full rounded-[4px] object-cover"
+        class="aspect-[4/5] w-full rounded-base object-cover"
       />
       <figcaption class="mt-2.5 text-xs text-muted">{t('hero.caption')}</figcaption>
     </figure>

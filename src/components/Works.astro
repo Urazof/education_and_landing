@@ -7,7 +7,7 @@ import CaseCard from './CaseCard.astro';
 // Фоновые изображения карточек Works — реальные кейс-медиа, а не логотипы.
 import growFoodCardBg from '../assets/growfood-card-bg.png';
 import priemCardBg from '../assets/priem-card-bg.jpg';
-import eucerincardBg from '../assets/eucerin-card-bg.png';
+import eucerinCardBg from '../assets/eucerin-card-bg.png';
 import philipsCardBg from '../assets/philips-card-bg.png';
 import cofixCardBg from '../assets/cofix-card-bg.jpg';
 import worksPreview from '../assets/works-preview.png';
@@ -22,7 +22,7 @@ const base = localePrefix(lang);
 const images: Record<string, ImageMetadata> = {
   'grow-food': growFoodCardBg,
   priem: priemCardBg,
-  eucerin: eucerincardBg,
+  eucerin: eucerinCardBg,
   philips: philipsCardBg,
   cofix: cofixCardBg,
 };
@@ -69,7 +69,7 @@ const cases = (await getCollection('cases'))
               title={entry.data.title}
               client={entry.data.client}
               image={images[entry.id] ?? worksPreview}
-              alt={entry.data.client}
+              alt=""
             />
           </div>
         ))
