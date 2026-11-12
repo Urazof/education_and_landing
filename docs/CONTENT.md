@@ -72,4 +72,5 @@ descriptive and not confirmed by Maria. Use the current labels unless she approv
 - Типы публикаций: Article, Case study, Commentary, Industry insight, Podcast (RU: Статья, Кейс, Комментарий, Отраслевой разбор, Подкаст).
 - RU: роли в hero, CTA «Смотреть работы →» / «Связаться», About H2 «Сначала инсайт. Потом бренд.», строка Contact.
 - Названия изданий и заголовки публикаций на `/ru/` остаются английскими (текущие подписи чипов).
+- Подпись под портретом (hero.caption): «Click the network — every node is a customer insight.» (из макета) / RU «Нажмите на сеть — каждый узел — это клиентский инсайт.»; счётчик «Insights linked» / «Связано инсайтов».
 - Ссылка «Archive →» ведёт прямо на кейс WRC (`/cases/wrc`): отдельной страницы архива нет. Решить: оставить, переименовать или сделать страницу архива.

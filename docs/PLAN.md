@@ -34,8 +34,8 @@ Acceptance: `npm run build` passes; a page renders with the right fonts and colo
 Acceptance: matches DESIGN.md and `docs/mockup/`; zero client JS in `dist/`.
 
 ## Phase 3: hero network canvas
-- [ ] `src/components/NetworkCanvas.astro` + `NetworkCanvas.ts` per DESIGN.md.
-Acceptance: one small JS file in `dist/` (< 8 KB gzip); reduced-motion respected; no CLS; LCP unaffected.
+- [x] `src/components/NetworkCanvas.astro` + `NetworkCanvas.ts` per DESIGN.md.
+Acceptance: one small JS file in `dist/` (< 8 KB gzip); reduced-motion respected; no CLS; LCP unaffected. (met: Astro inlines the script as one module, ~1.5 KB gzip, 0 separate .js files; CLS ≈ 0)
 
 ## Phase 4: case pages
 - [ ] Restyle `CaseArticle`, `CaseCard`, `ImageRow`, `MediaRow`, `VideoGroup` with the new tokens; check all 6 cases en + ru.

@@ -1,9 +1,11 @@
 ---
 // Hero по docs/DESIGN.md: эйброу-имя, H1 с курсивным словом и акцентной точкой, роли, абзац, две кнопки,
-// портрет 4:5 справа. Canvas-сеть добавится в Phase 3 (фон секции + подпись под портретом).
+// портрет 4:5 справа с подписью. Фон секции — интерактивная canvas-сеть (NetworkCanvas, Phase 3):
+// canvas лежит под контентом, контент — pointer-events: none (клики проходят на canvas), кроме ссылок и портрета.
 import { Image } from 'astro:assets';
 import { useTranslations, type Lang } from '../i18n/ui';
 import mariaPhoto from '../assets/maria-photo.jpg';
+import NetworkCanvas from './NetworkCanvas.astro';
 
 interface Props {
   lang: Lang;
@@ -12,9 +14,10 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section class="relative">
+<section class="relative overflow-hidden">
+  <NetworkCanvas lang={lang} />
   <div
-    class="container-page grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16 lg:py-24"
+    class="pointer-events-none relative container-page grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16 lg:py-24"
   >
     <div>
       <p class="eyebrow !text-muted">{t('hero.eyebrow')}</p>
@@ -35,7 +38,7 @@ const t = useTranslations(lang);
         {t('hero.roles')}
       </p>
       <p class="mt-4 max-w-xl text-pretty">{t('hero.intro')}</p>
-      <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+      <div class="pointer-events-auto mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
         <a
           href="#works"
           class="rounded-[4px] bg-accent px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-accent-ink"
@@ -52,7 +55,7 @@ const t = useTranslations(lang);
     </div>
 
     <!-- Портрет 4:5 (исходник 1024×1280). width/height задают кроп и размер файла; eager — это LCP. -->
-    <div class="mx-auto w-full max-w-[300px] lg:mx-0">
+    <figure class="pointer-events-auto m-0 mx-auto w-full max-w-[300px] lg:mx-0">
       <Image
         src={mariaPhoto}
         alt={t('hero.photoAlt')}
@@ -63,6 +66,7 @@ const t = useTranslations(lang);
         fetchpriority="high"
         class="aspect-[4/5] w-full rounded-[4px] object-cover"
       />
-    </div>
+      <figcaption class="mt-2.5 text-xs text-muted">{t('hero.caption')}</figcaption>
+    </figure>
   </div>
 </section>
