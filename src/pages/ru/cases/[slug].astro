@@ -5,19 +5,22 @@ import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
+import { caseDescription, caseJsonLd, getNextCase } from '../../../lib/cases';
 import CaseArticle from '../../../components/CaseArticle.astro';
 
 export async function getStaticPaths() {
   const cases = await getCollection('cases');
   return cases.map((entry) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: { entry, next: getNextCase(cases, entry) }, // запись + следующий кейс для ссылки внизу
   }));
 }
 
 const lang = 'ru';
-const { entry } = Astro.props;
-const description = `${entry.data.title} — кейс ${entry.data.client}. Мария Ткаченко.`;
+const { entry, next } = Astro.props;
+// description — начало текста самого кейса (уникален у каждого, ≤155 символов); JSON-LD — CreativeWork.
+const description = caseDescription(entry);
+const jsonLd = caseJsonLd(entry, new URL(Astro.url.pathname, Astro.site!), Astro.site!);
 ---
 
 <Base
@@ -25,8 +28,9 @@ const description = `${entry.data.title} — кейс ${entry.data.client}. Ма
   description={description}
   lang={lang}
   ogType="article"
+  jsonLd={jsonLd}
 >
   <Nav lang={lang} />
-  <CaseArticle entry={entry} lang={lang} />
+  <CaseArticle entry={entry} lang={lang} next={next} />
   <Footer lang={lang} />
 </Base>

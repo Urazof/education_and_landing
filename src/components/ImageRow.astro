@@ -28,14 +28,14 @@ const isMulti = images.length >= 2;
     {images.map((im) => {
       const ratio = (im.src.width / im.src.height).toFixed(4);
       return isMulti ? (
-        <div class="img-item overflow-hidden rounded-[5px]" style={`--r:${ratio}`}>
+        <div class="img-item overflow-hidden rounded-base" style={`--r:${ratio}`}>
           <Image src={im.src} alt={im.alt} class="w-full object-cover sm:h-full" />
         </div>
       ) : (
         <Image
           src={im.src}
           alt={im.alt}
-          class="w-full rounded-[5px] object-cover"
+          class="w-full rounded-base object-cover"
         />
       );
     })}

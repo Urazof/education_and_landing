@@ -40,12 +40,12 @@ const allow =
     style={`--cap:${height}px`}
   >
     {videos.map((v) => (
-      <div class="media-item overflow-hidden rounded-[5px] bg-ink/5" style={`--r:${(v.vertical ? 9 / 16 : 16 / 9).toFixed(4)}`}>
+      <div class="media-item overflow-hidden rounded-base bg-paper-2" style={`--r:${(v.vertical ? 9 / 16 : 16 / 9).toFixed(4)}`}>
         <iframe src={embedUrl(v.url)} title={title} loading="lazy" class="h-full w-full" allow={allow} allowfullscreen />
       </div>
     ))}
     {images.map((im) => (
-      <div class="media-item overflow-hidden rounded-[5px]" style={`--r:${(im.src.width / im.src.height).toFixed(4)}`}>
+      <div class="media-item overflow-hidden rounded-base" style={`--r:${(im.src.width / im.src.height).toFixed(4)}`}>
         <Image src={im.src} alt={im.alt} class="h-full w-full object-cover" />
       </div>
     ))}

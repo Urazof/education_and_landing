@@ -37,7 +37,7 @@ const allow =
     {videos.map((v) => (
       <div
         class:list={[
-          'overflow-hidden rounded-[5px] bg-ink/5',
+          'overflow-hidden rounded-base bg-paper-2',
           v.vertical
             ? `aspect-[9/16] w-full max-w-[220px] sm:h-[var(--row-h)] sm:max-w-none ${(videos.length === 2 && !isMixed) ? 'sm:flex-1 sm:min-w-0' : 'sm:w-auto'}`
             : `aspect-video w-full sm:h-[var(--row-h)] ${videos.length === 2 ? 'sm:flex-1 sm:min-w-0' : 'sm:w-auto'}`,

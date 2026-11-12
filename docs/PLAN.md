@@ -38,8 +38,8 @@ Acceptance: matches DESIGN.md and `docs/mockup/`; zero client JS in `dist/`.
 Acceptance: one small JS file in `dist/` (< 8 KB gzip); reduced-motion respected; no CLS; LCP unaffected. (met: Astro inlines the script as one module, ~1.5 KB gzip, 0 separate .js files; CLS ≈ 0)
 
 ## Phase 4: case pages
-- [ ] Restyle `CaseArticle`, `CaseCard`, `ImageRow`, `MediaRow`, `VideoGroup` with the new tokens; check all 6 cases en + ru.
-- [ ] `CreativeWork` JSON-LD, next-case link, unique title/description per case (replace the generic template description).
+- [x] Restyle `CaseArticle`, `CaseCard`, `ImageRow`, `MediaRow`, `VideoGroup` with the new tokens; check all 6 cases en + ru.
+- [x] `CreativeWork` JSON-LD, next-case link, unique title/description per case (replace the generic template description).
 Acceptance: every case has a unique title/description; layouts did not regress (screenshots).
 
 ## Phase 5: SEO and machine-readable files
