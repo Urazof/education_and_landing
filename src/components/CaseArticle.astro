@@ -1,13 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import type { CollectionEntry } from 'astro:content';
+import type { LocalCase } from '../lib/localize';
 import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
 import SocialLinks from './SocialLinks.astro';
 import VideoGroup from './VideoGroup.astro';
 import ImageRow from './ImageRow.astro';
 import MediaRow from './MediaRow.astro';
 import type { NextCase } from '../lib/cases';
+import imageAlts from '../data/image-alts.json';
 
 import growFood from '../assets/growfood-logo.png';
 import priemLogo from '../assets/priem-case-logo.png';
@@ -30,7 +31,7 @@ for (const [path, mod] of Object.entries(imageModules)) {
 }
 
 interface Props {
-  entry: CollectionEntry<'cases'>;
+  entry: LocalCase; // кейс, уже развёрнутый в язык страницы (getCases / localizeCase)
   lang: Lang;
   next?: NextCase; // следующий кейс для ссылки в конце страницы (у архивного кейса нет)
 }
@@ -67,10 +68,14 @@ const allow =
   'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
 
 // Хелпер: имена файлов секции → массив {src, alt} для ImageRow.
+// Описание картинки по её содержимому — из src/data/image-alts.json (по имени файла и языку); если файла там нет —
+// запасной шаблон «<клиент> — <секция> (n/N)».
+const altOf = (file: string, fallback: string) => (imageAlts as Record<string, { en: string; ru: string }>)[file]?.[lang] ?? fallback;
+
 function imgItems(files: string[], alt: string) {
   const list = files.filter((f) => assets[f]);
   // несколько картинок в секции различаем номером: «… (1/2)», «… (2/2)»
-  return list.map((f, i) => ({ src: assets[f], alt: list.length > 1 ? `${alt} (${i + 1}/${list.length})` : alt }));
+  return list.map((f, i) => ({ src: assets[f], alt: altOf(f, list.length > 1 ? `${alt} (${i + 1}/${list.length})` : alt) }));
 }
 
 // Контекст секции для alt-текстов: её заголовок, а у чистых медиа-блоков без заголовка — ближайший предыдущий заголовок
@@ -116,7 +121,7 @@ const sectionLabels = sections.map((s) => {
       const hasVideos = s.videos.length > 0;
       const vt = `${title} — video ${si + 1}`; // уникальный title для iframe секции
       const altBase = `${client} — ${sectionLabels[si]}`;
-      const altAt = (i: number, n: number) => (n > 1 ? `${altBase} (${i + 1}/${n})` : altBase);
+      const altAt = (f: string, i: number, n: number) => altOf(f, n > 1 ? `${altBase} (${i + 1}/${n})` : altBase);
 
       // Чистый медиа-блок без текста (нет ни heading, ни body, ни подзаголовка, ни буллетов)
       if (!hasHeading && !hasBody && !s.subheading && s.bullets.length === 0) {
@@ -138,7 +143,7 @@ const sectionLabels = sections.map((s) => {
                 </div>
               ))}
               {s.images.map((f, ii) => assets[f] && (
-                <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base object-cover sm:h-[var(--row-h)] sm:w-auto" />
+                <Image src={assets[f]} alt={altAt(f, ii, s.images.length)} class="w-full rounded-base object-cover sm:h-[var(--row-h)] sm:w-auto" />
               ))}
             </section>
           );
@@ -193,7 +198,7 @@ const sectionLabels = sections.map((s) => {
               </div>
               <div class="space-y-4">
                 {hasImages && s.images.map((f, ii) => assets[f] && (
-                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
+                  <Image src={assets[f]} alt={altAt(f, ii, s.images.length)} class="w-full rounded-base" />
                 ))}
                 {asideVideo && s.videos.map((v, vi) => (
                   <div class={`overflow-hidden rounded-base bg-paper-2 ${v.vertical ? 'aspect-[9/16]' : 'aspect-video'} w-full`}>
@@ -220,7 +225,7 @@ const sectionLabels = sections.map((s) => {
             <div class="grid items-center gap-8 sm:grid-cols-[2fr_3fr]">
               <div class="space-y-4">
                 {s.images.map((f, ii) => assets[f] && (
-                  <Image src={assets[f]} alt={altAt(ii, s.images.length)} class="w-full rounded-base" />
+                  <Image src={assets[f]} alt={altAt(f, ii, s.images.length)} class="w-full rounded-base" />
                 ))}
               </div>
               <div class="space-y-6">

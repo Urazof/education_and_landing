@@ -17,7 +17,7 @@ const t = useTranslations(lang);
 <section class="relative overflow-hidden">
   <NetworkCanvas lang={lang} />
   <div
-    class="pointer-events-none relative container-page grid items-center gap-10 pb-14 pt-[6.5rem] sm:pb-20 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16 lg:pb-24"
+    class="pointer-events-none relative container-page grid items-center gap-10 pb-14 pt-[6.5rem] sm:pb-20 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_clamp(300px,31vw,420px)] lg:gap-14 lg:pb-24"
   >
     <div>
       <p class="eyebrow !text-muted">{t('hero.eyebrow')}</p>
@@ -54,13 +54,14 @@ const t = useTranslations(lang);
       </div>
     </div>
 
-    <!-- Портрет 4:5 (исходник 1024×1280). width/height задают кроп и размер файла; eager — это LCP. -->
-    <div class="pointer-events-auto mx-auto w-full max-w-[300px] lg:mx-0">
+    <!-- Портрет 4:5 (исходник 1024×1280). Ширина колонки 300–420px (≈ высота текстового блока слева).
+         width/height задают кроп и размер файла (840 = 2× от макс. 420 для retina); eager — это LCP. -->
+    <div class="pointer-events-auto mx-auto w-full max-w-[300px] lg:mx-0 lg:max-w-none">
       <Image
         src={mariaPhoto}
         alt={t('hero.photoAlt')}
-        width={600}
-        height={750}
+        width={840}
+        height={1050}
         position="top"
         loading="eager"
         fetchpriority="high"
