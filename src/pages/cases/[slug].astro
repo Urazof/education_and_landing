@@ -1,7 +1,7 @@
 ---
 // Страница кейса (EN): /cases/grow-food, /cases/priem.
-// getStaticPaths генерирует по одному маршруту на каждую запись коллекции `cases`.
-import { getCollection } from 'astro:content';
+// getStaticPaths генерирует по одному маршруту на каждый кейс; getCases('en') разворачивает поля { en, ru } в английский.
+import { getCases } from '../../lib/localize';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
@@ -9,7 +9,7 @@ import { caseDescription, caseJsonLd, getNextCase } from '../../lib/cases';
 import CaseArticle from '../../components/CaseArticle.astro';
 
 export async function getStaticPaths() {
-  const cases = await getCollection('cases');
+  const cases = await getCases('en');
   return cases.map((entry) => ({
     params: { slug: entry.id }, // slug = имя .md-файла (grow-food, priem)
     props: { entry, next: getNextCase(cases, entry) }, // запись + следующий кейс для ссылки внизу

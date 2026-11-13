@@ -1,9 +1,11 @@
 {
-  // Название проекта в Cloudflare Pages — должно совпадать с тем, что создали в дашборде.
-  // Если используете Git-интеграцию Pages, этот файл не нужен — деплой идёт автоматически.
-  "name": "education-and-landing",
+  // Cloudflare Workers Builds + Static Assets: сайт — это папка dist/ без воркер-скрипта.
+  "name": "maria-portfolio",
   "compatibility_date": "2026-06-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Для несуществующего адреса отдавать dist/404.html со статусом 404.
+    // Без этой строки Cloudflare показывает свою стандартную страницу вместо нашей.
+    "not_found_handling": "404-page"
   }
 }

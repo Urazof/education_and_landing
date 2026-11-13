@@ -3,6 +3,7 @@
 // Язык — английский: именно на нём написаны тексты кейсов.
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { getCases } from '../lib/localize';
 import { caseDescription } from '../lib/cases';
 import { ui } from '../i18n/ui';
 
@@ -10,7 +11,7 @@ export const GET: APIRoute = async ({ site }) => {
   const origin = site!;
   const abs = (path: string) => new URL(path, origin).href;
 
-  const cases = (await getCollection('cases')).sort((a, b) => a.data.order - b.data.order);
+  const cases = await getCases('en');
   const works = cases.filter((c) => !c.data.archive);
   const archive = cases.filter((c) => c.data.archive);
   const press = (await getCollection('press')).sort((a, b) => a.data.order - b.data.order);
