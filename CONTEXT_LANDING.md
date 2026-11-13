@@ -4,6 +4,389 @@
 
 ---
 
+## 🔁 РЕДИЗАЙН (ветка `redesign`, старт 2026-11-12)
+
+**Что это:** перестройка внешнего вида по набору `maria-site-claude-kit` (удалён, всё лежит в корне): тёплая
+бумага `#F6F3EE`, заголовки Fraunces, текст Inter, один акцент `#2E6A4F`, hero с canvas-сетью, упор на SEO.
+План и чекбоксы — `docs/PLAN.md`; дизайн — `docs/DESIGN.md` (+ макет `docs/mockup/`); контент — `docs/CONTENT.md`.
+
+**Принятые решения (Phase 0):** коллекция остаётся `cases` (URL `/cases/[slug]`, редиректов нет), добавится `press`;
+ru остаётся; Tailwind v4 остаётся; страницы кейсов не переписываем, только перекрашиваем; акцент `#2E6A4F`.
+
+**Автоматизация:**
+- `/next-phase` (`.claude/skills/next-phase`) — выполняет следующую фазу плана целиком: реализация → check/build →
+  скриншоты → `site-reviewer` → отметка в PLAN → обновление этих двух файлов → коммит в `redesign`.
+- Hook `.claude/hooks/guard-branch.sh` (PreToolUse/Bash): `git commit/push` только на ветке `redesign`; force-push и push
+  в main/master/develop блокируются. Hook `.claude/hooks/check-on-stop.sh` (Stop): гоняет `npm run check`, если менялся
+  `src/`, и не даёт закончить ход при ошибках. Настройки — `.claude/settings.local.json` (`deny`: merge, force-push, gh pr).
+- Файлы `CONTEXT_LANDING.md` и `ASTRO-EDUCATION.md` в `.gitignore`, но УЖЕ отслеживаются git → ignore не работает;
+  пользователь коммитит их отдельно в общую ветку (в коммиты фаз их не стейджим).
+
+**Статус фаз:** Phase 0 ✅ · Phase 1 ✅ (шрифты, токены, `Base.astro`, шапка/подвал) · Phase 2 ✅ (коллекция `press`,
+секции главной en+ru; детали — `ASTRO-EDUCATION.md` §21) · Phase 3 ✅ (canvas-сеть в hero, §22) · Phase 4 ✅ (страницы кейсов, §23) ·
+Phase 5 ✅ (SEO, §24) · Phase 6 ✅ кроме деплоя (полное ревью и исправления, §25) · **осталось: решение о деплое** (только по команде пользователя).
+
+**Ветка `translate` (2026-11-13): переводы кейсов полями `{ en, ru }`** в том же файле `src/content/cases/*.md` (английский — база;
+схема `src/lib/caseSchema.ts`, разворачивание `src/lib/localize.ts`, `getCases(lang)`; детали — `ASTRO-EDUCATION.md` §27). Нет `ru` → на `/ru/` английский
++ предупреждение `[i18n]` при сборке. `check` 0/0/0, `build` 15 страниц, `dist/` идентичен сборке до рефакторинга. Переводы — черновик, ждут вычитки Марией.
+Скилл `new-case` обновлён под `cases`. Коммит: hook `guard-branch.sh` разрешает commit только на `redesign` — на `translate` блокируется
+(решение пользователя: править hook или коммитить самому).
+
+**2026-11-13 (та же ветка):** alt-тексты 31 картинки кейсов описаны по содержимому, en+ru (`src/data/image-alts.json`, §28) — ждут проверки Марией;
+портрет в hero увеличен до 300–420px по ширине (§28); `wrangler.jsonc`: `not_found_handling: "404-page"` (деплой не выполнялся).
+
+
+### ✅ TODO (согласовано 2026-11-13, будем делать)
+
+1. **Search Console + Bing Webmaster** — подтвердить домен `mariatkachenko.savor.ing` (метатег или DNS), отправить `sitemap-index.xml`,
+   смотреть покрытие и запросы. Делать сразу после деплоя. (Бесплатные кабинеты поисковиков: без них не видно, индексирует ли Google сайт.)
+2. **Проверка `sameAs` в Person JSON-LD** (`src/lib/seo.ts`; сейчас LinkedIn + Telegram) — список профилей, по которому Google понимает, что
+   «Мария Ткаченко» на сайте, в LinkedIn и в публикациях РБК/Sostav/Inc Russia — один человек. Сверить живые ссылки, добавить недостающие
+   площадки; также взаимные ссылки с профилей на сайт.
+3. **Description главной** (`docs/CONTENT.md`, 3 варианта, сейчас черновик) — утвердить с Марией: текст сниппета в выдаче, с запросами вроде
+   «бренд-стратег», «директор по маркетингу». Это самая заметная строка сайта в поиске.
+4. **Alt-тексты фото кейсов** — ✅ написаны по содержимому (en+ru, `src/data/image-alts.json`); осталось показать Марии на проверку.
+
+Рядом (из обсуждения): `assets.not_found_handling: "404-page"` в `wrangler.jsonc` (при деплое), решение по форме обратной связи,
+защита от «забытого перевода» кейса (fallback на EN-версию, см. §27 ASTRO-EDUCATION).
+
+**Phase 6 — итог:** `site-reviewer` полный проход: 2 Must fix исправлены (кириллическая «х» в метрике Grow Food; переключатель языка EN/RU в шапке),
+из ~19 Should fix сделано большинство (404-страница, skip-link, доступные заголовки/alt/имена соц-ссылок, уникальные title у iframe, контраст границ,
+youtube-nocookie, чистка `igsh`-параметров + запрет в схеме, favicon в токенах, hreflang в sitemap, `.gitignore` для скриншотов). Подробности — §25.
+Осознанно не делали: осмысленные alt у фото кейсов (нужны описания от Марии), выделение текста в hero (схема DESIGN.md), `x-default` в sitemap,
+мёртвые тела `.md` кейсов, дубль `order: 3` у WRC.
+✅ Вес `dist/`: 65 MB → **6.6 MB**. Причина была в том, что ImageRow/MediaRow читали `im.src.width/height` напрямую, и Astro считал оригиналы «используемыми в коде»
+(оставлял 3–9 MB PNG в `dist/_astro`). Теперь размеры читаются через `src/lib/image.ts` (`aspectRatio()`), раскладка не изменилась. Удалены 10 неиспользуемых картинок
+(`growfood-before-after/challenge/execution`, `icon-li/tg/wa`, `priem-logo-purple`, `priem-card-bg.png`, `priem-logo.png`, `wrc-card-bg.jpg`). Подробности — `ASTRO-EDUCATION.md` §25.5.
+Открыто: `src/assets/maria-photo.png` (вырезанный портрет) нигде не используется — оставлен, решить, удалять ли; `works-preview.png` — запасная картинка карточки.
+alt-тексты фото кейсов теперь «<Клиент> — <заголовок секции> (n/N)» (по смыслу секции, §25.5a); реальные описания содержимого — от Марии.
+
+**Деплой на Workers (подтверждено пользователем: Cloudflare Workers Builds, деплой при слиянии в `main`):** разбор Workers vs Pages, `wrangler.jsonc`, превью и 404 — `ASTRO-EDUCATION.md` §26.
+К решению: добавить в `wrangler.jsonc` `assets.not_found_handling: "404-page"` (иначе наш `404.html` на проде не используется) и включить превью-деплои (на Workers они не автоматические).
+
+**Деплой (не выполнен, ждёт решения):** таргет — Cloudflare (Pages/Workers, см. раздел «ТЕКУЩИЙ ФОКУС: ЧИНИМ ДЕПЛОЙ» ниже; `wrangler.jsonc` в репо),
+прод собирается из `main`, сейчас работа в `redesign`. Нужно решить: смержить `redesign` в `develop`/`main` самим пользователем (мердж и push в main
+для агента заблокированы hook-ом) и проверить build-command `npm run build`, output `dist`.
+
+**Phase 5 — итог:** `trailingSlash: 'always'` (ссылки со слэшем, как canonical/sitemap), Person JSON-LD на `/` и `/ru/`, `llms.txt` (endpoint, из коллекций),
+`public/og.png` 1200×630 (дефолт для всех страниц + `og:image:width/height/alt`), description главной (150/146 символов, **черновик**, 3 варианта в
+`docs/CONTENT.md`), `robots.txt` очищен. Аудит `dist/` без замечаний; Lighthouse: `/` 97/100/100/100, `/ru/` 99/100/100/100, кейс 100/100/96/100.
+Ждёт Марию: description главной, OG-картинка, RU-строки, ссылка «Archive →» (ведёт на кейс WRC).
+
+**Phase 4 — итог:** кейсы перекрашены в токены (контейнер 1200px, `rounded-base`, контурные/залитые кнопки, чипы метрик `paper-2`),
+внутренняя раскладка секций не тронута. Новое: `src/lib/cases.ts` (`getNextCase`, `caseDescription`, `caseJsonLd`), JSON-LD `CreativeWork`
+на каждой странице кейса, description из текста кейса (6/6 уникальных), блок «Next case» по кругу (у архивного WRC нет).
+Известно: тексты кейсов остаются английскими и на `/ru/` (перевод — отдельное решение); `case.next` RU — черновой.
+Главная также: Works теперь 2 крупных + 3 в ряд (ASTRO-EDUCATION §21.10).
+
+**Phase 3 — итог:** `NetworkCanvas.astro` + `NetworkCanvas.ts` (~1.5 KB gzip, инлайн-модуль, `.js` в `dist/` нет), цикл анимации только когда
+нужен (вне экрана/скрытая вкладка/reduced-motion — стоит), цвета из токенов, подпись «Click the network…» (теперь в правом верхнем углу НАД счётчиком, §22.3a) и счётчик
+«INSIGHTS LINKED». CLS ≈ 0. Проверено через CDP: дрейф есть/нет, клики и каскад работают, en/ru/390px. Новые RU-строки
+(`hero.caption`, `hero.counter`) — черновые.
+
+**Решение по кириллице:** для заголовков `/ru/` подключён Playfair Display (Fraunces кириллицы не имеет) — подставляется
+пошагово по глифам через стек `--font-display`.
+
+**Phase 2 — итог:** Hero (H1 с курсивным словом и акцентной точкой, роли, 2 CTA, портрет 4:5), About (H2 + текст),
+Works на `paper-2` (flex-wrap, карточки с подписью под обложкой, ссылка «Archive →»), Publications списком из коллекции
+`press` (`src/content/press.json`, схема запрещает utm/fbclid), Recognition (тёмная плашка + ссылка на жюри E+), Contact
+(LinkedIn/Telegram/WhatsApp кнопками; иконки убраны из шапки). `Archive.astro` удалён. `Nav` — имя + 4 якоря.
+⚠️ Новые RU-строки (роли, CTA, About H2, заголовки Works/Publications, строка Contact) — **черновой перевод**, нужна
+сверка с Марией. Нет в проекте и осталось на Phase 3: подпись под портретом про canvas («Click the network…»).
+
+**Phase 1 — что сделано (подробно: `ASTRO-EDUCATION.md` §20):**
+- `@fontsource-variable/fraunces` + `inter`; токены `--color-paper/paper-2/line/ink/ink-2/muted/accent/accent-ink/accent-on-dark`
+  в `@theme` (имена `ink`/`paper` сохранены, значения новые); брендовые `gf-*`/`priem-*` токены удалены (нигде не использовались).
+- `Base.astro`: preload двух woff2 (Inter latin, Fraunces latin), prop `jsonLd`, `theme-color`.
+- `Nav`: sticky + blur, лого-имя Fraunces, 4 пункта (About/Work/Publications/Contact; соц-иконки пока остались справа —
+  переедут в Contact в Phase 2). `Footer`: © + ссылка на sitemap (ссылка llms.txt — в Phase 5). `Contact` получил `id="contact"`.
+- ⚠️ Fraunces **не содержит кириллицы** → русские заголовки на `/ru/` рисуются запасным serif (Georgia). Решение по RU-заголовкам
+  (другой шрифт для кириллицы или принять fallback) — открыто, обсудить с пользователем до Phase 2.
+- Глобально НЕ задаём цвет `h1–h3` (иначе ломаются заголовки на фото-карточках Works).
+
+---
+
+## 📌 ТЕКУЩЕЕ СОСТОЯНИЕ (снимок на 2026-07-23, до редизайна)
+
+**Проект:** статичный мультиязычный (en/ru) лендинг-портфолио бренд-стратега Марии Ткаченко.
+Astro 5 + Tailwind v4, деплой Cloudflare, домен `mariatkachenko.savor.ing`. Источник макета — доска
+Miro «My First Board» (`https://miro.com/app/board/uXjVHML_PRQ=/`). Контент кейсов — EN, обвязка i18n.
+
+**Кейсы (`src/content/cases/*.md`):**
+| id | client | title | order | Особенности |
+|---|---|---|---|---|
+| `grow-food` | Grow Food | Brand transformation | 1 | Results+`after`; Context(aside-right, old-logo)+Challenge(aside-left); Execution (жирный) → 2 `subheading`-подблока с **буллетами** («Brand platform and identity» / «Product and digital»); медиа: гайд-видео, video-image (коробки+упаковка), 2 **верт.** скринкаста (media-row), закрывающий **Results**-прозой, золотой ролик (media) |
+| `priem` | Priem.menu | Building brand from zero | 2 | Results+`after`; Context+Challenge (aside-right + `extra`); What came next (`link` themeal) |
+| `eucerin` | Eucerin | Brand launch | 3 | Results+`after`; 4 пары картинок (1/2/4 квадраты — на всю ширину, 3 портреты — по центру); media-слот Brand film |
+| `philips` | Philips | Philthemusic | 4 | Results (без after); Context+Challenge (aside-right квадрат + `extra`); горизонталь-standalone; video-секция; media Brand film |
+| `cofix` | Cofix | Communication refresh | 5 | Results+spotlight(`award`+`link` Tagline); Context+Challenge (aside-right квадрат + `extra`); media-row (видео+3 верт. фото); карточка Works = `cofix-card-bg.jpg` |
+| `wrc` | WRC Academy | Faster than ever | (archive) | `archive: true` — скрыт из Works, доступен по /cases/wrc (Archive-чип). Нет Results/чипсов; Credentials (`links`) |
+
+Works на главной: 5 карточек (WRC в архиве). Нечётная последняя (Cofix) центрируется
+(`sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.75rem)]`); при 6-м кейсе вернётся в сетку сама.
+
+**Канонические паттерны кейсов** — полный справочник в `ASTRO-EDUCATION.md` §19. Кратко: секции
+data-driven (`sections[]`), раскладки `default / aside-right / aside-left / video-image / spotlight /
+media-row`, поля `metrics`+`after` (текст→чипсы→текст), `extra` (Context+Challenge слева от общей
+картинки), `award`+`link` (spotlight). Ряды картинок — `ImageRow` (cap 500, `justify-center`,
+`aspect-ratio` без кропа); микс видео+фото — `MediaRow`.
+
+**Сборка:** `npm run check` 0/0/0, `npm run build` — 14 страниц, зелёный.
+
+**⏳ Открытые хвосты:** `og:image` 1200×630; Lighthouse; вторая новая плашка на доске Miro
+(не разбирали); соцсети Eucerin — проверить актуальность.
+(Прим.: `growfood-context-new.png` — это НЕ плейсхолдер, а реальное старое лого GF «Old_Logo_GF»
+с доски, стоит в Context намеренно. Пункт закрыт.)
+
+---
+
+## 🗂 СЕССИЯ 2026-07-22: НОВЫЙ КЕЙС COFIX (Этап 11)
+
+**Контекст:** на доске Miro появились две новые плашки; в этой сессии интересовал только **Cofix**
+(вторую пока не трогаем). Кейс распарсен с доски по y-порядку и собран по паттернам существующих
+кейсов. Технический разбор — `ASTRO-EDUCATION.md` §18.
+
+**Что сделано:**
+
+### Новый кейс — Cofix (`cofix.md`, `order: 5`)
+- **Client**: Cofix, **Title**: «Brand communication refresh and SMM». Кофейная сеть с фикс-ценами,
+  SMM-переход на агентство, комьюнити Gen Z, адаптация глобальной кампании «Nothing But».
+- Структура секций 1:1 по доске (сверху вниз):
+  **Results** (интро + 6 метрик-чипов 2×3) → **Campaign spotlight** (новый layout) →
+  **Context** (`aside-right`, IG-скриншот) → **Challenge** (2 вертикальных фото в ряд) →
+  **Strategy** (крупный lifestyle-кадр) → **Execution** (текст).
+- Метрики: 20M+ / +30% / +50K / 3% / 1M+ / 25K+ (те же чипы `#ededed`, что в Eucerin/Philips).
+- 5 ассетов скачаны с Miro через `image_get_url` + curl: `cofix-logo.png` (500×500),
+  `cofix-context.png` (427×800, IG), `cofix-challenge-1/2.png` (вертикали 761/755×1280),
+  `cofix-strategy.jpg` (1080×1080). Astro → WebP (суммарно ~3.7 MB → ~400 kB).
+- `social: []`, `external` нет, `media: []` — на доске для Cofix соцсетей/сайта/видео не было.
+
+### Новый паттерн: `layout: spotlight` + поле `award` (схема)
+- Выделенный callout-блок (тонированная подложка `bg-ink/[0.04]`) с эйбровром-заголовком,
+  опц. бейджем награды (пилюля «🥉 …») и опц. кнопкой-ссылкой (`link`). Разбор — §18.
+- Для Cofix: badge «2× Bronze — Tagline Awards». ⚠️ **Ссылка на кейс Tagline не заведена** —
+  на доске текст «Read the full case study on Tagline →», но URL не был виджет-гиперссылкой.
+  Кнопку рендерим только при наличии `link.url` — сейчас её нет (открытый пункт).
+
+### Works: центрирование нечётной последней карточки
+- Кейсов стало 5 (нечёт) → последняя карточка одна в ряду. `Works.astro`: при нечётном числе
+  последняя карточка получает `sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.75rem)]` — растягивается
+  на 2 колонки и центрируется по ширине обычной карточки. Когда добавится 6-й кейс — вернётся
+  в обычную сетку автоматически (условие само отключится).
+- Card-bg карточки Cofix = `cofix-strategy.jpg` (lifestyle-кадр), переиспользован из Strategy.
+
+### Правки по фидбеку (та же сессия)
+- **Соцсети Cofix:** IG `instagram.com/cofixrussia/`, VK `vk.ru/cofixrussia` (как в др. кейсах).
+- **Правильная карточка Works:** фон карточки на главной = `cofix-card-bg.jpg` (фиолетовый стакан
+  «cofix», `IMG_7320.jpg` с доски) — брендовый кадр, а не lifestyle-квадрат. Опознан по мокапу
+  главной на доске: сетка Works 2×3, нижний-левый = Cofix. `cofix-strategy.jpg` остался в Strategy.
+- **Видео перед Context:** вертикальный YouTube Shorts `youtube.com/shorts/gnOFo59lpYg` — отдельная
+  медиа-секция (heading/body пустые, `videos:[{url,vertical:true}]`) над блоком Context.
+- **Context + Challenge — в одной строке слева от вертикальной картинки** (по макету): Context стал
+  `aside-right`, а Challenge переехал в новое поле `extra` (см. §18.5 в ASTRO-EDUCATION) — оба текста
+  стоят в левой колонке, IG-скрин справа спанит оба. Два вертикальных фото (`cofix-challenge-1/2`)
+  вынесены в отдельный медиа-ряд под этим блоком.
+
+### Второй раунд правок: раскладка Context/Challenge/видео сверена с доской точнее
+Первый заход был неточным — свежая проверка через слой `preview` (даёт координаты + текстовые
+плейсхолдеры, включая явную подпись «Здесь ролик, ссылка на ролик …» и реальный URL в тексте
+Campaign spotlight) показала:
+- **Заголовок кейса** — короткий, как у остальных: `title: Communication refresh` (было
+  «Brand communication refresh and SMM» — это была подпись с доски, а не поле title по паттерну).
+- **Видео — справа от Context+Challenge**, а не отдельным блоком выше. `Context` (`aside-right`)
+  получил `videos:[{url, vertical:true}]` вместо `images`. Компонент `CaseArticle.astro` научился
+  показывать видео в aside-колонке, когда картинки нет (`aside-right`/`aside-left` теперь триггерятся
+  по `hasImages || hasVideos`).
+- **IG-скриншот (`cofix-context.png`) уехал вниз** — стоит на доске в паре с фото Strategy
+  («girl with cake») ОДНИМ рядом перед Execution. `Strategy` лишился своей картинки; между Strategy
+  и Execution — новая секция без heading с `images:[cofix-strategy.jpg, cofix-context.png]`.
+- **Реальная ссылка Tagline найдена** на доске (была спрятана внутри текста, не как отдельный
+  виджет-линк): `tagline.ru/cases/prodvizhenie-onlayn-dostavki-cofix-v-usloviyah-pandemii/`.
+  Добавлена как `link` в секции `spotlight` → кнопка «Read the full case study on Tagline ↗».
+
+**Итоговый порядок секций Cofix:** Results → Campaign spotlight (с кнопкой) → Context+Challenge
+(aside-right, видео справа) → ряд 2 картинок (cup+latte) → Strategy → ряд 2 картинок
+(girl-with-cake + IG-скрин) → Execution.
+
+### Третий раунд: пропорции картинок/видео по макету
+Размеры не совпадали с доской. По геометрии из `preview` (текст ~750, видео 238×411, портреты
+cup/latte 394×663, ряд square 596×596 + IG 318×596) исправлено:
+- **`ImageRow` переведён на «justified row»** (`ASTRO-EDUCATION.md` §13.7 обновлён): у элемента
+  вместо `height: var(--row-h)` теперь `aspect-ratio: var(--r)`. Ширина ∝ реальному аспекту
+  (flex-grow=--r), высота у всех одинаковая = W/Σr, бокс совпадает с пропорцией картинки → **без
+  кропа**. Портреты остаются высокими, ландшафты — широкими, ряд заполняет ширину. Глобально
+  улучшило и другие кейсы (Eucerin/Priem/Philips — пары больше не кропятся в ландшафт). `--row-h`
+  для multi теперь не используется (single-режим не тронут).
+- **Видео в aside — узкая колонка:** для видео-aside (`asideVideo`) грид `sm:grid-cols-[3fr_1fr]`
+  вместо `[3fr_2fr]`. При контенте 976px + gap-8 даёт видео ≈236px / текст ≈708px — почти точно
+  как на доске (238 / 750). Картиночный aside остался `[3fr_2fr]`.
+- Проверено скриншотами: Cofix (видео узкое, cup/latte высокие портреты без кропа, square+IG по
+  аспектам) и Eucerin (регрессии нет — пары стали лучше).
+
+### Четвёртый раунд: размер картинок + текст под чипсами
+**(A) Картинки в рядах 2+ были слишком крупные** (портретные пары ~770px). `ImageRow`: добавлен
+**cap высоты** — `max-width: calc(var(--cap) * var(--r))` + `sm:justify-center` + `sm:gap-8`.
+Высокие (портретные) ряды больше не заполняют всю ширину: центрируются с воздухом по бокам и
+бо́льшим зазором; широкие (ландшафт) ряды по-прежнему заполняют ширину (cap не срабатывает).
+Cap = 460px (`IMG_ROW_CAP` в `CaseArticle.astro`); видео-ряды остались на `ROW_H=300`.
+**(B) Текст, разделённый чипсами (интро → чипсы → ещё текст → Context)** — по макету так во всех
+кейсах с Results, но в проекте второй кусок был склеен в один блок ДО чипсов. Добавлено поле секции
+`after` (текст ПОД чипсами, рендерится после `metrics`). Разделены:
+- **grow-food**: after = «Results held stable into the following year…»
+- **eucerin**: after = «80%+ of all SMM content was produced locally…»
+- **priem**: after = «Partnerships channel built from zero to ~40% of total acquisition.»
+- **philips**: на доске после чипсов текста нет → без изменений. **cofix**: после чипсов Campaign
+  spotlight (уже так). **wrc**: чипсов нет (архивный кейс) → без изменений.
+Проверено скриншотами Cofix / Eucerin / Grow Food.
+
+**Замечание:** cap выбран 460px как компромисс. Если ландшафтные пары (Eucerin Context и т.п.) всё
+ещё кажутся крупными — уменьшить `IMG_ROW_CAP` в `CaseArticle.astro`.
+
+### Пятый раунд: Context+Challenge слева от картинки (Priem, Philips) + картинки к краям
+- **Priem** и **Philips** приведены к паттерну Cofix (aside-right + `extra`): Context и Challenge —
+  в левой колонке, картинка справа спанит оба текста (по геометрии доски L текстов совпадает, картинка
+  правее). Priem: `priem-fridge.jpg` (портрет 1024×1280). Philips: `philips-challenge.jpg` (квадрат
+  1080×1080) как aside; а `philips-context.png` (горизонталь 3058×1720) вынесен отдельной секцией
+  без heading НИЖЕ блока Context/Challenge (на доске большая горизонталь стоит между Challenge и
+  Strategy). Так `extra` теперь используют 3 кейса: Cofix, Priem, Philips.
+- **Выравнивание рядов картинок:** `ImageRow` — `sm:justify-center sm:gap-10` (финал). Историю
+  прошли: `justify-center`(центр) → `justify-between`(к краям) → **обратно `justify-center` + gap-10**.
+  Причина: `justify-between` разбрасывал УЗКИЕ (вертикальные) пары к самым краям — огромный зазор
+  посередине. Финал: узкие вертикальные пары группируются по центру с умеренным зазором (gap-10 ≈40px),
+  воздух уходит по бокам; широкие/квадратные пары почти заполняют ширину (cap не срабатывает) и стоят
+  у краёв. Аспекты не меняются. Правит Eucerin блоки 3/4 (портреты) и Cofix блоки 1/2 (cup/latte,
+  square+IG) — их сводит ближе.
+- Проверено скриншотами: Priem, Philips, Eucerin, Cofix.
+
+### Шестой раунд: Cofix media-row + Eucerin выравнивание пар на всю ширину
+- **Eucerin блоки 2/4 — на всю ширину.** `IMG_ROW_CAP` 460 → **500**. Логика: квадрат/ландшафт-пары
+  (Σr≈2.0, натуральная justified-высота ~470–490) теперь НИЖЕ cap → заполняют всю ширину (стоят у
+  краёв, «выровнены»); только высокие ПОРТРЕТНЫЕ пары (Σr≈1.5, высота ~630) упираются в cap 500 и
+  центрируются. Так блоки 1/2/4 Eucerin (квадраты) заполняют ширину, блок 3 (портреты) — по центру.
+- **Cofix — крупная перестройка секций (по запросу):**
+  - Квадратное фото `cofix-strategy.jpg` (девушка с тортом) перенесено в **aside справа от
+    Context+Challenge** (как в Priem/Philips) — вместо видео, которое было там.
+  - После **Strategy** — новый блок **media-row**: видео + 3 вертикальных фото в ОДНУ линию, порядок:
+    вертикальное видео (Shorts) → `cofix-challenge-1` (cup) → `cofix-challenge-2` (латте) →
+    `cofix-context.png` (IG-скрин). Старые два фото-блока убраны.
+  - Новый компонент **`MediaRow.astro`** + layout `media-row`: микс видео (iframe) и картинок в одном
+    ряду общей высоты (сначала videos, потом images), та же cap/aspect-логика, что в ImageRow.
+    Вертикальное видео = аспект 9/16. `aspect-ratio` задаётся на всех ширинах (у iframe нет intrinsic
+    размера → иначе на мобиле схлопнулся бы).
+  - Итог секций Cofix: Results → Campaign spotlight → Context+Challenge (aside: квадрат) → Strategy →
+    media-row (видео+3 фото) → Execution.
+- Проверено скриншотами: Cofix (линия из 4 вертикалей) и Eucerin (пары у краёв).
+
+**Проверка:** `npm run check` 0/0/0, `npm run build` — 14 страниц, зелёный. Скриншоты главной
+(карточка «Communication refresh») и `/cases/cofix` (видео в aside, картинки перед Execution,
+кнопка Tagline) — ОК.
+
+**⏳ ОТКРЫТО (Cofix-специфичное):**
+- Вторая новая плашка на доске — не смотрели, ждёт отдельной сессии.
+
+**Урок процесса:** при разборе доски `board_list_items` с `item_type: image`/`text` может давать
+**неполную или неточную геометрию** (виджеты-заглушки типа «здесь будет ролик» не имеют типа image).
+Слой `item_type: preview` вытаскивает шире — включает shape-плейсхолдеры с текстом-инструкцией и
+ссылки, спрятанные внутри HTML контента текстовых блоков. При сомнении в раскладке — перепроверять
+через `preview`, а не полагаться на первый проход по `image`/`text`.
+
+---
+
+## 🗂 СЕССИЯ 2026-06-15: ПАЧКА UI-ПРАВОК ПО ТЕКСТУ И КНОПКАМ (Этап 10)
+
+**Контекст:** домен уже стоит правильный (`mariatkachenko.savor.ing` в `astro.config.mjs` + `robots.txt`) —
+правки не требовалось (старые `becom.ing` остались только в .md-доках как история). По деплою — Workers
+оставляем как есть, не трогаем.
+
+**Что сделано (технический разбор — `ASTRO-EDUCATION.md` §17):**
+
+### Шапка: иконка LinkedIn — круглая (как TG/WA)
+- В `Nav.astro` LinkedIn получил флаг `circle: true`. Раньше глиф simple-icons был скруглённым
+  квадратом; теперь рисуем `<circle r=12 fill=currentColor>` + буквы «in» поверх цветом фона
+  (`fill="var(--color-paper)"`). Размер тот же (`h-[18px] w-[18px]`, viewBox 24×24), ссылка сохранена.
+- `path` LinkedIn заменён на **только буквы**, вписанные в круг r≈10.5 (масштабированный глиф).
+- Массив `socials` типизирован (`{ label; url; path; circle? }[]`) — иначе `astro check` ругался на `s.circle`.
+
+### Баннер hero: новый текст + защита от висячих слов
+- Два абзаца (`hero.intro` + `about.p1`) схлопнуты в ОДИН. Новый текст в `hero.intro` (EN+RU),
+  второй `<p>` (`about.p1`) удалён из `Hero.astro`. Ключ `about.p1` оставлен (на нём висит
+  неиспользуемый `About.astro`, который не подключён в `index.astro`).
+- **Висячие слова:** на всех текстовых элементах hero добавлен `text-pretty` (= `text-wrap: pretty`) —
+  браузер не оставляет одно слово на последней строке. Работает и на десктопе, и на мобайле.
+
+### Footer (секция Contact): ссылка LinkedIn на тексте
+- `Contact.astro`: сам текст «Let's keep in touch» — это `<a>` на `linkedin.com/in/maria-tkachenko-k/`
+  (новая вкладка, `hover:underline`). Отдельного бейджа НЕТ (был, откатили по фидбеку).
+
+### Selected Works: play-бейдж — ОТКАЧЕН
+- Пробовали стеклянный «play»-бейдж на карточках (`CaseCard.astro`), по фидбеку откатили.
+  `CaseCard` вернулся к прежней нижней раскладке (client + title, без бейджа).
+
+### Archive-кнопка — заметнее
+- `Archive.astro`: `text-sm font-medium` → `text-lg font-bold` (пропорционально тексту на баннерах Works).
+
+### Publications — чуть жирнее
+- `Publications.astro`: класс чипа `font-medium` → `font-semibold`.
+
+**Проверка:** `npm run check` 0/0/0, `npm run build` — 12 страниц, зелёный.
+Пред-существующий WARN `Duplicate id "philips"` в check — не из этой сессии, не блокирует.
+
+**⏳ ОТКРЫТО (перешло):** `growfood-context-new.png` плейсхолдер; `og:image` 1200×630 + Lighthouse;
+буллеты/фон в тексте Priem/Philips; Grow Food execution — 2 под-секции на доске vs старый текст в .md.
+
+---
+
+## 🗂 СЕССИЯ 2026-06-04: RESULTS-ЧИПЫ ВО ВСЕХ КЕЙСАХ + ПРАВКИ РАСКЛАДКИ (Этап 9)
+
+**Что сделано:**
+
+### Results-чипы (новое поле `sections[].metrics`) — все кейсы
+Все кейсы получили секцию Results первым блоком, по образцу Eucerin.
+Доска обновилась: чипы добавлены на все кейсы, у каждого свои метрики и число чипов:
+- **Grow Food**: 3 чипа (+200% / +40% / 2х)
+- **Priem**: 6 чипов в 2 ряда ($20M+ / 50%+ / +90% / -55% / 15+ / +180%)
+- **Philips**: 6 чипов в 2 ряда (31M+ / 6M+ / 2% / 7K+ / 5K+ / 70+)
+- **Eucerin**: уже был, цвет исправлен `#f5f5ed` → `#ededed` (доска обновилась)
+
+### Новое фото Priem card bg на главной
+Miro-доска обновила карточку Priem в Works: новое фото `priem-card-bg.jpg` (198 kB) скачано
+через `image_get_url`. `Works.astro` обновлён с `.png` на `.jpg`.
+
+### Социальные ссылки Philips
+Добавлены VK (`vk.com/philthemusic`) + IG (`instagram.com/_phil_the_music_/`).
+
+### Видео в media: обновлены на YouTube
+- Philips Brand film: `vimeo/513292169` → `youtu.be/XX5SGexsTGE`
+- Eucerin Brand film: `vimeo/418987467` → `youtu.be/T0p_5wnAo7Y`
+
+### Прием — полная перестройка секций по доске
+Секции приведены к y-порядку доски:
+Results (чипы) → Context → Challenge (aside-right) → Strategy → пустой ряд с фото
+→ Execution (Brand & identity) → пустой ряд с видео → пустой (Launch & growth текст)
+→ пустой (видео «Ролик с котом») → What came next.
+Заголовок: «Building from zero» → «Building brand from zero».
+Видео `wHJYcF63Q3c` перемещено из Results в отдельный блок перед What came next.
+
+### Philips — видео и картинки на правильные позиции
+На доске видео T0llWVVP9V8 стоит между Strategy (y=5367) и Execution (y=6084) —
+перемещено в standalone-секцию. `philips-strategy.png` убран из Strategy и перенесён
+в блок изображений после Execution. Итоговые 3 группы (по y-позициям доски):
+`philips-strategy.png` / `philips-execution.png` / `philips-results-1+2.png` (пара).
+
+### VideoGroup: исправлена ширина при смешанных ориентациях
+Вертикальное видео (9:16) в паре с горизонтальным (16:9) теперь получает
+естественную ширину (`sm:w-auto`), горизонтальное — заполняет оставшееся (`sm:flex-1`).
+Ранее оба получали `sm:flex-1` (равные 50%), вертикальное смотрелось как сплющенное.
+
+**⏳ ОТКРЫТО:**
+- Буллеты и фон в тексте (Priem/Philips) — не удалось воспроизвести по коду, нужно уточнение.
+- Grow Food execution секция: на доске обновлена на 2 под-секции (Brand platform+identity /
+  Product+digital), но в grow-food.md пока старый текст.
+- `growfood-context-new.png` — серый плейсхолдер.
+- `og:image` 1200×630, Lighthouse-прогон.
+
+---
+
 ## 🗂 СЕССИЯ 2026-06-03: EUCERIN + ARCHIVE-РЕДИЗАЙН (Этап 8)
 
 **Что сделано** (технический разбор — `ASTRO-EDUCATION.md` §15):

@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCases } from '../lib/localize';
 import type { ImageMetadata } from 'astro';
 import { useTranslations, localePrefix, type Lang } from '../i18n/ui';
 import CaseCard from './CaseCard.astro';
@@ -27,9 +27,8 @@ const images: Record<string, ImageMetadata> = {
   cofix: cofixCardBg,
 };
 
-const cases = (await getCollection('cases'))
-  .filter((e) => !e.data.archive)
-  .sort((a, b) => a.data.order - b.data.order);
+// Названия карточек — в языке страницы (getCases разворачивает { en, ru }); порядок по `order` уже задан.
+const cases = (await getCases(lang)).filter((e) => !e.data.archive);
 ---
 
 <section id="works" class="bg-paper-2">

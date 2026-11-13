@@ -1,7 +1,8 @@
 // Общие помощники для страниц кейсов (EN и RU используют одни и те же функции).
-import type { CollectionEntry } from 'astro:content';
+import type { LocalCase } from './localize';
 
-type CaseEntry = CollectionEntry<'cases'>;
+// Кейс, уже развёрнутый в один язык (см. localize.ts).
+type CaseEntry = LocalCase;
 
 export interface NextCase {
   id: string;
@@ -36,8 +37,8 @@ export function caseDescription(entry: CaseEntry, max = 160): string {
   return cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,.;:—-]+$/, '') + '…';
 }
 
-// JSON-LD CreativeWork для страницы кейса. Язык контента — английский (тексты кейсов не переводились).
-export function caseJsonLd(entry: CaseEntry, url: URL, site: URL) {
+// JSON-LD CreativeWork для страницы кейса. inLanguage — язык текста страницы (en для /cases/, ru для /ru/cases/).
+export function caseJsonLd(entry: CaseEntry, url: URL, site: URL, lang: 'en' | 'ru' = 'en') {
   const d = entry.data;
   const person = { '@type': 'Person', name: 'Maria Tkachenko', url: site.href };
   return {
@@ -47,7 +48,7 @@ export function caseJsonLd(entry: CaseEntry, url: URL, site: URL) {
     description: caseDescription(entry),
     url: url.href,
     mainEntityOfPage: url.href,
-    inLanguage: 'en',
+    inLanguage: lang,
     author: person,
     creator: person,
     about: {
