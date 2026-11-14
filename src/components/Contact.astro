@@ -1,7 +1,8 @@
 ---
-// Contact: большой H2 с курсивом и акцентной точкой, короткая строка, три кнопки-соцсети
+// Contact: большой H2 с курсивом и акцентной точкой, короткая строка, форма (ContactForm), затем три кнопки-соцсети
 // (LinkedIn — залитая, Telegram и WhatsApp — контурные). Соцсети переехали сюда из шапки.
 import { useTranslations, type Lang } from '../i18n/ui';
+import ContactForm from './ContactForm.astro';
 
 interface Props {
   lang: Lang;
@@ -19,15 +20,16 @@ const btn = 'rounded-base px-2 py-3 text-center text-[13px] font-medium transiti
 ---
 
 <section id="contact" class="border-t border-line">
-  <div class="container-page py-[72px] md:py-[120px]">
+  <div class="container-page pb-[72px] pt-[72px] md:pb-[96px] md:pt-14">
     <p class="eyebrow">{t('contact.eyebrow')}</p>
-    <h2 class="mt-5 text-[clamp(3rem,7vw,6rem)] leading-[1] tracking-[-0.02em] text-ink">
+    <h2 class="mt-5 text-[clamp(2.75rem,6vw,5rem)] leading-[1] tracking-[-0.02em] text-ink">
       {t('contact.h2.a')}<em class="font-light italic">{t('contact.h2.em')}</em><span class="text-accent"
         >.</span
       >
     </h2>
-    <p class="mt-6 max-w-md text-pretty">{t('contact.line')}</p>
-    <div class="mt-9 grid grid-cols-1 gap-2 min-[360px]:grid-cols-3 sm:flex sm:flex-wrap sm:gap-3">
+    <p class="mt-4 max-w-md text-pretty">{t('contact.line')}</p>
+    <ContactForm lang={lang} />
+    <div class="mt-6 grid grid-cols-1 gap-2 min-[360px]:grid-cols-3 sm:flex sm:flex-wrap sm:gap-3">
       {
         links.map((l) => (
           <a
