@@ -14,6 +14,7 @@ Decisions (agreed with the user):
 - Keep: `Base.astro` SEO props, sitemap config, case content/assets, `Works` logic (archive filter, odd-card centring), social links, real publication URLs.
 - Rewrite: global.css tokens + fonts, Hero (canvas + new H1/portrait), About, Nav/Footer, Works cards, Publications (list rows + `press` collection), Contact, new Recognition band, case-page colours.
 - Remove at the end: the unused `About.astro` split if it stays unused; legacy `icon-*.png` assets (unused since SVG icons).
+- Hero network (agreed 2026-11-14, deviates from DESIGN.md numbers; DESIGN.md itself left untouched): link distance 120→140px, spread probability 55→85%, click pick radius 48→80px, links light only when both ends are lit. Reason: the original graph was below the connectivity threshold (see `ASTRO-EDUCATION.md` §22.5).
 - Git: commits/pushes only on `redesign` via `.claude/hooks/guard-branch.sh`. Context files are committed by the user later.
 - [x] Kit docs, agent and skills copied into the repo root (`docs/`, `.claude/agents`, `.claude/skills`).
 - [x] `CLAUDE.md` merged (kit rules + project rules). `docs/CONTENT.md` filled from the project.

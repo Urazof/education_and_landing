@@ -1,11 +1,31 @@
 {
-  // Cloudflare Workers Builds + Static Assets: сайт — это папка dist/ без воркер-скрипта.
+  // Cloudflare Workers Builds + Static Assets: сайт — папка dist/, плюс маленький Worker только для формы обратной связи.
   "name": "maria-portfolio",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-06-01",
   "assets": {
     "directory": "./dist",
+    // Привязка, через которую Worker при необходимости отдаёт статические файлы (worker/index.ts → env.ASSETS).
+    "binding": "ASSETS",
+    // Worker запускается ТОЛЬКО для /api/*; остальные запросы обслуживает статика напрямую (быстро и без лимитов Worker).
+    "run_worker_first": ["/api/*"],
     // Для несуществующего адреса отдавать dist/404.html со статусом 404.
     // Без этой строки Cloudflare показывает свою стандартную страницу вместо нашей.
     "not_found_handling": "404-page"
+  },
+  // Отправка писем через Cloudflare Email Routing. Адрес-получатель (CONTACT_TO) здесь НЕ указан: это секрет,
+  // его задают командой `npx wrangler secret put CONTACT_TO` или в дашборде (Settings → Variables and Secrets).
+  // Адрес должен быть подтверждён в Email Routing (Destination addresses); правило и MX-записи создаются только для поддомена.
+  "send_email": [{ "name": "SEND_EMAIL" }],
+  // Ограничение частоты отправок: не больше 5 писем в минуту с одного IP (worker/handler.ts). Счётчик приблизительный и по дата-центрам.
+  // namespace_id — любое положительное целое в виде строки; одинаковые id разных Worker делят счётчики, поэтому у нас свой.
+  // Требует wrangler 4.36+ (Workers Builds ставит свежий). Период может быть только 10 или 60 секунд.
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "4817", "simple": { "limit": 5, "period": 60 } }
+  ],
+  "vars": {
+    // Отправитель писем с формы: адрес на ПОДДОМЕНЕ сайта (mariatkachenko.savor.ing), где включён Email Routing.
+    // Корневой домен savor.ing почтой сайта не затрагивается: на нём будет другое.
+    "CONTACT_FROM": "site@mariatkachenko.savor.ing"
   }
 }

@@ -47,15 +47,15 @@ Alternative accents (decide with Maria): `#2B4C7E` ink blue, `#B0472A` brick, `#
 5. Publications & podcasts: list rows separated by hairlines, top border in ink. Columns: outlet label / title (Fraunces 24px) / kind / ↗. Hover: row background `--paper-2`, arrow nudges 4px.
 6. Recognition band: `--ink` background, "Jury member, *E+ Awards* (formerly Effie), 2024", large italic "E+" on the right in `--accent-on-dark`.
 7. Contact: H2 "Let's keep *in touch*." at `clamp(48px, 7vw, 96px)`, short line, buttons LinkedIn (filled), Telegram, WhatsApp (outlined).
-8. Footer: © year, small links: sitemap.xml · llms.txt.
+8. Footer: © year only. (Links to sitemap and llms.txt were removed 2026-11-14: crawlers find them via `robots.txt` and the well-known `/llms.txt` path, and they are of no use to visitors.)
 
 ## Case page `/work/[slug]`
 Eyebrow (kind) · H1 (title) · meta row (brand, year, role) · cover · sections from MDX (Challenge, Approach, Result) · next-case link. Same tokens.
 
 ## Hero network canvas (the only JS)
 - Canvas absolutely fills the hero; content above it with `pointer-events: none` except links.
-- ~70 nodes per 1440×760 area (scale by area), slow drift, links drawn when distance < 120px; ink at 8% alpha, ~8% of nodes in accent.
-- Click near a node: it lights up, a ring pulse expands, the light spreads to neighbours with 55% probability per link, max depth 6, 120–240ms delay per hop. Counter "INSIGHTS LINKED 0000" top-right (`aria-hidden`).
+- ~70 nodes per 1440×760 area (scale by area), slow drift, links drawn when distance < 140px; ink at 8% alpha, ~8% of nodes in accent. (Was 120px; raised 2026-11-14, see `ASTRO-EDUCATION.md` §22.5: below ~140px the graph falls apart into islands.)
+- Click within 80px of a node: it lights up, a ring pulse expands, the light spreads to neighbours with 85% probability per link, max depth 6, 120–240ms delay per hop. A link glows only when BOTH its ends are lit. Fade and drift are time-based (not per frame). Counter "INSIGHTS LINKED 0000" top-right (`aria-hidden`).
 - `devicePixelRatio`-aware, re-init on resize (ResizeObserver), pause when off-screen (IntersectionObserver) and when the tab is hidden.
 - `prefers-reduced-motion: reduce` → static network, no drift, clicks still light nodes.
 - Canvas is decorative: `aria-hidden="true"`; must not affect LCP (start on idle).
