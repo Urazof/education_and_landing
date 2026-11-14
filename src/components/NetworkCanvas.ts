@@ -3,9 +3,10 @@
 //
 // Поведение:
 //  • ~70 узлов на область 1440×760 (масштабируется по площади), медленный дрейф;
-//  • связи рисуются при расстоянии < 120px (ink 8% альфы), ~8% узлов — акцентные;
-//  • клик рядом с узлом: узел загорается, расходится кольцо, свет перескакивает на соседей
-//    (вероятность 55% на связь, глубина ≤ 6, задержка 120–240 мс на скачок), счётчик растёт;
+//  • связи рисуются при расстоянии < 140px (ink 8% альфы), ~8% узлов — акцентные;
+//  • клик рядом с узлом (≤ 80px): узел загорается, расходится кольцо, свет перескакивает на соседей
+//    (вероятность 85% на связь, глубина ≤ 6, задержка 120–240 мс на скачок), счётчик растёт;
+//  • связь подсвечивается, только когда загорелись ОБА её конца (то есть свет по ней реально прошёл);
 //  • DPR-aware, пересоздание при ресайзе, пауза вне экрана и на скрытой вкладке;
 //  • prefers-reduced-motion: сеть статична (без дрейфа и колец), клики по-прежнему зажигают узлы.
 
@@ -27,10 +28,12 @@ interface Pulse {
 
 const DENSITY = 70; // узлов на REF_AREA
 const REF_AREA = 1440 * 760;
-const LINK = 120; // макс. расстояние связи, px
-const PICK_RADIUS = 48; // насколько близко к узлу должен попасть клик/тап
+// Подобрано симуляцией (см. ASTRO-EDUCATION.md §22.5): при 120px / 55% / 48px сеть почти не связна (средняя степень ≈ 2.6, при пороге
+// перколяции ≈ 4.5): клик попадал в узел в ~36% случаев, а половина каскадов гасла за ≤ 3 узла.
+const LINK = 140; // макс. расстояние связи, px
+const PICK_RADIUS = 80; // насколько близко к узлу должен попасть клик/тап
 const MAX_DEPTH = 6;
-const SPREAD_PROBABILITY = 0.55;
+const SPREAD_PROBABILITY = 0.85;
 const HOT_SHARE = 0.08;
 
 export function initNetwork(canvas: HTMLCanvasElement, scoreEl: HTMLElement | null): () => void {
@@ -136,19 +139,26 @@ export function initNetwork(canvas: HTMLCanvasElement, scoreEl: HTMLElement | nu
     }
   }
 
-  function step() {
+  // Время кадра: затухание и дрейф считаем по реальному времени (k = 1 на 60 fps), а не «на кадр».
+  // Иначе на слабом телефоне (20–30 fps) подсветка гасла бы в 2–3 раза дольше, узлы дольше оставались «уже горящими»
+  // (`ignite` пропускает их), и повторные клики/цепочки в этом месте не срабатывали.
+  let last = 0;
+
+  function step(now: number) {
+    const k = last ? Math.min((now - last) / (1000 / 60), 12) : 1;
+    last = now;
     for (const n of nodes) {
       if (!reduced) {
-        n.x += n.vx;
-        n.y += n.vy;
+        n.x += n.vx * k;
+        n.y += n.vy * k;
         if (n.x < 0 || n.x > w) n.vx *= -1;
         if (n.y < 0 || n.y > h) n.vy *= -1;
       }
-      n.lit *= reduced ? 0.97 : 0.985;
+      n.lit *= (reduced ? 0.97 : 0.985) ** k;
     }
     for (const p of pulses) {
-      p.r += 2.2;
-      p.a *= 0.93;
+      p.r += 2.2 * k;
+      p.a *= 0.93 ** k;
     }
     pulses = pulses.filter((p) => p.a > 0.01);
   }
@@ -165,7 +175,9 @@ export function initNetwork(canvas: HTMLCanvasElement, scoreEl: HTMLElement | nu
         const b = nodes[j];
         const d = Math.hypot(a.x - b.x, a.y - b.y);
         if (d >= LINK) continue;
-        const lit = Math.max(a.lit, b.lit);
+        // min, а не max: линия светится только если загорелись оба конца. С max подсвечивались и линии к ещё тёмным соседям —
+        // казалось, что цепочка идёт дальше, хотя она уже оборвалась.
+        const lit = Math.min(a.lit, b.lit);
         const on = lit > 0.05;
         ctx.strokeStyle = on ? ACCENT : INK;
         ctx.globalAlpha = (1 - d / LINK) * (on ? 0.25 + lit * 0.5 : 0.08);
@@ -198,10 +210,13 @@ export function initNetwork(canvas: HTMLCanvasElement, scoreEl: HTMLElement | nu
 
   // Цикл анимации запускается только когда он нужен: сеть на экране, вкладка видима, и либо идёт дрейф,
   // либо ещё затухает подсветка/кольца. В reduced-motion после затухания цикл полностью останавливается.
-  function frame() {
+  function frame(now: number) {
     raf = 0;
-    if (!active()) return;
-    step();
+    if (!active()) {
+      last = 0; // после паузы (вкладка скрыта/сеть вне экрана) не считаем огромный dt
+      return;
+    }
+    step(now);
     draw();
     if (!reduced || pulses.length > 0 || nodes.some((n) => n.lit > 0.05)) requestDraw();
   }
