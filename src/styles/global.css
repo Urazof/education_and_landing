@@ -39,10 +39,21 @@
 }
 
 /* Базовые стили документа */
+/* Высота sticky-шапки (Nav.astro): телефон — две строки (имя + меню), от sm — одна. Нужна для отступа якорей: если отступ больше высоты шапки,
+   сверху остаётся полоса предыдущей секции, если меньше — заголовок прячется под шапкой. Значение чуть меньше шапки (на 1px),
+   чтобы между шапкой и секцией не было просвета. При смене вёрстки шапки обновить обе цифры. */
+:root {
+  --header-h: 5.5rem;
+}
+@media (min-width: 40rem) {
+  :root {
+    --header-h: 3.75rem;
+  }
+}
 html {
   scroll-behavior: smooth;
   /* якоря не прячутся под sticky-шапкой */
-  scroll-padding-top: 4.5rem;
+  scroll-padding-top: var(--header-h);
 }
 body {
   font-family: var(--font-sans);
@@ -64,6 +75,13 @@ h3 {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
+}
+
+/* После отправки формы сервер возвращает на /#contact-sent (или #contact-error). Там страница должна сразу открыться на сообщении,
+   а не «ехать» к нему плавно сверху вниз, поэтому для этих двух якорей плавную прокрутку отключаем. Остальные якоря (меню и т. д.) плавные. */
+html:has(#contact-sent:target),
+html:has(#contact-error:target) {
+  scroll-behavior: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {

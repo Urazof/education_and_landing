@@ -9,8 +9,12 @@ npm-debug.log*
 # env
 .env
 .env.production
+# локальные секреты Worker (wrangler dev)
+.dev.vars
 # os / editor
 .DS_Store
 .claude
+# рабочие материалы редизайна и формы (спеки, скриншоты, планы). Уже отслеживаемые файлы docs/ остаются в git; новые — не попадают
+docs/
 # скриншоты и промежуточные картинки проверки (не часть проекта)
 .design/*.png

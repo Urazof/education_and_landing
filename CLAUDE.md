@@ -33,6 +33,7 @@ After any change to the project (new feature, fix, refactor, architecture decisi
 
 - `CONTEXT_LANDING.md` — project context snapshot: what we are building, current state, key decisions, next steps.
 - `ASTRO-EDUCATION.md` — deep technical reference for a developer new to the project.
+- `docs/` is listed in `.gitignore` (working material: specs, screenshots, plans such as `docs/FORM-PLAN.md`). Files already tracked (`CONTENT.md`, `DESIGN.md`, `PLAN.md`, `mockup/`) stay in git; new files there are NOT committed unless added with `git add -f`.
 - `docs/` — redesign spec (from the kit). Edit only: tick checkboxes in `PLAN.md`, record decisions in its Phase 0 section,
   and keep `CONTENT.md` in sync with the real content. Never change `DESIGN.md` without asking.
 

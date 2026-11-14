@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import { contactDevApi } from './worker/dev-plugin.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -37,6 +38,7 @@ export default defineConfig({
   vite: {
     // @ts-expect-error — Astro тянет vite@6, а @tailwindcss/vite — vite@8; типы Plugin не совпадают.
     // На сборку/рантайм НЕ влияет (build зелёный). Уберём, когда версии vite сойдутся в одну.
-    plugins: [tailwindcss()],
+    // contactDevApi — только для `npm run dev`: имитирует /api/contact (Worker в dev не запускается), см. worker/dev-plugin.mjs.
+    plugins: [tailwindcss(), contactDevApi()],
   },
 });

@@ -1,5 +1,5 @@
 ---
-// Подвал: копирайт слева, мелкие служебные ссылки справа (docs/DESIGN.md, секция 8).
+// Подвал: только копирайт (docs/DESIGN.md, секция 8). Ссылки на sitemap и llms.txt убраны 2026-11-14: роботы находят их сами (robots.txt, /llms.txt).
 
 import { useTranslations, type Lang } from '../i18n/ui';
 
@@ -12,11 +12,7 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-line">
-  <div class="container-page flex flex-col gap-2 py-8 text-sm text-muted sm:flex-row sm:justify-between">
+  <div class="container-page py-8 text-sm text-muted">
     <span>© {year} Maria Tkachenko. {t('footer.rights')}.</span>
-    <span class="flex gap-5">
-      <a href="/sitemap-index.xml" class="transition-colors hover:text-accent">{t('footer.sitemap')}</a>
-      <a href="/llms.txt" class="transition-colors hover:text-accent">llms.txt</a>
-    </span>
   </div>
 </footer>

@@ -1,0 +1,3 @@
+# Скопируйте в .dev.vars (файл в .gitignore) для локального `wrangler dev`.
+# На проде адрес задаётся секретом: npx wrangler secret put CONTACT_TO
+CONTACT_TO=owner@example.com
