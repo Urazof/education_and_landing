@@ -13,7 +13,6 @@ export const ui = {
     'a11y.skip': 'Skip to content',
     'notfound.title': 'Page not found',
     'notfound.text': 'The page you are looking for does not exist or has moved.',
-    'footer.sitemap': 'Sitemap',
     'meta.title': 'Maria Tkachenko — Brand strategist & marketing leader',
     'meta.description':
       'Marketing leader and brand strategist. I turn customer insight into clear positioning and marketing strategy for complex products people connect with.',
@@ -50,6 +49,22 @@ export const ui = {
     'contact.h2.a': "Let's keep ",
     'contact.h2.em': 'in touch',
     'contact.line': 'Brand strategy, positioning, launches — or just a conversation about marketing.',
+    // Форма обратной связи (docs/FORM-PLAN.md). Значения опций темы (hiring/product/talk/other) уходят на сервер и не зависят от языка.
+    'form.topic': 'Topic',
+    'form.topic.hiring': "I'm hiring for a full-time role",
+    'form.topic.product': 'I have a product to ship',
+    'form.topic.talk': 'I want to book a talk or workshop',
+    'form.topic.other': 'Something else',
+    'form.name': 'Name',
+    'form.email': 'Email',
+    'form.organization': 'Organization',
+    'form.optional': 'optional',
+    'form.message': 'Tell me what you have in mind',
+    'form.send': 'Send inquiry',
+    'form.sent.title': 'Message sent',
+    'form.sent.text': 'Thank you for reaching out.',
+    'form.error.title': 'Could not send the message',
+    'form.error.text': 'Please try again, or write to me on LinkedIn or Telegram below.',
     'about.p1':
       "Since 2011, I've been building and scaling brands across consumer, tech, subscription, and digital products. I know how to turn complex products into brands people instantly understand and genuinely connect with.",
     'bridge':
@@ -70,7 +85,6 @@ export const ui = {
     'a11y.skip': 'К содержимому',
     'notfound.title': 'Страница не найдена',
     'notfound.text': 'Такой страницы нет или она переехала.',
-    'footer.sitemap': 'Карта сайта',
     'meta.title': 'Мария Ткаченко — бренд-стратег и маркетинг-лидер',
     'meta.description':
       'Маркетинг-лидер и бренд-стратег. Превращаю клиентские инсайты в чёткое позиционирование и маркетинговую стратегию для сложных продуктов и брендов.',
@@ -106,6 +120,22 @@ export const ui = {
     'contact.h2.a': 'Давайте ',
     'contact.h2.em': 'общаться',
     'contact.line': 'Бренд-стратегия, позиционирование, запуски — или просто разговор о маркетинге.',
+    // ⚠️ Русские строки формы — черновой перевод, нужна вычитка Марией.
+    'form.topic': 'Тема обращения',
+    'form.topic.hiring': 'Хочу предложить постоянную работу',
+    'form.topic.product': 'У меня есть продукт к запуску',
+    'form.topic.talk': 'Хочу пригласить выступить или провести воркшоп',
+    'form.topic.other': 'Другое',
+    'form.name': 'Имя',
+    'form.email': 'Email',
+    'form.organization': 'Организация',
+    'form.optional': 'необязательно',
+    'form.message': 'Расскажите, что у вас на уме',
+    'form.send': 'Отправить',
+    'form.sent.title': 'Сообщение отправлено',
+    'form.sent.text': 'Спасибо, что написали.',
+    'form.error.title': 'Не удалось отправить сообщение',
+    'form.error.text': 'Попробуйте ещё раз или напишите мне в LinkedIn или Telegram ниже.',
     'about.p1':
       'С 2011 года я строю и масштабирую бренды в потребительском, технологичном, подписочном и цифровом сегментах. Я умею превращать сложные продукты в бренды, которые люди мгновенно понимают и к которым по-настоящему привязываются.',
     'bridge':
